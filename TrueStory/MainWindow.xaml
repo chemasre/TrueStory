@@ -23,6 +23,6 @@
             </MenuItem>
         </Menu>
         <ListBox x:Name="FolderView" DockPanel.Dock="Right" d:ItemsSource="{d:SampleData ItemCount=5}" MinWidth="200"/>
-        <TextBox x:Name="FileContents" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewTextInput="FileContents_PreviewTextInput" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True"/>
+        <TextBox x:Name="FileContents" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewTextInput="FileContents_PreviewTextInput" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" TextChanged="FileContents_TextChanged"/>
     </DockPanel>
 </Window>

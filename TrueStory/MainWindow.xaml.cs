@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 
@@ -286,5 +287,22 @@ namespace TrueStory
             return valid;
         }
 
+        private void FileContents_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            foreach (TextChange c in e.Changes)
+            {
+                Console.WriteLine("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
+            }
+
+            if(e.Changes.Count == 1)
+            {
+                TextChange c = e.Changes.First();
+                if(c.AddedLength > 0 && c.RemovedLength == 0)
+                {
+                    Console.WriteLine("Added text " + FileContents.Text.Substring(c.Offset, c.AddedLength));
+                }
+            }
+
+        }
     }
 }
