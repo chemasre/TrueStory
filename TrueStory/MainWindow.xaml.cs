@@ -16,12 +16,45 @@ namespace TrueStory
         const string parentFolderName = "..";
         const string folderPrefix = "[Carpeta] ";
 
+        string? clipboard;
+
         Story? story;
         public MainWindow()
         {
             InitializeComponent();
 
             DataObject.AddPastingHandler(FileContents, FileContents_OnPaste);
+            DataObject.AddCopyingHandler(FileContents, FileContents_OnCopy);
+
+            FileContents.ContextMenu = null;
+        }
+
+        private void FileContents_OnCopy(object sender, DataObjectCopyingEventArgs e)
+        {
+            bool isText = e.DataObject.GetDataPresent(DataFormats.UnicodeText, true);
+
+            if (isText)
+            {
+                string text = (string)e.DataObject.GetData(DataFormats.UnicodeText);
+
+                Console.WriteLine("Detected copy: " + text);
+
+                clipboard = text;
+
+                if(Keyboard.IsKeyDown(Key.X))
+                {
+                    if (FileContents.SelectionLength > 0) { FileContents.SelectedText = "";  }
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Unrecognized copy");
+            }
+
+            e.CancelCommand();
+            Console.WriteLine("Copy cancelled");
+
         }
 
         private void FileContents_OnPaste(object sender, DataObjectPastingEventArgs e)
@@ -35,12 +68,31 @@ namespace TrueStory
 
                 Console.WriteLine("Detected paste: " + text);
 
+
+                if(clipboard != null)
+                {
+                    if (FileContents.SelectionLength > 0)
+                    {
+                        FileContents.SelectedText = text;
+                    }
+                    else
+                    {
+                        int p = FileContents.CaretIndex;
+                        FileContents.Text = FileContents.Text.Insert(FileContents.CaretIndex, clipboard);
+                        FileContents.CaretIndex = p + clipboard.Length;
+                    }
+                }
+
+
+
             }
             else
             {
                 Console.WriteLine("Unrecognized paste");
-                e.CancelCommand();
             }
+
+            e.CancelCommand();
+            Console.WriteLine("Paste cancelled");
         }
 
         private void FileContents_PreviewTextInput(object sender, TextCompositionEventArgs e)
