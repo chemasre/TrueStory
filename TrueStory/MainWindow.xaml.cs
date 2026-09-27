@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,9 @@ namespace TrueStory
     {
         const string parentFolderName = "..";
         const string folderPrefix = "[Carpeta] ";
+
+        const string tabAsSpaces = "    ";
+        char[] tabEquivalents = new char[] { ' ', '\t' };
 
         string? clipboard;
 
@@ -355,6 +359,63 @@ namespace TrueStory
                 }
             }
 
+        }
+
+        private void FileContents_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Tab)
+            {
+                int p = FileContents.CaretIndex;
+                FileContents.Text = FileContents.Text.Insert(p, tabAsSpaces);
+                FileContents.CaretIndex = p + tabAsSpaces.Length;
+
+                e.Handled = true;
+            }
+            if (e.Key == Key.Return)
+            {
+                Console.WriteLine("Detected return");
+
+                int lineIndex = FileContents.GetLineIndexFromCharacterIndex(FileContents.CaretIndex);
+                string lineText = FileContents.GetLineText(lineIndex);
+
+                int lastTabEquivalent = FindLastTabEquivalent(lineText);
+
+                string? tabPrefix = null;
+                if (lastTabEquivalent >= 0) { tabPrefix = lineText.Substring(0, lastTabEquivalent);  }
+
+                int p = FileContents.CaretIndex;
+                string newLineText = Environment.NewLine + (tabPrefix ?? "");
+                FileContents.Text = FileContents.Text.Insert(p, newLineText);
+                FileContents.CaretIndex = p + newLineText.Length;
+
+                e.Handled = true;
+            }
+        }
+
+        int FindLastTabEquivalent(string lineText)
+        {
+            int i = 0;
+            bool found = false;
+            int lastTabEquivalent = -1;
+
+            while (i < lineText.Length && !found)
+            {
+                int j = 0;
+                bool isTabEquivalent = false;
+                while (j < tabEquivalents.Length && !isTabEquivalent)
+                {
+                    if (lineText[i] == tabEquivalents[j]) { isTabEquivalent = true; }
+                    else { j++; }
+                }
+
+                if (!isTabEquivalent) { found = true; lastTabEquivalent = i; }
+                else
+                {
+                    i++;
+                }
+            }
+
+            return lastTabEquivalent;
         }
     }
 }
