@@ -1,0 +1,28 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TrueStory"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TrueStory.MainWindow"
+        mc:Ignorable="d"
+        Title="TrueStory 0.1.0" Height="450" Width="800">
+    <DockPanel>
+        <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+            <MenuItem x:Name="StoryMenu" Header="Historia">
+                <MenuItem x:Name="NewStoryMenuAction" Header="Nueva historia..." Click="NewStoryMenuAction_Click"/>
+                <MenuItem x:Name="OpenStoryMenuAction" Header="Abrir historia..." Click="OpenStoryMenuAction_Click"/>
+                <MenuItem x:Name="CloseStoryMenuAction" Header="Cerrar historia" Click="CloseStoryMenuAction_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="FileMenu" Header="Archivo">
+                <MenuItem x:Name="NewMenu" Header="Nuevo">
+                    <MenuItem x:Name="NewFolderMenuAction" Header="Carpeta" Click="NewFolderMenuAction_Click"/>
+                    <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="NewFileMenuAction_Click"/>
+                </MenuItem>
+                <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="DeleteFileOrFolderMenuAction_Click"/>
+            </MenuItem>
+        </Menu>
+        <ListBox x:Name="FolderView" DockPanel.Dock="Right" d:ItemsSource="{d:SampleData ItemCount=5}" MinWidth="200"/>
+        <TextBox x:Name="FileContents" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewTextInput="FileContents_PreviewTextInput" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True"/>
+    </DockPanel>
+</Window>
