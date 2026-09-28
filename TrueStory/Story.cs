@@ -8,23 +8,29 @@ using System.Xml.Linq;
 
 namespace TrueStory
 {
-    internal class Story
+    public class Story
     {
-        internal const string storyFilename = ".truestory";
+        public struct Header
+        {
+            public string publicKey;
+            public string author;
+        }
 
-        internal string RootPath { get { return rootPath;  } }
+
+        public const string storyFilename = ".truestory";
+
+        public string RootPath { get { return rootPath;  } }
 
         FileStream file;
         string rootPath;
         bool isClosed;
 
-        Story(FileStream _file)
+        Story(FileStream file, Header header)
         {
-            file = _file;
             rootPath = Path.GetDirectoryName(file.Name) ?? "";
         }
 
-        internal static bool ExistsStory(string path)
+        public static bool ExistsStory(string path)
         {
             bool result;
 
@@ -33,27 +39,27 @@ namespace TrueStory
             return result;
         }
 
-        internal static Story CreateStory(string path)
+        public static Story CreateStory(string path, Header header)
         {
             FileStream file = File.Create(path + Path.DirectorySeparatorChar + storyFilename);
 
-            Story result = new(file);
+            Story result = new(file, header);
 
             return result;
 
         }
 
-        internal static Story OpenStory(string path)
+        public static Story OpenStory(string path)
         {
             FileStream file = File.Open(path + Path.DirectorySeparatorChar + storyFilename, FileMode.Open);
 
-            Story result = new(file);
+            Story result = new(file, new Header());
 
             return result;
 
         }
 
-        internal void Close()
+        public void Close()
         {
             if (isClosed) { return;  }
 
@@ -61,7 +67,7 @@ namespace TrueStory
             isClosed = true;
         }
 
-        internal void CreateFolder(string name)
+        public void CreateFolder(string name)
         {
             if(isClosed) { return; }
 
@@ -70,7 +76,7 @@ namespace TrueStory
 
         }
 
-        internal void CreateFile(string name)
+        public void CreateFile(string name)
         {
             if (isClosed) { return; }
 
@@ -80,18 +86,19 @@ namespace TrueStory
 
         }
 
-        internal void DeleteDirectory(string name)
+        public void DeleteDirectory(string name)
         {
             if (isClosed) { return; }
 
             Directory.Delete(rootPath + Path.DirectorySeparatorChar + name, true);
         }
 
-        internal void DeleteFile(string name)
+        public void DeleteFile(string name)
         {
             if (isClosed) { return; }
 
             File.Delete(rootPath + Path.DirectorySeparatorChar + name);
         }
+
     }
 }

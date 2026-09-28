@@ -9,10 +9,10 @@
         Title="TrueStory 0.1.0" Height="450" Width="800">
     <DockPanel>
         <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-            <MenuItem x:Name="StoryMenu" Header="Historia">
-                <MenuItem x:Name="NewStoryMenuAction" Header="Nueva historia..." Click="NewStoryMenuAction_Click"/>
-                <MenuItem x:Name="OpenStoryMenuAction" Header="Abrir historia..." Click="OpenStoryMenuAction_Click"/>
-                <MenuItem x:Name="CloseStoryMenuAction" Header="Cerrar historia" Click="CloseStoryMenuAction_Click"/>
+            <MenuItem x:Name="ActivityMenu" Header="Actividad">
+                <MenuItem x:Name="NewActivityMenuAction" Header="Nueva actividad..." Click="NewActivityMenuAction_Click"/>
+                <MenuItem x:Name="OpenActivityMenuAction" Header="Abrir actividad..." Click="OpenActivityMenuAction_Click"/>
+                <MenuItem x:Name="CloseActivityMenuAction" Header="Cerrar actividad" Click="CloseActivityMenuAction_Click"/>
             </MenuItem>
             <MenuItem x:Name="FileMenu" Header="Archivo">
                 <MenuItem x:Name="NewMenu" Header="Nuevo">

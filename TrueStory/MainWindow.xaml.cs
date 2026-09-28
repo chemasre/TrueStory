@@ -104,27 +104,19 @@ namespace TrueStory
             Console.WriteLine("Detected input: " + e.Text);
         }
 
-        private void NewStoryMenuAction_Click(object sender, RoutedEventArgs e)
+        private void NewActivityMenuAction_Click(object sender, RoutedEventArgs e)
         {
-            OpenFolderDialog dialog = new ();
+            DialogActivityProperties dialog = new();
 
-            bool? result = dialog.ShowDialog();
+            bool ? result = dialog.ShowDialog();
+
 
             if(result.GetValueOrDefault())
             {
-                string path = dialog.FolderName;
+                story = Story.CreateStory(dialog.ActivityFolderText.Text.Trim(), dialog.Header);
 
-                if (Story.ExistsStory(path))
-                {
-                    MessageBox.Show("Ya hay una historia en esa carpeta.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
-                else
-                {
-                    story = Story.CreateStory(path);
-
-                    UpdateTitle();
-                    UpdateFolderView();
-                }
+                UpdateTitle();
+                UpdateFolderView();
             }
         }
 
@@ -149,7 +141,7 @@ namespace TrueStory
 
         }
 
-        private void OpenStoryMenuAction_Click(object sender, RoutedEventArgs e)
+        private void OpenActivityMenuAction_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog dialog = new();
 
@@ -173,7 +165,7 @@ namespace TrueStory
             }
         }
 
-        private void CloseStoryMenuAction_Click(object sender, RoutedEventArgs e)
+        private void CloseActivityMenuAction_Click(object sender, RoutedEventArgs e)
         {
             if(story == null)
             {
@@ -417,5 +409,6 @@ namespace TrueStory
 
             return lastTabEquivalent;
         }
+
     }
 }
