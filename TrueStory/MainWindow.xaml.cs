@@ -1,10 +1,12 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TrueStory.Source;
 
 
 namespace TrueStory
@@ -14,97 +16,171 @@ namespace TrueStory
     /// </summary>
     public partial class MainWindow : Window
     {
-        const string parentFolderName = "..";
-        const string folderPrefix = "[Carpeta] ";
-
-        const string tabAsSpaces = "    ";
-        char[] tabEquivalents = new char[] { ' ', '\t' };
-
-        string? clipboard;
-
         Story? story;
+        StoryActions? performer;
+
+        string? loadedFile;
+        bool loadedFileNeedsSave;
+
+        string? selectedFolder;
+
+        enum UIState
+        {
+            NoStory,
+            StoryNoSelection,
+            StoryFileLoadedNoNeedsSave,
+            StoryFileSelectedNeedsSave,
+            StoryFolderSelected
+        }
+
+        UIState uiState;
+
+        FileEditor fileEditor;
+        FolderView folderView;
+
+        
+
         public MainWindow()
         {
             InitializeComponent();
 
-            DataObject.AddPastingHandler(FileContents, FileContents_OnPaste);
-            DataObject.AddCopyingHandler(FileContents, FileContents_OnCopy);
+            fileEditor = new(FileEditorTextBox);
+            fileEditor.OnContentsChanged += OnFileContentsChanged;
 
-            FileContents.ContextMenu = null;
+            folderView = new FolderView(FolderView);
+            folderView.OnDeselected += OnFolderViewDeselected;
+            folderView.OnFileSelected += OnFolderViewFileSelected;
+            folderView.OnFolderSelected += OnFolderViewFolderSelected;
+
+
+            SetUIState(UIState.NoStory);
+
+            UpdateTitle();
+
         }
 
-        private void FileContents_OnCopy(object sender, DataObjectCopyingEventArgs e)
+        private void OnFolderViewFolderSelected(string _folder)
         {
-            bool isText = e.DataObject.GetDataPresent(DataFormats.UnicodeText, true);
+            CheckFileNeedsSave();
 
-            if (isText)
-            {
-                string text = (string)e.DataObject.GetData(DataFormats.UnicodeText);
+            selectedFolder = _folder;
 
-                Console.WriteLine("Detected copy: " + text);
+            fileEditor.Clear();
 
-                clipboard = text;
-
-                if(Keyboard.IsKeyDown(Key.X))
-                {
-                    if (FileContents.SelectionLength > 0) { FileContents.SelectedText = "";  }
-                }
-
-            }
-            else
-            {
-                Console.WriteLine("Unrecognized copy");
-            }
-
-            e.CancelCommand();
-            Console.WriteLine("Copy cancelled");
-
+            SetUIState(UIState.StoryFolderSelected);
         }
 
-        private void FileContents_OnPaste(object sender, DataObjectPastingEventArgs e)
+        private void OnFolderViewFileSelected(string file)
         {
-            bool isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
+            Debug.Assert(story != null);
 
-            if(isText)
-            {
-                string text = (string)e.SourceDataObject.GetData(DataFormats.UnicodeText);
-                e.FormatToApply = DataFormats.Text;
+            selectedFolder = null;
 
-                Console.WriteLine("Detected paste: " + text);
+            CheckFileNeedsSave();
 
+            SetUIState(UIState.StoryFileLoadedNoNeedsSave);
 
-                if(clipboard != null)
-                {
-                    if (FileContents.SelectionLength > 0)
-                    {
-                        FileContents.SelectedText = text;
-                    }
-                    else
-                    {
-                        int p = FileContents.CaretIndex;
-                        FileContents.Text = FileContents.Text.Insert(FileContents.CaretIndex, clipboard);
-                        FileContents.CaretIndex = p + clipboard.Length;
-                    }
-                }
+            fileEditor.Load(story.LoadFile(file));
+            loadedFile = file;
+            loadedFileNeedsSave = false;
+            UpdateTitle();
 
-
-
-            }
-            else
-            {
-                Console.WriteLine("Unrecognized paste");
-            }
-
-            e.CancelCommand();
-            Console.WriteLine("Paste cancelled");
         }
 
-        private void FileContents_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void OnFolderViewDeselected()
         {
-            Console.WriteLine("Detected input: " + e.Text);
+            selectedFolder = null;
+
+            CheckFileNeedsSave();
+
+            fileEditor.Clear();
+
+            SetUIState(UIState.StoryNoSelection);
         }
 
-        private void NewActivityMenuAction_Click(object sender, RoutedEventArgs e)
+        void SetUIState(UIState _uiState)
+        {
+            if (_uiState == UIState.NoStory)
+            {
+                NewActivityMenuAction.IsEnabled = true;
+                OpenActivityMenuAction.IsEnabled = true;
+                CloseActivityMenuAction.IsEnabled = false;
+                FileEditorTextBox.IsEnabled = false;
+                FolderView.IsEnabled = false;
+                FileMenu.IsEnabled = false;
+            }
+            else if (_uiState == UIState.StoryNoSelection)
+            {
+                NewActivityMenuAction.IsEnabled = false;
+                OpenActivityMenuAction.IsEnabled = false;
+                CloseActivityMenuAction.IsEnabled = true;
+                FileEditorTextBox.IsEnabled = false;
+                FolderView.IsEnabled = true;
+                FileMenu.IsEnabled = true;
+                NewMenu.IsEnabled = true;
+                NewFileMenuAction.IsEnabled = true;
+                NewFolderMenuAction.IsEnabled = true;
+                SaveFileMenuAction.IsEnabled = false;
+                DeleteFileOrFolderMenuAction.IsEnabled = false;
+            }
+            else if (_uiState == UIState.StoryFileLoadedNoNeedsSave)
+            {
+                NewActivityMenuAction.IsEnabled = false;
+                OpenActivityMenuAction.IsEnabled = false;
+                CloseActivityMenuAction.IsEnabled = true;
+                FileEditorTextBox.IsEnabled = true;
+                FolderView.IsEnabled = true;
+                FileMenu.IsEnabled = true;
+                NewMenu.IsEnabled = true;
+                NewFileMenuAction.IsEnabled = true;
+                NewFolderMenuAction.IsEnabled = true;
+                SaveFileMenuAction.IsEnabled = false;
+                DeleteFileOrFolderMenuAction.IsEnabled = true;
+            }
+            else if (_uiState == UIState.StoryFileSelectedNeedsSave)
+            {
+                NewActivityMenuAction.IsEnabled = false;
+                OpenActivityMenuAction.IsEnabled = false;
+                CloseActivityMenuAction.IsEnabled = true;
+                FileEditorTextBox.IsEnabled = true;
+                FolderView.IsEnabled = true;
+                FileMenu.IsEnabled = true;
+                NewMenu.IsEnabled = true;
+                NewFileMenuAction.IsEnabled = true;
+                NewFolderMenuAction.IsEnabled = true;
+                SaveFileMenuAction.IsEnabled = true;
+                DeleteFileOrFolderMenuAction.IsEnabled = true;
+            }
+            else // uiState == UIState.StoryFolderSelected
+            {
+                NewActivityMenuAction.IsEnabled = false;
+                OpenActivityMenuAction.IsEnabled = false;
+                CloseActivityMenuAction.IsEnabled = true;
+                FileEditorTextBox.IsEnabled = false;
+                FolderView.IsEnabled = true;
+                FileMenu.IsEnabled = true;
+                NewMenu.IsEnabled = true;
+                NewFileMenuAction.IsEnabled = true;
+                NewFolderMenuAction.IsEnabled = true;
+                SaveFileMenuAction.IsEnabled = false;
+                DeleteFileOrFolderMenuAction.IsEnabled = true;
+            }
+
+
+            uiState = _uiState;
+        }
+
+        void OnFileContentsChanged()
+        {
+            if (!loadedFileNeedsSave)
+            {
+                loadedFileNeedsSave = true;
+                SetUIState(UIState.StoryFileSelectedNeedsSave);
+                UpdateTitle();
+            }
+        }
+
+        void OnNewActivity(object sender, RoutedEventArgs e)
         {
             DialogActivityProperties dialog = new();
 
@@ -113,35 +189,18 @@ namespace TrueStory
 
             if(result.GetValueOrDefault())
             {
-                story = Story.CreateStory(dialog.ActivityFolderText.Text.Trim(), dialog.Header);
+                story = new Story(dialog.ActivityFolderText.Text.Trim(), Story.Mode.Create, dialog.Header);
+                performer = new StoryActions(story);
+
+                SetUIState(UIState.StoryNoSelection);
 
                 UpdateTitle();
-                UpdateFolderView();
+
+                folderView.RootPath = story.RootPath;
             }
         }
 
-        private void UpdateFolderView()
-        {
-            if (story == null) { return;  }
-
-
-            FolderView.Items.Clear();
-            
-            string[] directories = Directory.GetDirectories(story.RootPath);
-            foreach(string d in directories)
-            { FolderView.Items.Add(folderPrefix + Path.GetFileName(d));  }
-
-            string[] files = Directory.GetFiles(story.RootPath);
-            foreach(string f in files)
-            {
-                string n = Path.GetFileName(f);
-                if(n != Story.storyFilename) { FolderView.Items.Add(n); }
-            }
-
-
-        }
-
-        private void OpenActivityMenuAction_Click(object sender, RoutedEventArgs e)
+        void OnMenuOpenActivity(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog dialog = new();
 
@@ -153,9 +212,15 @@ namespace TrueStory
 
                 if (Story.ExistsStory(path))
                 {
-                    story = Story.OpenStory(path);
+                    story = new Story(path, Story.Mode.Append);
+                    performer = new StoryActions(story);
+
+                    SetUIState(UIState.StoryNoSelection);
+
                     UpdateTitle();
-                    UpdateFolderView();
+
+                    folderView.RootPath = story.RootPath;
+
 
                 }
                 else
@@ -165,30 +230,44 @@ namespace TrueStory
             }
         }
 
-        private void CloseActivityMenuAction_Click(object sender, RoutedEventArgs e)
+        void OnMenuCloseActivity(object sender, RoutedEventArgs e)
         {
-            if(story == null)
-            {
-                MessageBox.Show("No hay una historia abierta.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            else
-            {
-                story.Close();
-                story = null;
-                UpdateTitle();
-            }
+            Debug.Assert(story != null);
+            
+            CheckFileNeedsSave();
+
+            FileEditorTextBox.Clear();
+            FolderView.Items.Clear();
+
+            Debug.Assert(performer != null);
+
+            performer.Dispose();
+            performer = null;
+
+            story.Dispose();
+            story = null;
+
+            SetUIState(UIState.NoStory);
+            UpdateTitle();
+
         }
 
 
 
-        private void UpdateTitle()
+        void UpdateTitle()
         {
-            Title = "TrueStory 0.1.0" + (story == null ? "" : story.RootPath);
+            string caption;
+
+            if (story == null) { caption = ""; }
+            else if (loadedFile != null) { caption = " [" + (loadedFileNeedsSave ? "* ":"") + loadedFile + "]"; }
+            else { caption = " " + story.RootPath; }
+
+            Title = Version.FullName() + " " + caption;
         }
 
-        private void NewFolderMenuAction_Click(object sender, RoutedEventArgs e)
+        void OnMenuNewFolder(object sender, RoutedEventArgs e)
         {
-            if (story == null) { return;  }
+            Debug.Assert(story != null);
 
             DialogAskName dialog = new();
 
@@ -202,7 +281,7 @@ namespace TrueStory
             {
                 string name = dialog.Input.Text;
 
-                if (!IsValidFolderName(name))
+                if (!Utils.IsValidFolderName(name))
                 {
                     MessageBox.Show("El nombre de la carpeta no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
@@ -212,16 +291,16 @@ namespace TrueStory
                 }
                 else
                 {
-                    story.CreateFolder(name);
-                    UpdateFolderView();
+                    story.AddCreateFolder(name);
+                    folderView.Update();
                 }
 
             }
 
         }
-        private void NewFileMenuAction_Click(object sender, RoutedEventArgs e)
+        void OnMenuNewFile(object sender, RoutedEventArgs e)
         {
-            if (story == null) { return; }
+            Debug.Assert(story != null);
 
             DialogAskName dialog = new();
 
@@ -236,7 +315,7 @@ namespace TrueStory
                 string name = dialog.Input.Text;
 
 
-                if(!IsValidFileName(name))
+                if(!Utils.IsValidFileName(name))
                 {
                     MessageBox.Show("El nombre del fichero no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
@@ -246,15 +325,15 @@ namespace TrueStory
                 }
                 else
                 {
-                    story.CreateFile(name);
-                    UpdateFolderView();
+                    story.AddCreateFile(name);
+                    folderView.Update();
                 }
 
             }
         }
-        private void DeleteFileOrFolderMenuAction_Click(object sender, RoutedEventArgs e)
+        void OnMenuDeleteFileOrFolder(object sender, RoutedEventArgs e)
         {
-            if (story == null) { return; }
+            Debug.Assert(story != null);
 
             bool validSelection = true;
 
@@ -262,7 +341,7 @@ namespace TrueStory
             {
                 validSelection = false;
             }
-            else if(FolderView.SelectedItem as string == parentFolderName)
+            else if(FolderView.SelectedItem as string == Constants.parentFolderName)
             {
                 validSelection = false;
             }
@@ -275,9 +354,9 @@ namespace TrueStory
             {
                 string name = ((string?)FolderView.SelectedItem ?? "");
 
-                bool isDirectory = name.StartsWith(folderPrefix);
+                bool isDirectory = name.StartsWith(Constants.folderPrefix);
 
-                if (isDirectory) { name = name.Remove(0, folderPrefix.Length); }
+                if (isDirectory) { name = name.Remove(0, Constants.folderPrefix.Length); }
 
                 MessageBoxResult result;
 
@@ -292,123 +371,57 @@ namespace TrueStory
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    if (isDirectory) { story.DeleteDirectory(name); }
-                    else { story.DeleteFile(name);  }
+                    if (isDirectory) { story.AddDeleteDirectory(name); }
+                    else { story.AddDeleteFile(name);  }
 
-                    UpdateFolderView();
+                    folderView.Update();
                 }
             }
 
         }
 
-        private bool IsValidFolderName(string text)
+
+
+        void CheckFileNeedsSave()
         {
-            if (text.Length == 0) { return false;  }
+            Debug.Assert(story != null);
 
-            char[] invalid = Path.GetInvalidPathChars();
-            bool valid = true;
-            int i = 0;
-            while (valid && i < invalid.Length)
+            if (loadedFile != null && loadedFileNeedsSave)
             {
-                valid = valid && !text.Contains(invalid[i]);
+                MessageBoxResult result = MessageBox.Show("El fichero '" + loadedFile + "' se ha modificado ¿quieres guardarlo?", "Confirmar guardado", MessageBoxButton.YesNo);
 
-                if (valid) { i++;  }
-            }
-            
-            return valid;
-        }
-
-        private bool IsValidFileName(string text)
-        {
-            if (text.Length == 0) { return false; }
-
-            char[] invalid = Path.GetInvalidFileNameChars();
-            bool valid = true;
-            int i = 0;
-            while (valid && i < invalid.Length)
-            {
-                valid = valid && !text.Contains(invalid[i]);
-
-                if (valid) { i++; }
-            }
-
-            return valid;
-        }
-
-        private void FileContents_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            foreach (TextChange c in e.Changes)
-            {
-                Console.WriteLine("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
-            }
-
-            if(e.Changes.Count == 1)
-            {
-                TextChange c = e.Changes.First();
-                if(c.AddedLength > 0 && c.RemovedLength == 0)
+                if (result == MessageBoxResult.Yes)
                 {
-                    Console.WriteLine("Added text " + FileContents.Text.Substring(c.Offset, c.AddedLength));
+                    story.SaveFile(loadedFile, FileEditorTextBox.Text);
+
+                    loadedFile = null;
+                    loadedFileNeedsSave = false;
+                    UpdateTitle();
+
+                    SetUIState(UIState.StoryFileLoadedNoNeedsSave);
                 }
             }
-
         }
 
-        private void FileContents_PreviewKeyDown(object sender, KeyEventArgs e)
+        void OnMenuSaveFile(object sender, RoutedEventArgs e)
         {
-            if(e.Key == Key.Tab)
+            Debug.Assert(story != null);
+
+            string? item = (string?)FolderView.SelectedItem;
+
+            Debug.Assert(item != null);
+
+            Debug.Assert(!item.StartsWith(Constants.folderPrefix) && item != Constants.parentFolderName);
+
+            story.SaveFile(item, FileEditorTextBox.Text);
+
+            if(loadedFileNeedsSave)
             {
-                int p = FileContents.CaretIndex;
-                FileContents.Text = FileContents.Text.Insert(p, tabAsSpaces);
-                FileContents.CaretIndex = p + tabAsSpaces.Length;
+                loadedFileNeedsSave = false;
 
-                e.Handled = true;
-            }
-            if (e.Key == Key.Return)
-            {
-                Console.WriteLine("Detected return");
-
-                int lineIndex = FileContents.GetLineIndexFromCharacterIndex(FileContents.CaretIndex);
-                string lineText = FileContents.GetLineText(lineIndex);
-
-                int lastTabEquivalent = FindLastTabEquivalent(lineText);
-
-                string? tabPrefix = null;
-                if (lastTabEquivalent >= 0) { tabPrefix = lineText.Substring(0, lastTabEquivalent);  }
-
-                int p = FileContents.CaretIndex;
-                string newLineText = Environment.NewLine + (tabPrefix ?? "");
-                FileContents.Text = FileContents.Text.Insert(p, newLineText);
-                FileContents.CaretIndex = p + newLineText.Length;
-
-                e.Handled = true;
+                SetUIState(UIState.StoryFileLoadedNoNeedsSave);
+                UpdateTitle();
             }
         }
-
-        int FindLastTabEquivalent(string lineText)
-        {
-            int i = 0;
-            bool found = false;
-            int lastTabEquivalent = -1;
-
-            while (i < lineText.Length && !found)
-            {
-                int j = 0;
-                bool isTabEquivalent = false;
-                while (j < tabEquivalents.Length && !isTabEquivalent)
-                {
-                    if (lineText[i] == tabEquivalents[j]) { isTabEquivalent = true; }
-                    else { j++; }
-                }
-
-                if (!isTabEquivalent) { found = true; lastTabEquivalent = i; }
-                else
-                {
-                    i++;
-                }
-            }
-
-            return lastTabEquivalent;
-        }
-
     }
 }

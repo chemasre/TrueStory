@@ -10,19 +10,20 @@
     <DockPanel>
         <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch">
             <MenuItem x:Name="ActivityMenu" Header="Actividad">
-                <MenuItem x:Name="NewActivityMenuAction" Header="Nueva actividad..." Click="NewActivityMenuAction_Click"/>
-                <MenuItem x:Name="OpenActivityMenuAction" Header="Abrir actividad..." Click="OpenActivityMenuAction_Click"/>
-                <MenuItem x:Name="CloseActivityMenuAction" Header="Cerrar actividad" Click="CloseActivityMenuAction_Click"/>
+                <MenuItem x:Name="NewActivityMenuAction" Header="Nueva actividad..." Click="OnNewActivity"/>
+                <MenuItem x:Name="OpenActivityMenuAction" Header="Abrir actividad..." Click="OnMenuOpenActivity"/>
+                <MenuItem x:Name="CloseActivityMenuAction" Header="Cerrar actividad" Click="OnMenuCloseActivity"/>
             </MenuItem>
             <MenuItem x:Name="FileMenu" Header="Archivo">
                 <MenuItem x:Name="NewMenu" Header="Nuevo">
-                    <MenuItem x:Name="NewFolderMenuAction" Header="Carpeta" Click="NewFolderMenuAction_Click"/>
-                    <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="NewFileMenuAction_Click"/>
+                    <MenuItem x:Name="NewFolderMenuAction" Header="Carpeta" Click="OnMenuNewFolder"/>
+                    <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="OnMenuNewFile"/>
                 </MenuItem>
-                <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="DeleteFileOrFolderMenuAction_Click"/>
+                <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="OnMenuDeleteFileOrFolder"/>
+                <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile"/>
             </MenuItem>
         </Menu>
         <ListBox x:Name="FolderView" DockPanel.Dock="Right" d:ItemsSource="{d:SampleData ItemCount=5}" MinWidth="200"/>
-        <TextBox x:Name="FileContents" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewTextInput="FileContents_PreviewTextInput" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" TextChanged="FileContents_TextChanged" AcceptsTab="True" PreviewKeyDown="FileContents_PreviewKeyDown"/>
+        <TextBox x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" AcceptsTab="True"/>
     </DockPanel>
 </Window>
