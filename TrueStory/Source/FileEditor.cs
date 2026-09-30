@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,15 @@ namespace TrueStory
     {
         public event OnContentsChangedHandler? OnContentsChanged;
 
-        public delegate void OnContentsChangedHandler();
+        public struct ContentChange
+        {
+            public int Offset;
+            public int Added;
+            public string AddedText;
+            public int Removed;
+        }
+
+        public delegate void OnContentsChangedHandler(ContentChange c);
 
         TextBox textBox;
 
@@ -130,16 +139,29 @@ namespace TrueStory
                 Console.WriteLine("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
             }
 
+            Debug.Assert(e.Changes.Count == 1);
+
             if (e.Changes.Count == 1)
             {
                 TextChange c = e.Changes.First();
+                string text = "";
                 if (c.AddedLength > 0 && c.RemovedLength == 0)
                 {
-                    Console.WriteLine("Added text " + textBox.Text.Substring(c.Offset, c.AddedLength));
+                    text = textBox.Text.Substring(c.Offset, c.AddedLength);
+                    Console.WriteLine("Added text " + text);
+
+                    
                 }
+
+                ContentChange cc = new();
+                cc.Offset = c.Offset;
+                cc.Added = c.AddedLength;
+                cc.AddedText = text;
+                cc.Removed = c.RemovedLength;
+
+                OnContentsChanged?.Invoke(cc);
             }
 
-            OnContentsChanged?.Invoke();
 
         }
 

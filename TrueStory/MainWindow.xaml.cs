@@ -20,6 +20,7 @@ namespace TrueStory
         StoryActions? performer;
 
         string? loadedFile;
+        List<Story.FileChange> loadedFileChanges;
         bool loadedFileNeedsSave;
 
         string? selectedFolder;
@@ -38,7 +39,7 @@ namespace TrueStory
         FileEditor fileEditor;
         FolderView folderView;
 
-        
+
 
         public MainWindow()
         {
@@ -51,6 +52,8 @@ namespace TrueStory
             folderView.OnDeselected += OnFolderViewDeselected;
             folderView.OnFileSelected += OnFolderViewFileSelected;
             folderView.OnFolderSelected += OnFolderViewFolderSelected;
+
+            loadedFileChanges = new();
 
 
             SetUIState(UIState.NoStory);
@@ -170,14 +173,24 @@ namespace TrueStory
             uiState = _uiState;
         }
 
-        void OnFileContentsChanged()
+        void OnFileContentsChanged(FileEditor.ContentChange c)
         {
+            Debug.Assert(story != null);
+
             if (!loadedFileNeedsSave)
             {
                 loadedFileNeedsSave = true;
                 SetUIState(UIState.StoryFileSelectedNeedsSave);
                 UpdateTitle();
             }
+
+            Story.FileChange fc = new();
+            fc.Offset = c.Offset;
+            fc.Added = c.Added;
+            fc.AddedText = c.AddedText;
+            fc.Removed = c.Removed;
+
+            loadedFileChanges.Add(fc);
         }
 
         void OnNewActivity(object sender, RoutedEventArgs e)
@@ -392,10 +405,11 @@ namespace TrueStory
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    story.SaveFile(loadedFile, FileEditorTextBox.Text);
+                    story.SaveFile(loadedFile, FileEditorTextBox.Text, loadedFileChanges.ToArray());
 
                     loadedFile = null;
                     loadedFileNeedsSave = false;
+                    loadedFileChanges.Clear();
                     UpdateTitle();
 
                     SetUIState(UIState.StoryFileLoadedNoNeedsSave);
@@ -413,7 +427,8 @@ namespace TrueStory
 
             Debug.Assert(!item.StartsWith(Constants.folderPrefix) && item != Constants.parentFolderName);
 
-            story.SaveFile(item, FileEditorTextBox.Text);
+            story.SaveFile(item, FileEditorTextBox.Text, loadedFileChanges.ToArray());
+            loadedFileChanges.Clear();
 
             if(loadedFileNeedsSave)
             {
