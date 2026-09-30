@@ -13,6 +13,8 @@ namespace TrueStory
     {
         Story story;
 
+        Encoding encoding;
+
         public StoryActions(Story _story)
         {
             story = _story;
@@ -24,6 +26,8 @@ namespace TrueStory
             story.OnLoadFile += OnLoadFile;
             story.OnSaveFile += OnSaveFile;
             story.OnExecuteCommand += OnExecuteCommand;
+
+            encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
 
 
@@ -52,12 +56,12 @@ namespace TrueStory
 
         void OnSaveFile(string name, string text)
         {
-            File.WriteAllText(story.RootPath + Path.DirectorySeparatorChar + name, text, Encoding.UTF8);
+            File.WriteAllText(story.RootPath + Path.DirectorySeparatorChar + name, text, encoding);
         }
 
         string OnLoadFile(string name)
         {
-            string text = File.ReadAllText(story.RootPath + Path.DirectorySeparatorChar + name, Encoding.UTF8);
+            string text = File.ReadAllText(story.RootPath + Path.DirectorySeparatorChar + name, encoding);
 
             return text;
         }

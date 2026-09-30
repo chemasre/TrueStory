@@ -25,7 +25,9 @@ namespace TrueStory
 
         public void WriteString(String s)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(s);
+            Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+            byte[] bytes = encoding.GetBytes(s);
             byte[] bytesLength = BitConverter.GetBytes(bytes.Length);
             writer.Write(bytesLength);
             writer.Write(bytes);
