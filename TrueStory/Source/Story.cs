@@ -70,8 +70,6 @@ namespace TrueStory
 
         public string RootPath { get { return rootPath;  } }
 
-        const string DataSeparator = "[$$%%&&]";
-
         FileStream file;
         string rootPath;
         Mode mode;
@@ -93,10 +91,17 @@ namespace TrueStory
 
                 file = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
 
+
                 Record r = new();
                 r.type = RecordType.Header;
                 r.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                r.data = Encoding.UTF8.GetBytes(header.Value.publicKey + DataSeparator + header.Value.author);
+
+                BinaryBuffer buffer = new();
+
+                buffer.WriteString(header.Value.publicKey);
+                buffer.WriteString(header.Value.author);
+
+                r.data = buffer.GetBytes();
 
                 AddRecord(r);
             }
@@ -124,7 +129,12 @@ namespace TrueStory
 
             record.type = RecordType.CreateFolder;
             record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            record.data = Encoding.UTF8.GetBytes(name);
+
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(name);
+
+            record.data = buffer.GetBytes();
 
             AddRecord(record);
 
@@ -171,7 +181,12 @@ namespace TrueStory
 
             record.type = RecordType.CreateFile;
             record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            record.data = Encoding.UTF8.GetBytes(name);
+
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(name);
+
+            record.data = buffer.GetBytes();
 
             AddRecord(record);
 
@@ -188,7 +203,12 @@ namespace TrueStory
 
             record.type = RecordType.DeleteDirectory;
             record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            record.data = Encoding.UTF8.GetBytes(name);
+
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(name);
+
+            record.data = buffer.GetBytes();
 
             AddRecord(record);
 
@@ -204,7 +224,12 @@ namespace TrueStory
 
             record.type = RecordType.DeleteFile;
             record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            record.data = Encoding.UTF8.GetBytes(name);
+
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(name);
+
+            record.data = buffer.GetBytes();
 
             AddRecord(record);
 
@@ -224,7 +249,13 @@ namespace TrueStory
 
             record.type = RecordType.DeleteFile;
             record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            record.data = Encoding.UTF8.GetBytes(name + DataSeparator + result);
+
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(name);
+            buffer.WriteString(result);
+
+            record.data = buffer.GetBytes();
 
             AddRecord(record);
 
@@ -242,26 +273,23 @@ namespace TrueStory
             record.type = RecordType.DeleteFile;
             record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            StringBuilder builder = new();
-            builder.Append(name);
-            builder.Append(DataSeparator);
-            builder.Append(changes.Length);
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(name);
+            buffer.WriteInt(changes.Length);
+
             foreach (FileChange c in changes)
             {
-                builder.Append(DataSeparator);
-                builder.Append(c.Offset);
-                builder.Append(DataSeparator);
-                builder.Append(c.Added);
-                builder.Append(DataSeparator);
-                builder.Append(c.AddedText);
-                builder.Append(DataSeparator);
-                builder.Append(c.Removed);
+                buffer.WriteInt(c.Offset);
+                buffer.WriteInt(c.Added);
+                buffer.WriteString(c.AddedText);
+                buffer.WriteInt(c.Removed);
 
             }
-            builder.Append(DataSeparator);
-            builder.Append(text);
 
-            record.data = Encoding.UTF8.GetBytes(builder.ToString());
+            buffer.WriteString(text);
+
+            record.data = buffer.GetBytes();
 
             AddRecord(record);
 
