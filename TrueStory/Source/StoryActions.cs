@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,9 @@ namespace TrueStory
             story.OnDeleteFolder += OnDeleteFolder;
             story.OnLoadFile += OnLoadFile;
             story.OnSaveFile += OnSaveFile;
+            story.OnExecuteCommand += OnExecuteCommand;
         }
+
 
 
         void OnDeleteFolder(string name)
@@ -57,6 +60,30 @@ namespace TrueStory
             string text = File.ReadAllText(story.RootPath + Path.DirectorySeparatorChar + name, Encoding.UTF8);
 
             return text;
+        }
+
+        string OnExecuteCommand(string command)
+        {
+            string output;
+
+            Process process = new();
+            ProcessStartInfo startInfo = new();
+            //startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.WorkingDirectory = story.RootPath;
+            startInfo.Arguments = "/c " + command;
+            startInfo.CreateNoWindow = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            startInfo.UseShellExecute = false;
+            process.StartInfo = startInfo;
+            process.Start();
+
+            output = process.StandardOutput.ReadToEnd() + Environment.NewLine + process.StandardError.ReadToEnd();
+
+            process.WaitForExit();
+
+            return output;
         }
 
         public void Dispose()

@@ -14,5 +14,16 @@ namespace TrueStory
         public const string tabAsSpaces = "    ";
         public static readonly char[] tabEquivalents = new char[] { ' ', '\t' };
 
+        public static readonly string[] allowedExtensions = new string[]
+        {
+            "txt", "csv", "md",
+            "htm", "html", "css", "js",
+            "php",
+            "c", "h",
+            "hpp", "cpp",
+            "cs",
+            "java"
+        };
+
     }
 }

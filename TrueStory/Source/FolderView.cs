@@ -47,7 +47,11 @@ namespace TrueStory.Source
             foreach (string f in files)
             {
                 string n = Path.GetFileName(f);
-                if (n != Story.StoryFilename) { listBox.Items.Add(n); }
+
+                if (Utils.HasAllowedExtension(n) && n != Story.StoryFilename)
+                {
+                    listBox.Items.Add(n);
+                }
             }
         }
 

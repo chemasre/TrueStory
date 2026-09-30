@@ -38,6 +38,7 @@ namespace TrueStory
 
         FileEditor fileEditor;
         FolderView folderView;
+        CommandConsole commandConsole;
 
 
 
@@ -53,6 +54,9 @@ namespace TrueStory
             folderView.OnFileSelected += OnFolderViewFileSelected;
             folderView.OnFolderSelected += OnFolderViewFolderSelected;
 
+            commandConsole = new(CommandConsoleTextBox);
+            commandConsole.OnExecuteCommand += OnExecuteCommand;
+
             loadedFileChanges = new();
 
 
@@ -60,6 +64,13 @@ namespace TrueStory
 
             UpdateTitle();
 
+        }
+
+        private string OnExecuteCommand(string command)
+        {
+            Debug.Assert(story != null);
+
+            return story.ExecuteCommand(command);
         }
 
         private void OnFolderViewFolderSelected(string _folder)
@@ -110,6 +121,7 @@ namespace TrueStory
                 CloseActivityMenuAction.IsEnabled = false;
                 FileEditorTextBox.IsEnabled = false;
                 FolderView.IsEnabled = false;
+                CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
             }
             else if (_uiState == UIState.StoryNoSelection)
@@ -119,6 +131,7 @@ namespace TrueStory
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = false;
                 FolderView.IsEnabled = true;
+                CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
                 NewFileMenuAction.IsEnabled = true;
@@ -133,6 +146,7 @@ namespace TrueStory
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = true;
                 FolderView.IsEnabled = true;
+                CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
                 NewFileMenuAction.IsEnabled = true;
@@ -147,6 +161,7 @@ namespace TrueStory
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = true;
                 FolderView.IsEnabled = true;
+                CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
                 NewFileMenuAction.IsEnabled = true;
@@ -161,6 +176,7 @@ namespace TrueStory
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = false;
                 FolderView.IsEnabled = true;
+                CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
                 NewFileMenuAction.IsEnabled = true;
@@ -251,6 +267,7 @@ namespace TrueStory
 
             FileEditorTextBox.Clear();
             FolderView.Items.Clear();
+            commandConsole.Clear();
 
             Debug.Assert(performer != null);
 
@@ -328,9 +345,14 @@ namespace TrueStory
                 string name = dialog.Input.Text;
 
 
-                if(!Utils.IsValidFileName(name))
+                if (!Utils.IsValidFileName(name))
                 {
                     MessageBox.Show("El nombre del fichero no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+                else if (!Utils.HasAllowedExtension(name))
+                {
+                    string extensions = string.Join(';', Constants.allowedExtensions);
+                    MessageBox.Show("Sólo se permite crear ficheros que tengan alguna de estas extensiones: " + extensions, "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
                 else if (File.Exists(story.RootPath + Path.DirectorySeparatorChar + name))
                 {

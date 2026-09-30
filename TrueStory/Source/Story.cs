@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -32,6 +33,12 @@ namespace TrueStory
             public int Removed;
         }
 
+        public struct ExecutedCommand
+        {
+            public string command;
+            public string output;
+        }
+
         public enum RecordType
         {
             Header,
@@ -40,7 +47,8 @@ namespace TrueStory
             DeleteFile,
             DeleteDirectory,
             LoadFile,
-            SaveFile
+            SaveFile,
+            ExecuteCommand
         }
 
         public struct Record
@@ -56,6 +64,7 @@ namespace TrueStory
         public event CreateFileHandler? OnDeleteFolder;
         public event LoadFileHandler? OnLoadFile;
         public event SaveFileHandler? OnSaveFile;
+        public event ExecuteCommandHandler? OnExecuteCommand;
 
 
         public delegate void CreateFileHandler(string name);
@@ -64,6 +73,7 @@ namespace TrueStory
         public delegate void DeleteFolderHandler(string name);
         public delegate string LoadFileHandler(string name);
         public delegate void SaveFileHandler(string name, string text);
+        public delegate string ExecuteCommandHandler(string name);
 
 
         public const string StoryFilename = ".truestory";
@@ -294,6 +304,32 @@ namespace TrueStory
             AddRecord(record);
 
             OnSaveFile?.Invoke(name, text);
+        }
+
+        public string ExecuteCommand(string command)
+        {
+            Debug.Assert(!disposed);
+            Debug.Assert(mode == Mode.Append || mode == Mode.Create);
+
+            string result = OnExecuteCommand?.Invoke(command) ?? "";
+
+            Record record = new();
+
+            record.type = RecordType.ExecuteCommand;
+            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            BinaryBuffer buffer = new();
+
+            buffer.WriteString(command);
+            buffer.WriteString(result);
+
+            record.data = buffer.GetBytes();
+
+            AddRecord(record);
+
+            return result;
+
+
         }
 
         public void Dispose()

@@ -38,7 +38,6 @@ namespace TrueStory
 
             _textBox.ContextMenu = null;
 
-            _textBox.PreviewTextInput += OnTextBoxPreviewTextInput;
             _textBox.TextChanged += OnTextBoxTextChanged;
             _textBox.PreviewKeyDown += OnKeyDown;
 
@@ -123,11 +122,6 @@ namespace TrueStory
 
             e.CancelCommand();
             Console.WriteLine("Paste cancelled");
-        }
-
-        void OnTextBoxPreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Console.WriteLine("Detected input: " + e.Text);
         }
 
         void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
