@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,11 +26,11 @@ namespace TrueStory
 
         TextBox textBox;
 
-        string? clipboard;
+        Label infoBar;
 
         bool ignoreChanges;
 
-        public FileEditor(TextBox _textBox)
+        public FileEditor(TextBox _textBox, Label _infoBar)
         {
             DataObject.AddPastingHandler(_textBox, OnFileContentsPaste);
             DataObject.AddCopyingHandler(_textBox, OnFileContentsCopy);
@@ -40,8 +39,13 @@ namespace TrueStory
 
             _textBox.TextChanged += OnTextBoxTextChanged;
             _textBox.PreviewKeyDown += OnKeyDown;
+            _textBox.SelectionChanged += OnSelectionChanged;
 
             textBox = _textBox;
+
+            infoBar = _infoBar;
+
+            ClearInfoBar();
         }
 
         public void Load(string text)
@@ -49,6 +53,8 @@ namespace TrueStory
             ignoreChanges = true;
             textBox.Text = text;
             ignoreChanges = false;
+
+            UpdateInfoBar();
         }
 
         public void Clear()
@@ -56,6 +62,21 @@ namespace TrueStory
             ignoreChanges = true;
             textBox.Text = "";
             ignoreChanges = false;
+
+            ClearInfoBar();
+        }
+
+        void ClearInfoBar()
+        {
+            infoBar.Content = "No file loaded";
+        }
+
+        void UpdateInfoBar()
+        {
+            int line = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+            int count = textBox.LineCount;
+            int column = textBox.CaretIndex - textBox.GetCharacterIndexFromLineIndex(line);
+            infoBar.Content = String.Format("Line {0:0} Column {1:0} Total lines {2:0}", line, column, count);
         }
 
         void OnFileContentsCopy(object sender, DataObjectCopyingEventArgs e)
@@ -68,7 +89,7 @@ namespace TrueStory
 
                 Console.WriteLine("Detected copy: " + text);
 
-                clipboard = text;
+                PrivateClipboard.content = text;
 
                 if (Keyboard.IsKeyDown(Key.X))
                 {
@@ -98,7 +119,7 @@ namespace TrueStory
                 Console.WriteLine("Detected paste: " + text);
 
 
-                if (clipboard != null)
+                if (PrivateClipboard.content != null)
                 {
                     if (textBox.SelectionLength > 0)
                     {
@@ -107,8 +128,8 @@ namespace TrueStory
                     else
                     {
                         int p = textBox.CaretIndex;
-                        textBox.Text = textBox.Text.Insert(textBox.CaretIndex, clipboard);
-                        textBox.CaretIndex = p + clipboard.Length;
+                        textBox.Text = textBox.Text.Insert(textBox.CaretIndex, PrivateClipboard.content);
+                        textBox.CaretIndex = p + PrivateClipboard.content.Length;
                     }
                 }
 
@@ -216,5 +237,9 @@ namespace TrueStory
             return lastTabEquivalent;
         }
 
+        void OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateInfoBar();
+        }
     }
 }

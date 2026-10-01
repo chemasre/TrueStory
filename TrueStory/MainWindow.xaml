@@ -26,8 +26,9 @@
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de TrueStory" Click="OnMenuAboutApp"/>
             </MenuItem>
         </Menu>
-        <ListBox x:Name="FolderView" DockPanel.Dock="Right" d:ItemsSource="{d:SampleData ItemCount=5}" MinWidth="200"/>
         <TextBox x:Name="CommandConsoleTextBox" DockPanel.Dock="Bottom" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" AcceptsTab="True" MinHeight="120" MaxHeight="120"/>
+        <ListBox x:Name="FolderView" DockPanel.Dock="Right" d:ItemsSource="{d:SampleData ItemCount=5}" MinWidth="200"/>
+        <Label x:Name="FileEditorInfoBar" DockPanel.Dock="Bottom" Content="Label" Width="auto" MinHeight="21"/>
         <TextBox x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" AcceptsTab="True"/>
     </DockPanel>
 </Window>

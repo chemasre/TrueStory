@@ -46,7 +46,7 @@ namespace TrueStory
         {
             InitializeComponent();
 
-            fileEditor = new(FileEditorTextBox);
+            fileEditor = new(FileEditorTextBox, FileEditorInfoBar);
             fileEditor.OnContentsChanged += OnFileContentsChanged;
 
             folderView = new FolderView(FolderView);
