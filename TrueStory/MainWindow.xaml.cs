@@ -460,5 +460,12 @@ namespace TrueStory
                 UpdateTitle();
             }
         }
+
+        void OnMenuAboutApp(object sender, RoutedEventArgs e)
+        {
+            DialogAbout d = new();
+
+            d.ShowDialog();
+        }
     }
 }

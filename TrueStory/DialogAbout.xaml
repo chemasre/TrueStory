@@ -1,0 +1,66 @@
+﻿<Window x:Class="TrueStory.DialogAbout"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TrueStory"
+        mc:Ignorable="d"
+        Title="Acerca de TrueStory" Width="630" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <RichTextBox DockPanel.Dock="Top" MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40">
+            <FlowDocument>
+                <Paragraph>
+                    TrueStory es una aplicación que trata de <Bold>ayudarte a adquirir las competencias previstas en el temario</Bold> poniéndote un poco más difícil que copies y pegues el contenido generado con IA sin comprenderlo realmente.
+                </Paragraph>
+                <Paragraph>
+                    La forma en que lo hace es:
+                </Paragraph>
+                <List MarkerStyle="Decimal">
+                    <ListItem>
+                        <Paragraph>
+                            <Bold>Guarda un registro de todas las modificaciones que haces en los documentos del proyecto</Bold>, es decir, no sólo guarda el resultado final sino también todos los pasos intermedios, carácter a carácter, así como todos los comandos que hayas ejecutado desde la consola del programa.</Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Bold>No permite que copies y pegues desde fuentes externas</Bold>. La aplicación dispone de su propio sistema de copia/pega, lo que quiere decir que podrás copiar y pegar sólo entre documentos de la actividad.
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Bold>Realiza preguntas cada cierto tiempo acerca del contenido introducido en los documentos</Bold>. Estas preguntas no tienen un peso en la evaluación, pero pueden ser indicios de que estás introduciendo un contenido que no entiendes.</Paragraph>
+                        <Paragraph Margin="10,20,10,20" BorderBrush="#FF2442EC" BorderThickness="1,1,1,1" Padding="5,5,3,5" Foreground="#FF1236C7">
+                            <Bold>El profesor/a será quien decida en base a esos indicios si es necesario que, por ejemplo, superes una cuestionario para que te acepte la actividad.</Bold>
+                        </Paragraph>
+                    </ListItem>
+                </List>
+                <Paragraph>
+                    Qué <Bold>NO</Bold> hace TrueStory:
+                </Paragraph>
+                <List MarkerStyle="Decimal">
+                    <ListItem>
+                        <Paragraph>
+                            <Bold>No monitoriza tu ordenador de ninguna forma</Bold>. TrueStory no examina qué ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                            <Bold>No te desincentiva a utilizar inteligencia artificial</Bold> . Puedes utilizar la inteligencia artificial para consultar información relevante, o pedir consejo sobre los pasos a seguir. Lo único que la aplicación intenta desincentivar es que te suplante.
+                        </Paragraph>
+                    </ListItem>
+                    <ListItem>
+                        <Paragraph>
+                        <Bold>No evita que "hagas trampa"</Bold> . Si te empeñas, puedes saltarte todos los controles que pone la aplicación. Sólo esperamos que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir ese esfuerzo en formarte.
+                        </Paragraph>
+                     </ListItem>
+
+                </List>
+                <Paragraph TextAlignment="Center" BorderBrush="#FF0B52C5" BorderThickness="1,1,1,1" Padding="5,5,5,5" Margin="Auto,42,Auto,15" Foreground="#FF1E3CB5">
+                    <Bold>Recuerda que el objetivo de la formación es que entrenes la red neuronal que tienes en la cabeza</Bold>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <DockPanel LastChildFill="False" HorizontalAlignment="Center">
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click"/>
+        </DockPanel>
+    </DockPanel>
+</Window>
