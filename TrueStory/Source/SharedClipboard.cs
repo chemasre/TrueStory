@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TrueStory
 {
-    public class PrivateClipboard
+    public class SharedClipboard
     {
-        public static string? content;
+        public static string? Content { get; set; }
     }
 }

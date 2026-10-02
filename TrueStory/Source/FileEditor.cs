@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TrueStory
 {
@@ -24,28 +25,73 @@ namespace TrueStory
 
         public delegate void OnContentsChangedHandler(ContentChange c);
 
+        MainWindow window;
         TextBox textBox;
 
         Label infoBar;
 
         bool ignoreChanges;
 
-        public FileEditor(TextBox _textBox, Label _infoBar)
+        bool loaded;
+
+        public FileEditor(MainWindow _window)
         {
-            DataObject.AddPastingHandler(_textBox, OnFileContentsPaste);
-            DataObject.AddCopyingHandler(_textBox, OnFileContentsCopy);
+            DataObject.AddPastingHandler(_window.FileEditorTextBox, OnFileContentsPaste);
+            DataObject.AddCopyingHandler(_window.FileEditorTextBox, OnFileContentsCopy);
 
-            _textBox.ContextMenu = null;
+            _window.FileEditorTextBox.ContextMenu = null;
 
-            _textBox.TextChanged += OnTextBoxTextChanged;
-            _textBox.PreviewKeyDown += OnKeyDown;
-            _textBox.SelectionChanged += OnSelectionChanged;
+            _window.FileEditorTextBox.TextChanged += OnTextBoxTextChanged;
+            _window.FileEditorTextBox.PreviewKeyDown += OnKeyDown;
+            _window.FileEditorTextBox.SelectionChanged += OnSelectionChanged;
 
-            textBox = _textBox;
+            textBox = _window.FileEditorTextBox;
+            infoBar = _window.FileEditorInfoBar;
 
-            infoBar = _infoBar;
+            _window.CutMenuAction.Click += OnMenuCut;
+            _window.CopyMenuAction.Click += OnMenuCopy;
+            _window.PasteMenuAction.Click += OnMenuPaste;
+            _window.GotoLineMenuAction.Click += OnMenuGotoLine;
 
-            ClearInfoBar();
+            window = _window;
+
+            loaded = false;
+
+            UpdateInfoBar();
+
+
+            UpdateEditMenu();
+        }
+
+        private void OnMenuGotoLine(object sender, RoutedEventArgs e)
+        {
+            DialogGotoLine d = new();
+            d.Message.Text = String.Format("Ir a línea ({0:0} - {1:0})", 1, textBox.LineCount);
+            d.MaxLines = textBox.LineCount;
+            d.Input.Text = "1";
+
+            bool? result = d.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                textBox.CaretIndex = textBox.GetCharacterIndexFromLineIndex(d.Line);
+                textBox.ScrollToLine(d.Line);
+            }
+        }
+
+        void OnMenuPaste(object sender, RoutedEventArgs e)
+        {
+            DoPaste();
+        }
+
+        void OnMenuCopy(object sender, RoutedEventArgs e)
+        {
+            DoCopyOrCut(false);
+        }
+
+        void OnMenuCut(object sender, RoutedEventArgs e)
+        {
+            DoCopyOrCut(true);
         }
 
         public void Load(string text)
@@ -54,29 +100,60 @@ namespace TrueStory
             textBox.Text = text;
             ignoreChanges = false;
 
+            loaded = true;
+
             UpdateInfoBar();
+            UpdateEditMenu();
         }
 
-        public void Clear()
+        public void Unload()
         {
             ignoreChanges = true;
             textBox.Text = "";
             ignoreChanges = false;
 
-            ClearInfoBar();
-        }
+            loaded = false;
 
-        void ClearInfoBar()
-        {
-            infoBar.Content = "No file loaded";
+            UpdateInfoBar();
+            UpdateEditMenu();
         }
 
         void UpdateInfoBar()
         {
-            int line = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
-            int count = textBox.LineCount;
-            int column = textBox.CaretIndex - textBox.GetCharacterIndexFromLineIndex(line);
-            infoBar.Content = String.Format("Line {0:0} Column {1:0} Total lines {2:0}", line, column, count);
+            if (loaded)
+            {
+                int line = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                int count = textBox.LineCount;
+                int column = textBox.CaretIndex - textBox.GetCharacterIndexFromLineIndex(line);
+                infoBar.Content = String.Format("Line {0:0} Column {1:0} Total lines {2:0}", line + 1, column + 1, count);
+            }
+            else
+            {
+                infoBar.Content = "No file loaded";
+            }
+        }
+
+        void DoCopyOrCut(bool isCut)
+        {
+            SharedClipboard.Content = textBox.SelectedText;
+            if (isCut) { if (textBox.SelectionLength > 0) { textBox.SelectedText = ""; }  }
+        }
+
+        void DoPaste()
+        {
+            if (SharedClipboard.Content != null)
+            {
+                if (textBox.SelectionLength > 0)
+                {
+                    textBox.SelectedText = SharedClipboard.Content;
+                }
+                else
+                {
+                    int p = textBox.CaretIndex;
+                    textBox.Text = textBox.Text.Insert(textBox.CaretIndex, SharedClipboard.Content);
+                    textBox.CaretIndex = p + SharedClipboard.Content.Length;
+                }
+            }
         }
 
         void OnFileContentsCopy(object sender, DataObjectCopyingEventArgs e)
@@ -89,12 +166,9 @@ namespace TrueStory
 
                 Console.WriteLine("Detected copy: " + text);
 
-                PrivateClipboard.content = text;
+                DoCopyOrCut(Keyboard.IsKeyDown(Key.X));
 
-                if (Keyboard.IsKeyDown(Key.X))
-                {
-                    if (textBox.SelectionLength > 0) { textBox.SelectedText = ""; }
-                }
+                UpdateEditMenu();
 
             }
             else
@@ -119,21 +193,7 @@ namespace TrueStory
                 Console.WriteLine("Detected paste: " + text);
 
 
-                if (PrivateClipboard.content != null)
-                {
-                    if (textBox.SelectionLength > 0)
-                    {
-                        textBox.SelectedText = text;
-                    }
-                    else
-                    {
-                        int p = textBox.CaretIndex;
-                        textBox.Text = textBox.Text.Insert(textBox.CaretIndex, PrivateClipboard.content);
-                        textBox.CaretIndex = p + PrivateClipboard.content.Length;
-                    }
-                }
-
-
+                DoPaste();
 
             }
             else
@@ -240,6 +300,23 @@ namespace TrueStory
         void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             UpdateInfoBar();
+            UpdateEditMenu();
+        }
+
+        void UpdateEditMenu()
+        {
+            if (loaded)
+            {
+                window.EditMenu.IsEnabled = true;
+                window.CutMenuAction.IsEnabled = (textBox.SelectionLength > 0);
+                window.CopyMenuAction.IsEnabled = (textBox.SelectionLength > 0);
+                window.PasteMenuAction.IsEnabled = (SharedClipboard.Content != null);
+                window.GotoLineMenuAction.IsEnabled = true;
+            }
+            else
+            {
+                window.EditMenu.IsEnabled = false;
+            }
         }
     }
 }

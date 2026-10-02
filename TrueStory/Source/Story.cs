@@ -54,7 +54,6 @@ namespace TrueStory
         public struct Record
         {
             public RecordType type;
-            public long date;
             public byte[] data;
         }
 
@@ -104,7 +103,6 @@ namespace TrueStory
 
                 Record r = new();
                 r.type = RecordType.Header;
-                r.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 BinaryBuffer buffer = new();
 
@@ -114,6 +112,7 @@ namespace TrueStory
                 r.data = buffer.GetBytes();
 
                 AddRecord(r);
+
             }
             else if (_mode == Mode.Append) { file = new FileStream(filePath, FileMode.Append, FileAccess.Write);  }
             else // _mode == Mode.Read
@@ -138,7 +137,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.CreateFolder;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
@@ -154,7 +152,7 @@ namespace TrueStory
 
         void AddRecord(Record record)
         {
-            int bufferSize = sizeof(int) + sizeof(RecordType) + sizeof(long) + sizeof(int) + record.data.Length;
+            int bufferSize = sizeof(int) + sizeof(RecordType) + sizeof(int) + record.data.Length;
 
             int offset = 0;
             byte[] buffer = new byte[bufferSize];
@@ -166,10 +164,6 @@ namespace TrueStory
             bytes = BitConverter.GetBytes((int)record.type);
             bytes.CopyTo(buffer, offset);
             offset += sizeof(int);
-
-            bytes = BitConverter.GetBytes(record.date);
-            bytes.CopyTo(buffer, offset);
-            offset += sizeof(long);
 
             bytes = BitConverter.GetBytes(record.data.Length);
             bytes.CopyTo(buffer, offset);
@@ -190,7 +184,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.CreateFile;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
@@ -212,7 +205,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.DeleteDirectory;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
@@ -233,7 +225,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.DeleteFile;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
@@ -258,7 +249,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.DeleteFile;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
@@ -281,7 +271,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.DeleteFile;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
@@ -316,7 +305,6 @@ namespace TrueStory
             Record record = new();
 
             record.type = RecordType.ExecuteCommand;
-            record.date = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
             BinaryBuffer buffer = new();
 
