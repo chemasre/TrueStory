@@ -22,6 +22,13 @@
                 <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="OnMenuDeleteFileOrFolder"/>
                 <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile"/>
             </MenuItem>
+            <MenuItem x:Name="EditMenu" Header="Edición">
+                <MenuItem x:Name="CutMenuAction" Header="Cortar"/>
+                <MenuItem x:Name="CopyMenuAction" Header="Copiar"/>
+                <MenuItem x:Name="PasteMenuAction" Header="Pegar"/>
+                <Separator/>
+                <MenuItem x:Name="GotoLineMenuAction" Header="Ir a línea..."/>
+            </MenuItem>
             <MenuItem x:Name="AboutMenu" Header="Acerca de">
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de TrueStory" Click="OnMenuAboutApp"/>
             </MenuItem>

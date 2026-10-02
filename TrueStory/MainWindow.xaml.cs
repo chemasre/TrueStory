@@ -30,7 +30,7 @@ namespace TrueStory
             NoStory,
             StoryNoSelection,
             StoryFileLoadedNoNeedsSave,
-            StoryFileSelectedNeedsSave,
+            StoryFileLoadedNeedsSave,
             StoryFolderSelected
         }
 
@@ -46,7 +46,7 @@ namespace TrueStory
         {
             InitializeComponent();
 
-            fileEditor = new(FileEditorTextBox, FileEditorInfoBar);
+            fileEditor = new(this);
             fileEditor.OnContentsChanged += OnFileContentsChanged;
 
             folderView = new FolderView(FolderView);
@@ -79,7 +79,7 @@ namespace TrueStory
 
             selectedFolder = _folder;
 
-            fileEditor.Clear();
+            fileEditor.Unload();
 
             SetUIState(UIState.StoryFolderSelected);
         }
@@ -107,7 +107,7 @@ namespace TrueStory
 
             CheckFileNeedsSave();
 
-            fileEditor.Clear();
+            fileEditor.Unload();
 
             SetUIState(UIState.StoryNoSelection);
         }
@@ -154,7 +154,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
             }
-            else if (_uiState == UIState.StoryFileSelectedNeedsSave)
+            else if (_uiState == UIState.StoryFileLoadedNeedsSave)
             {
                 NewActivityMenuAction.IsEnabled = false;
                 OpenActivityMenuAction.IsEnabled = false;
@@ -183,6 +183,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                EditMenu.IsEnabled = false;
             }
 
 
@@ -196,7 +197,7 @@ namespace TrueStory
             if (!loadedFileNeedsSave)
             {
                 loadedFileNeedsSave = true;
-                SetUIState(UIState.StoryFileSelectedNeedsSave);
+                SetUIState(UIState.StoryFileLoadedNeedsSave);
                 UpdateTitle();
             }
 
@@ -467,5 +468,6 @@ namespace TrueStory
 
             d.ShowDialog();
         }
+
     }
 }
