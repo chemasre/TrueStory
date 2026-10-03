@@ -19,24 +19,33 @@ namespace TrueStory
             Read
         }
 
-        public struct Header
+        public struct HeaderData
         {
             public string publicKey;
             public string author;
         }
 
-        public struct FileChange
+        public struct FileChangeData
         {
             public int Offset;
             public int Added;
             public string AddedText;
             public int Removed;
+            public long DeltaTime;
         }
 
-        public struct ExecutedCommand
+        public struct ExecutedCommandData
         {
             public string command;
             public string output;
+        }
+
+        public struct QuestionData
+        {
+            public string question;
+            public string answer;
+            public int usedTime;
+            public int totalTime;
         }
 
         public enum RecordType
@@ -85,7 +94,7 @@ namespace TrueStory
 
         bool disposed;
 
-        public Story(string _rootPath, Mode _mode, Header? header = null)
+        public Story(string _rootPath, Mode _mode, HeaderData? header = null)
         {
             rootPath = _rootPath;
             mode = _mode;
@@ -263,7 +272,7 @@ namespace TrueStory
             return result;
         }
 
-        public void SaveFile(string name, string text, FileChange[] changes)
+        public void SaveFile(string name, string text, FileChangeData[] changes)
         {
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
@@ -277,12 +286,13 @@ namespace TrueStory
             buffer.WriteString(name);
             buffer.WriteInt(changes.Length);
 
-            foreach (FileChange c in changes)
+            foreach (FileChangeData c in changes)
             {
                 buffer.WriteInt(c.Offset);
                 buffer.WriteInt(c.Added);
                 buffer.WriteString(c.AddedText);
                 buffer.WriteInt(c.Removed);
+                buffer.WriteLong(c.DeltaTime);
 
             }
 

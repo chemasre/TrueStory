@@ -15,12 +15,16 @@ namespace TrueStory
     {
         public event OnContentsChangedHandler? OnContentsChanged;
 
+        public TextBox TextBox { get { return textBox;  } }
+        public bool IsFileLoaded { get { return loaded; } }
+
         public struct ContentChange
         {
             public int Offset;
             public int Added;
             public string AddedText;
             public int Removed;
+            public long DeltaTime;
         }
 
         public delegate void OnContentsChangedHandler(ContentChange c);
@@ -31,6 +35,8 @@ namespace TrueStory
         Label infoBar;
 
         bool ignoreChanges;
+
+        long lastChangeTime;
 
         bool loaded;
 
@@ -99,6 +105,8 @@ namespace TrueStory
             ignoreChanges = true;
             textBox.Text = text;
             ignoreChanges = false;
+
+            lastChangeTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             loaded = true;
 
@@ -209,10 +217,10 @@ namespace TrueStory
         {
             if (ignoreChanges) { return;  }
 
-            foreach (TextChange c in e.Changes)
-            {
-                Console.WriteLine("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
-            }
+            //foreach (TextChange c in e.Changes)
+            //{
+            //    Console.WriteLine("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
+            //}
 
             Debug.Assert(e.Changes.Count == 1);
 
@@ -223,7 +231,7 @@ namespace TrueStory
                 if (c.AddedLength > 0 && c.RemovedLength == 0)
                 {
                     text = textBox.Text.Substring(c.Offset, c.AddedLength);
-                    Console.WriteLine("Added text " + text);
+                    // Console.WriteLine("Added text " + text);
 
                     
                 }
@@ -233,6 +241,14 @@ namespace TrueStory
                 cc.Added = c.AddedLength;
                 cc.AddedText = text;
                 cc.Removed = c.RemovedLength;
+
+                long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                cc.DeltaTime = time - lastChangeTime;
+
+                Console.WriteLine("Delta time: " + cc.DeltaTime);
+
+                lastChangeTime = time;
+                
 
                 OnContentsChanged?.Invoke(cc);
             }
@@ -245,14 +261,29 @@ namespace TrueStory
             if (e.Key == Key.Tab)
             {
                 int p = textBox.CaretIndex;
+
+                ignoreChanges = true;
                 textBox.Text = textBox.Text.Insert(p, Constants.tabAsSpaces);
                 textBox.CaretIndex = p + Constants.tabAsSpaces.Length;
+                ignoreChanges = false;
+
+                ContentChange c = new();
+                c.Offset = p;
+                c.Added = Constants.tabAsSpaces.Length;
+                c.AddedText = Constants.tabAsSpaces;
+                c.Removed = 0;
+                long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                c.DeltaTime = time - lastChangeTime;
+
+                lastChangeTime = time;
+
+                OnContentsChanged?.Invoke(c);
 
                 e.Handled = true;
             }
             if (e.Key == Key.Return)
             {
-                Console.WriteLine("Detected return");
+                // Console.WriteLine("Detected return");
 
                 int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
                 string lineText = textBox.GetLineText(lineIndex);
@@ -264,8 +295,23 @@ namespace TrueStory
 
                 int p = textBox.CaretIndex;
                 string newLineText = Environment.NewLine + (tabPrefix ?? "");
+
+                ignoreChanges = true;
                 textBox.Text = textBox.Text.Insert(p, newLineText);
                 textBox.CaretIndex = p + newLineText.Length;
+                ignoreChanges = false;
+
+                ContentChange c = new();
+                c.Offset = p;
+                c.Added = newLineText.Length;
+                c.AddedText = newLineText;
+                c.Removed = 0;
+                long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                c.DeltaTime = time - lastChangeTime;
+
+                lastChangeTime = time;
+
+                OnContentsChanged?.Invoke(c);
 
                 e.Handled = true;
             }

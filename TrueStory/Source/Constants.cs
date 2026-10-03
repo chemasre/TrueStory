@@ -25,5 +25,13 @@ namespace TrueStory
             "java"
         };
 
+        public static readonly char[] wordSeparators = new char[] { ';', '(', ')', '"', '\'', '.', ',' };
+
+
+        public const long minQuestionInterval = 10;
+        public const long maxQuestionInterval = 30;
+
+        public const long questionWarningInterval = 3;
+
     }
 }

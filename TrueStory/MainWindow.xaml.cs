@@ -16,11 +16,14 @@ namespace TrueStory
     /// </summary>
     public partial class MainWindow : Window
     {
+        public string? LoadedFile { get { return loadedFile;  } }
+        public FileEditor FileEditor { get { return fileEditor; } }
+
         Story? story;
         StoryActions? performer;
 
         string? loadedFile;
-        List<Story.FileChange> loadedFileChanges;
+        List<Story.FileChangeData> loadedFileChanges;
         bool loadedFileNeedsSave;
 
         string? selectedFolder;
@@ -39,6 +42,7 @@ namespace TrueStory
         FileEditor fileEditor;
         FolderView folderView;
         CommandConsole commandConsole;
+        Instructor instructor;
 
 
 
@@ -56,6 +60,8 @@ namespace TrueStory
 
             commandConsole = new(CommandConsoleTextBox);
             commandConsole.OnExecuteCommand += OnExecuteCommand;
+
+            instructor = new(this);
 
             loadedFileChanges = new();
 
@@ -201,11 +207,12 @@ namespace TrueStory
                 UpdateTitle();
             }
 
-            Story.FileChange fc = new();
+            Story.FileChangeData fc = new();
             fc.Offset = c.Offset;
             fc.Added = c.Added;
             fc.AddedText = c.AddedText;
             fc.Removed = c.Removed;
+            fc.DeltaTime = c.DeltaTime;
 
             loadedFileChanges.Add(fc);
         }
