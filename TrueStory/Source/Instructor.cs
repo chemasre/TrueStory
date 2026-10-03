@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace TrueStory
@@ -115,10 +116,12 @@ namespace TrueStory
             if (!fileEditor.IsFileLoaded)
             {
                 instructorTextBox.Text = "";
+                instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
             }
             else if (nextQuestionTime <= currentTime)
             {
-                instructorTextBox.Text = "Boss is watching";
+                instructorTextBox.Text = "The boss is watching";
+                instructorTextBox.Background = new SolidColorBrush(Colors.Yellow);
             }
             else
             {
@@ -126,11 +129,13 @@ namespace TrueStory
 
                 if (left > 0 && left < Constants.questionWarningInterval)
                 {
-                    instructorTextBox.Text = "Boss passes in " + (nextQuestionTime - currentTime) + " seconds";
+                    instructorTextBox.Text = "Boss passing in " + (nextQuestionTime - currentTime) + " seconds";
+                    instructorTextBox.Background = new SolidColorBrush(Colors.LightYellow);
                 }
                 else
                 {
                     instructorTextBox.Text = "";
+                    instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
                 }
 
             }

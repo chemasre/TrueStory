@@ -31,7 +31,7 @@ namespace TrueStory
         public const long minQuestionInterval = 10;
         public const long maxQuestionInterval = 30;
 
-        public const long questionWarningInterval = 3;
+        public const long questionWarningInterval = 5;
 
     }
 }
