@@ -11,9 +11,9 @@ using System.Windows.Threading;
 
 namespace TrueStory
 {
-    class Instructor
+    public class Instructor
     {
-        struct Question
+        public struct Question
         {
             public string text;
             public Context context;
@@ -22,14 +22,14 @@ namespace TrueStory
             public long timeLimit;
         }
 
-        struct Context
+        public struct Context
         {
             public string fileName;
             public ContextLine[] lines;
             public int currentLine;
         }
 
-        struct ContextLine
+        public struct ContextLine
         {
             public int number;
             public string text;
@@ -120,7 +120,7 @@ namespace TrueStory
             }
             else if (nextQuestionTime <= currentTime)
             {
-                instructorTextBox.Text = "The boss is watching";
+                instructorTextBox.Text = "El jefe está mirando";
                 instructorTextBox.Background = new SolidColorBrush(Colors.Yellow);
             }
             else
@@ -129,7 +129,7 @@ namespace TrueStory
 
                 if (left > 0 && left < Constants.questionWarningInterval)
                 {
-                    instructorTextBox.Text = "Boss passing in " + (nextQuestionTime - currentTime) + " seconds";
+                    instructorTextBox.Text = "El jefe pasará en " + (nextQuestionTime - currentTime) + " segundos";
                     instructorTextBox.Background = new SolidColorBrush(Colors.LightYellow);
                 }
                 else
@@ -234,7 +234,13 @@ namespace TrueStory
                                 showText.AppendLine();
                             }
 
-                            MessageBox.Show(showText.ToString());
+
+                            DialogQuestion d = new();
+
+                            d.Question = question;
+
+
+                            d.ShowDialog();
 
                             questionShown = true;
 
