@@ -12,9 +12,9 @@ namespace TrueStory
 
         public const int Major = 0;
         public const int Minor = 3;
-        public const int Patch = 2;
+        public const int Patch = 3;
 
-        public const string Alias = "fixed save on close"; 
+        public const string Alias = "panel titles"; 
 
         public static string FullName()
         {

@@ -34,11 +34,14 @@
             </MenuItem>
         </Menu>
         <DockPanel LastChildFill="True" DockPanel.Dock="Right" MinWidth="200" Width="100">
-            <TextBlock x:Name="InstructorTextBox" DockPanel.Dock="Bottom" TextWrapping="Wrap" MinHeight="120" Text="Question soon" TextAlignment="Center" Padding="0,45,0,0" FontSize="20" FontWeight="Bold" Foreground="#FF525252" FontFamily="Courier New"/>
-            <ListBox x:Name="FolderView" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="Courier New" />
+            <TextBlock x:Name="InstructorTextBox" DockPanel.Dock="Bottom" TextWrapping="Wrap" MinHeight="146" Text="Question soon" TextAlignment="Center" Padding="0,60,0,0" FontSize="20" FontWeight="Bold" Foreground="#FF525252" FontFamily="Courier New"/>
+            <Label x:Name="FolderViewTitleLabel" DockPanel.Dock="Top" Content="Carpeta de actividad" MinHeight="21" FontFamily="Courier New" Height="24" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Background="#FFE2E2E2"/>
+            <ListBox x:Name="FolderViewList" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="Courier New" />
         </DockPanel>
         <TextBox x:Name="CommandConsoleTextBox" DockPanel.Dock="Bottom" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" AcceptsTab="True" MinHeight="120" MaxHeight="120" Height="100"/>
-        <Label x:Name="FileEditorInfoBar" DockPanel.Dock="Bottom" Content="Label" Width="auto" MinHeight="21" FontFamily="Courier New"/>
+        <Label x:Name="FileEditorInfoBarLabel_Copiar" DockPanel.Dock="Bottom" Content="Consola de comandos" MinHeight="21" FontFamily="Courier New" BorderThickness="1,1,1,1" BorderBrush="#FF868686" Height="26" Background="#FFE2E2E2"/>
+        <Label x:Name="FileEditorInfoBarLabel" DockPanel.Dock="Bottom" Content="Información" Width="auto" MinHeight="21" FontFamily="Courier New" BorderThickness="1,1,1,1" BorderBrush="#FFD4D3D3" Foreground="#FF969696"/>
+        <Label x:Name="FileEditorTitleLabel" DockPanel.Dock="Top" Content="Título" MinHeight="21" FontFamily="Courier New" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Height="24" Background="#FFE2E2E2"/>
         <TextBox x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" AcceptsTab="True"/>
     </DockPanel>
     <Window.CommandBindings>
