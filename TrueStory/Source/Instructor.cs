@@ -115,6 +115,8 @@ namespace TrueStory
 
         void OnTimerTick(object? sender, EventArgs e)
         {
+            if (Switches.NoQuestions) { return; }
+
             long currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             if (!fileEditor.IsFileLoaded)
@@ -147,6 +149,8 @@ namespace TrueStory
 
         void OnFileEditorContentsChanged(FileEditor.ContentChange c)
         {
+            if (Switches.NoQuestions) { return;  }
+
             long currentTime = DateTimeOffset.Now.ToUnixTimeSeconds();
 
             bool questionShown = false;
