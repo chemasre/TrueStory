@@ -52,7 +52,7 @@ namespace TrueStory
             _window.FileEditorTextBox.SelectionChanged += OnSelectionChanged;
 
             textBox = _window.FileEditorTextBox;
-            infoBar = _window.FileEditorInfoBar;
+            infoBar = _window.FileEditorInfoBarLabel;
 
             _window.CutMenuAction.Click += OnMenuCut;
             _window.CopyMenuAction.Click += OnMenuCopy;
@@ -137,7 +137,7 @@ namespace TrueStory
             }
             else
             {
-                infoBar.Content = "No file loaded";
+                infoBar.Content = "Barra de información";
             }
         }
 

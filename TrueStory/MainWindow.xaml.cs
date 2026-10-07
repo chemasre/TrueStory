@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -44,16 +45,19 @@ namespace TrueStory
         CommandConsole commandConsole;
         Instructor instructor;
 
-
+        public static RoutedCommand ShortcutNewFile = new RoutedCommand();
+        public static RoutedCommand ShortcutSaveFile = new RoutedCommand();
 
         public MainWindow()
         {
             InitializeComponent();
 
+            Closing += OnClosing;
+
             fileEditor = new(this);
             fileEditor.OnContentsChanged += OnFileContentsChanged;
 
-            folderView = new FolderView(FolderView);
+            folderView = new FolderView(FolderViewList);
             folderView.OnDeselected += OnFolderViewDeselected;
             folderView.OnFileSelected += OnFolderViewFileSelected;
             folderView.OnFolderSelected += OnFolderViewFolderSelected;
@@ -62,6 +66,9 @@ namespace TrueStory
             commandConsole.OnExecuteCommand += OnExecuteCommand;
 
             instructor = new(this);
+
+            ShortcutSaveFile.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+            ShortcutNewFile.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
 
             loadedFileChanges = new();
 
@@ -72,8 +79,16 @@ namespace TrueStory
 
             SetUIState(UIState.NoStory);
 
-            UpdateTitle();
+            UpdateFileTitle();
 
+            Title = Version.FullName();
+        }
+
+        private void OnClosing(object? sender, CancelEventArgs e)
+        {
+            if (story == null) { return;  }
+
+            CheckFileNeedsSave();
         }
 
         private string OnExecuteCommand(string command)
@@ -107,7 +122,7 @@ namespace TrueStory
             fileEditor.Load(story.LoadFile(file));
             loadedFile = file;
             loadedFileNeedsSave = false;
-            UpdateTitle();
+            UpdateFileTitle();
 
         }
 
@@ -122,6 +137,23 @@ namespace TrueStory
             SetUIState(UIState.StoryNoSelection);
         }
 
+        private void OnShortcutSaveFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(FileMenu.IsEnabled && SaveFileMenuAction.IsEnabled)
+            {
+                OnMenuSaveFile(sender, e);
+            }
+
+        }
+
+        private void OnShortcutNewFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (FileMenu.IsEnabled && NewFileMenuAction.IsEnabled)
+            {
+                OnMenuNewFile(sender, e);
+            }
+        }
+
         void SetUIState(UIState _uiState)
         {
             if (_uiState == UIState.NoStory)
@@ -130,7 +162,7 @@ namespace TrueStory
                 OpenActivityMenuAction.IsEnabled = true;
                 CloseActivityMenuAction.IsEnabled = false;
                 FileEditorTextBox.IsEnabled = false;
-                FolderView.IsEnabled = false;
+                FolderViewList.IsEnabled = false;
                 CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
             }
@@ -140,7 +172,7 @@ namespace TrueStory
                 OpenActivityMenuAction.IsEnabled = false;
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = false;
-                FolderView.IsEnabled = true;
+                FolderViewList.IsEnabled = true;
                 CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
@@ -155,7 +187,7 @@ namespace TrueStory
                 OpenActivityMenuAction.IsEnabled = false;
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = true;
-                FolderView.IsEnabled = true;
+                FolderViewList.IsEnabled = true;
                 CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
@@ -170,7 +202,7 @@ namespace TrueStory
                 OpenActivityMenuAction.IsEnabled = false;
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = true;
-                FolderView.IsEnabled = true;
+                FolderViewList.IsEnabled = true;
                 CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
@@ -185,7 +217,7 @@ namespace TrueStory
                 OpenActivityMenuAction.IsEnabled = false;
                 CloseActivityMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsEnabled = false;
-                FolderView.IsEnabled = true;
+                FolderViewList.IsEnabled = true;
                 CommandConsoleTextBox.IsEnabled = true;
                 FileMenu.IsEnabled = true;
                 NewMenu.IsEnabled = true;
@@ -208,7 +240,7 @@ namespace TrueStory
             {
                 loadedFileNeedsSave = true;
                 SetUIState(UIState.StoryFileLoadedNeedsSave);
-                UpdateTitle();
+                UpdateFileTitle();
             }
 
             Story.FileChangeData fc = new();
@@ -235,7 +267,7 @@ namespace TrueStory
 
                 SetUIState(UIState.StoryNoSelection);
 
-                UpdateTitle();
+                UpdateFileTitle();
 
                 folderView.RootPath = story.RootPath;
             }
@@ -258,7 +290,7 @@ namespace TrueStory
 
                     SetUIState(UIState.StoryNoSelection);
 
-                    UpdateTitle();
+                    UpdateFileTitle();
 
                     folderView.RootPath = story.RootPath;
 
@@ -278,7 +310,9 @@ namespace TrueStory
             CheckFileNeedsSave();
 
             FileEditorTextBox.Clear();
-            FolderView.Items.Clear();
+            loadedFile = null;
+
+            FolderViewList.Items.Clear();
             commandConsole.Clear();
 
             Debug.Assert(performer != null);
@@ -290,21 +324,15 @@ namespace TrueStory
             story = null;
 
             SetUIState(UIState.NoStory);
-            UpdateTitle();
+            UpdateFileTitle();
 
         }
 
-
-
-        void UpdateTitle()
+        void UpdateFileTitle()
         {
-            string caption;
+            if (story != null && loadedFile != null) { FileEditorTitleLabel.Content = (loadedFileNeedsSave ? "[*]":"") + loadedFile + ""; }
+            else { FileEditorTitleLabel.Content = "Editor de ficheros"; }
 
-            if (story == null) { caption = ""; }
-            else if (loadedFile != null) { caption = " [" + (loadedFileNeedsSave ? "* ":"") + loadedFile + "]"; }
-            else { caption = " " + story.RootPath; }
-
-            Title = Version.FullName() + " " + caption;
         }
 
         void OnMenuNewFolder(object sender, RoutedEventArgs e)
@@ -384,11 +412,11 @@ namespace TrueStory
 
             bool validSelection = true;
 
-            if(FolderView.SelectedIndex < 0)
+            if(FolderViewList.SelectedIndex < 0)
             {
                 validSelection = false;
             }
-            else if(FolderView.SelectedItem as string == Constants.parentFolderName)
+            else if(FolderViewList.SelectedItem as string == Constants.parentFolderName)
             {
                 validSelection = false;
             }
@@ -399,7 +427,7 @@ namespace TrueStory
             }
             else
             {
-                string name = ((string?)FolderView.SelectedItem ?? "");
+                string name = ((string?)FolderViewList.SelectedItem ?? "");
 
                 bool isDirectory = name.StartsWith(Constants.folderPrefix);
 
@@ -444,7 +472,7 @@ namespace TrueStory
                     loadedFile = null;
                     loadedFileNeedsSave = false;
                     loadedFileChanges.Clear();
-                    UpdateTitle();
+                    UpdateFileTitle();
 
                     SetUIState(UIState.StoryFileLoadedNoNeedsSave);
                 }
@@ -455,7 +483,7 @@ namespace TrueStory
         {
             Debug.Assert(story != null);
 
-            string? item = (string?)FolderView.SelectedItem;
+            string? item = (string?)FolderViewList.SelectedItem;
 
             Debug.Assert(item != null);
 
@@ -469,7 +497,7 @@ namespace TrueStory
                 loadedFileNeedsSave = false;
 
                 SetUIState(UIState.StoryFileLoadedNoNeedsSave);
-                UpdateTitle();
+                UpdateFileTitle();
             }
         }
 
