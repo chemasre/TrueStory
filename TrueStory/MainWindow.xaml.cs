@@ -65,6 +65,10 @@ namespace TrueStory
 
             loadedFileChanges = new();
 
+            if (Switches.NoFolders)
+            {
+                NewFolderMenuAction.Visibility = Visibility.Collapsed;
+            }
 
             SetUIState(UIState.NoStory);
 

@@ -30,8 +30,8 @@ namespace TrueStory
         {
             InitializeComponent();
 
-            ActivityCodeText.Text = "00000000";
-            StudentNameText.Text = "";
+            ActivityCodeText.Text = "B1-ACT1";
+            StudentNameText.Text = "Nombre Apellido";
             ActivityFolderText.Text = "";
 
             header = new();

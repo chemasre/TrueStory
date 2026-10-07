@@ -39,9 +39,12 @@ namespace TrueStory.Source
 
             listBox.Items.Clear();
 
-            string[] directories = Directory.GetDirectories(rootPath);
-            foreach (string d in directories)
-            { listBox.Items.Add(Constants.folderPrefix + Path.GetFileName(d)); }
+            if (!Switches.NoFolders)
+            {
+                string[] directories = Directory.GetDirectories(rootPath);
+                foreach (string d in directories)
+                { listBox.Items.Add(Constants.folderPrefix + Path.GetFileName(d)); }
+            }
 
             string[] files = Directory.GetFiles(rootPath);
             foreach (string f in files)

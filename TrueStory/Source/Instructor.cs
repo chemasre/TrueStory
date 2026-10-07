@@ -105,7 +105,11 @@ namespace TrueStory
             timer = new();
             timer.Tick += OnTimerTick;
             timer.Interval = new TimeSpan(0, 0, 1);
-            timer.Start();
+
+            if (!Switches.NoQuestions)
+            {
+                timer.Start();
+            }
 
         }
 
