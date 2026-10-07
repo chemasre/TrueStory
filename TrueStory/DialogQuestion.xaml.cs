@@ -61,14 +61,20 @@ namespace TrueStory
             FlowDocument doc = QuestionDocument.Document;
 
             doc.Blocks.Clear();
-            doc.Blocks.Add(new Paragraph(new Run(Question.text)));
+            doc.Blocks.Add(new Paragraph(new Run("Fichero '" + Question.context.fileName + "'")));
+
+            Paragraph p = null;
 
             foreach (Instructor.ContextLine l in Question.context.lines)
             {
-                Paragraph p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
+                p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
                 p.Margin = new Thickness(0);
                 doc.Blocks.Add(p);
             }
+
+            p = new Paragraph(new Run(Question.text));
+            p.Margin = new Thickness(0, 20, 0, 0);
+            doc.Blocks.Add(p);
 
             AnswerTextBox.Focus();
 

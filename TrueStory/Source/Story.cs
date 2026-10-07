@@ -257,7 +257,7 @@ namespace TrueStory
 
             Record record = new();
 
-            record.type = RecordType.DeleteFile;
+            record.type = RecordType.LoadFile;
 
             BinaryBuffer buffer = new();
 
@@ -279,7 +279,7 @@ namespace TrueStory
 
             Record record = new();
 
-            record.type = RecordType.DeleteFile;
+            record.type = RecordType.SaveFile;
 
             BinaryBuffer buffer = new();
 

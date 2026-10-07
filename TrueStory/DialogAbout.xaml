@@ -15,7 +15,7 @@
                 <Paragraph>
                     La forma en que lo hace es:
                 </Paragraph>
-                <List MarkerStyle="None">
+                <List MarkerStyle="Decimal">
                     <ListItem>
                         <Paragraph>
                             <Bold>Guarda un registro de todas las modificaciones que haces en los documentos del proyecto</Bold>, es decir, no sólo guarda el resultado final sino también todos los pasos intermedios, carácter a carácter, así como todos los comandos que hayas ejecutado desde la consola del programa.</Paragraph>
@@ -25,7 +25,7 @@
                             <Bold>No permite que copies y pegues desde fuentes externas</Bold>. La aplicación dispone de su propio sistema de copia/pega, lo que quiere decir que podrás copiar y pegar sólo entre documentos de la actividad.
                         </Paragraph>
                     </ListItem>
-                    <ListItem Foreground="{x:Null}">
+                    <ListItem>
                         <Paragraph>
                             <Bold>Realiza preguntas cada cierto tiempo acerca del contenido introducido en los documentos</Bold>. Estas preguntas no tienen un peso en la evaluación, pero pueden ser indicios de que estás introduciendo un contenido que no entiendes.</Paragraph>
                         <Paragraph Margin="10,20,10,20" BorderBrush="#FF2442EC" BorderThickness="1,1,1,1" Padding="5,5,3,5" Foreground="#FF1236C7">

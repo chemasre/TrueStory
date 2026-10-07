@@ -8,13 +8,13 @@ namespace TrueStory
 {
     public class Version
     {
-        public const string AppName = "TrueStory";
+        public const string AppName = "TrueEditor";
 
         public const int Major = 0;
-        public const int Minor = 3;
-        public const int Patch = 3;
+        public const int Minor = 4;
+        public const int Patch = 0;
 
-        public const string Alias = "panel titles"; 
+        public const string Alias = "basic questions"; 
 
         public static string FullName()
         {

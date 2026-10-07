@@ -28,10 +28,10 @@ namespace TrueStory
         public static readonly char[] wordSeparators = new char[] { ';', '(', ')', '"', '\'', '.', ',' };
 
 
-        public const long minQuestionInterval = 10;
-        public const long maxQuestionInterval = 30;
+        public const long minQuestionWait = 60 * 5;
+        public const long maxQuestionWait = 60 * 10;
 
-        public const long questionWarningInterval = 5;
+        public const long questionWarningTime = 5;
 
     }
 }

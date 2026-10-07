@@ -9,6 +9,6 @@ namespace TrueStory
     public class Switches
     {
         public static bool NoFolders = true;
-        public static bool NoQuestions = true;
+        public static bool NoQuestions = false;
     }
 }

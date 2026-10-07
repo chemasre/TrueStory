@@ -133,7 +133,7 @@ namespace TrueStory
                 int line = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
                 int count = textBox.LineCount;
                 int column = textBox.CaretIndex - textBox.GetCharacterIndexFromLineIndex(line);
-                infoBar.Content = String.Format("Line {0:0} Column {1:0} Total lines {2:0}", line + 1, column + 1, count);
+                infoBar.Content = String.Format("Línea {0:0} Columna {1:0} Total líneas {2:0}", line + 1, column + 1, count);
             }
             else
             {
