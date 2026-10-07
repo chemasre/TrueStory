@@ -17,10 +17,10 @@
             <MenuItem x:Name="FileMenu" Header="Archivo">
                 <MenuItem x:Name="NewMenu" Header="Nuevo">
                     <MenuItem x:Name="NewFolderMenuAction" Header="Carpeta" Click="OnMenuNewFolder"/>
-                    <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="OnMenuNewFile"/>
+                    <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="OnMenuNewFile" InputGestureText="Ctrl+N"/>
                 </MenuItem>
                 <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="OnMenuDeleteFileOrFolder"/>
-                <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile"/>
+                <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile" InputGestureText="Ctrl+S"/>
             </MenuItem>
             <MenuItem x:Name="EditMenu" Header="Edición">
                 <MenuItem x:Name="CutMenuAction" Header="Cortar"/>
@@ -41,4 +41,8 @@
         <Label x:Name="FileEditorInfoBar" DockPanel.Dock="Bottom" Content="Label" Width="auto" MinHeight="21" FontFamily="Courier New"/>
         <TextBox x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="Courier New" AcceptsReturn="True" AcceptsTab="True"/>
     </DockPanel>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutSaveFile}" Executed="OnShortcutSaveFile"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutNewFile}" Executed="OnShortcutNewFile"/>
+    </Window.CommandBindings>
 </Window>

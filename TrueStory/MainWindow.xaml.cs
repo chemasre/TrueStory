@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -44,11 +45,14 @@ namespace TrueStory
         CommandConsole commandConsole;
         Instructor instructor;
 
-
+        public static RoutedCommand ShortcutNewFile = new RoutedCommand();
+        public static RoutedCommand ShortcutSaveFile = new RoutedCommand();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            Closing += OnClosing;
 
             fileEditor = new(this);
             fileEditor.OnContentsChanged += OnFileContentsChanged;
@@ -63,6 +67,9 @@ namespace TrueStory
 
             instructor = new(this);
 
+            ShortcutSaveFile.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
+            ShortcutNewFile.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
+
             loadedFileChanges = new();
 
             if (Switches.NoFolders)
@@ -74,6 +81,11 @@ namespace TrueStory
 
             UpdateTitle();
 
+        }
+
+        private void OnClosing(object? sender, CancelEventArgs e)
+        {
+            CheckFileNeedsSave();
         }
 
         private string OnExecuteCommand(string command)
@@ -120,6 +132,23 @@ namespace TrueStory
             fileEditor.Unload();
 
             SetUIState(UIState.StoryNoSelection);
+        }
+
+        private void OnShortcutSaveFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            if(FileMenu.IsEnabled && SaveFileMenuAction.IsEnabled)
+            {
+                OnMenuSaveFile(sender, e);
+            }
+
+        }
+
+        private void OnShortcutNewFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (FileMenu.IsEnabled && NewFileMenuAction.IsEnabled)
+            {
+                OnMenuNewFile(sender, e);
+            }
         }
 
         void SetUIState(UIState _uiState)
@@ -278,6 +307,8 @@ namespace TrueStory
             CheckFileNeedsSave();
 
             FileEditorTextBox.Clear();
+            loadedFile = null;
+
             FolderView.Items.Clear();
             commandConsole.Clear();
 
