@@ -2,7 +2,19 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:TrueStory"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+    xmlns:System="clr-namespace:System;assembly=System.Runtime">
     <Application.Resources>
+        <SolidColorBrush x:Key="TrueEditorButtonNeutral" Color="#FF7CE1FB"/>
+        <SolidColorBrush x:Key="TrueEditorButtonAccept" Color="#FFEFDE24"/>
+        <SolidColorBrush x:Key="TrueEditorButtonCancel" Color="#FFF1CF70"/>
+        <SolidColorBrush x:Key="TrueEditorBackground" Color="#FFF7A756"/>
+        <SolidColorBrush x:Key="TrueEditorEditableTextBackground" Color="#FFFBF4DB"/>
+        <SolidColorBrush x:Key="TrueEditorNonEditableTextBackground" Color="#FFF7CE91"/>
+        <SolidColorBrush x:Key="TrueEditorPanelTitle" Color="#FFED9B35"/>
+        <SolidColorBrush x:Key="TrueEditorMenu" Color="#FFF9E3A5"/>
+        <SolidColorBrush x:Key="TrueStoryPanelTitleText" Color="#FF884D11"/>
+        <FontFamily x:Key="TrueStoryFont">Courier New</FontFamily>
+        <System:Double x:Key="TrueStoryFontSize">12</System:Double>
     </Application.Resources>
 </Application>

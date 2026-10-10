@@ -4,69 +4,107 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
-        mc:Ignorable="d" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de ">
+        mc:Ignorable="d" Width="640" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de " Background="{DynamicResource TrueEditorBackground}">
     <DockPanel>
-        <RichTextBox x:Name="Document" DockPanel.Dock="Top" MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="150,50,150,30">
-            <FlowDocument>
-                <Paragraph TextAlignment="Center">
-                    <Image Source="/AboutImage.png" Width="100" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Paragraph>
-                <Paragraph>
-                    El editor <Bold>TrueStory</Bold> trata de <Bold>ayudarte a adquirir las competencias previstas en el temario</Bold> poniéndote un poco más difícil que copies y pegues el contenido generado con IA sin comprenderlo realmente.
-                </Paragraph>
-                <Paragraph>
-                    La forma en que lo hace es:
-                </Paragraph>
-                <List MarkerStyle="Decimal">
-                    <ListItem>
-                        <Paragraph>
-                            <Bold>Guarda un registro de todas las modificaciones que haces en los documentos del proyecto</Bold>, es decir, no sólo guarda el resultado final sino también todos los pasos intermedios, carácter a carácter, así como todos los comandos que hayas ejecutado desde la consola del programa.</Paragraph>
-                    </ListItem>
-                    <ListItem>
-                        <Paragraph >
-                            <Bold>No permite que copies y pegues desde fuentes externas</Bold>. La aplicación dispone de su propio sistema de copia/pega, lo que quiere decir que podrás copiar y pegar sólo entre documentos de la actividad.
-                        </Paragraph>
-                    </ListItem>
-                    <ListItem>
-                        <Paragraph>
-                            <Bold>Realiza preguntas cada cierto tiempo acerca del contenido introducido en los documentos</Bold>. Estas preguntas no tienen un peso en la evaluación, pero pueden ser indicios de que estás introduciendo un contenido que no entiendes.</Paragraph>
-                        <Paragraph Margin="10,20,10,20" BorderBrush="#FF2442EC" BorderThickness="1,1,1,1" Padding="5,5,3,5" Foreground="#FF1236C7">
-                            <Bold>El profesor/a será quien decida en base a los indicios del registro si es necesario que, por ejemplo, superes una cuestionario para que te acepte la actividad.</Bold>
-                        </Paragraph>
-                    </ListItem>
-                </List>
-                <Paragraph>
-                    Qué <Bold>NO</Bold> hace TrueStory:
-                </Paragraph>
-                <List MarkerStyle="Decimal">
-                    <ListItem>
-                        <Paragraph>
-                            <Bold>No monitoriza tu ordenador de ninguna forma</Bold> . TrueStory no examina qué ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
-                        </Paragraph>
-                    </ListItem>
-                    <ListItem>
-                        <Paragraph>
-                            <Bold>No te desincentiva a utilizar inteligencia artificial</Bold> . Puedes utilizar la inteligencia artificial para consultar información relevante, o pedir consejo sobre los pasos a seguir. Lo único que la aplicación intenta desincentivar es que te suplante.
-                        </Paragraph>
-                    </ListItem>
-                    <ListItem>
-                        <Paragraph>
-                            <Bold>No evita que "hagas trampa"</Bold> . Si te empeñas, puedes saltarte todos los controles que pone la aplicación. Sólo esperamos que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir esa energía en formarte.
-                        </Paragraph>
-                        <Paragraph TextAlignment="Center" BorderBrush="#FF0B52C5" BorderThickness="1,1,1,1" Padding="5,5,5,5" Margin="10,20,10,20" Foreground="#FF1E3CB5">
-                            <Bold>El objetivo de la formación es entrenar la red neuronal que tienes en la cabeza</Bold>
-                        </Paragraph>
-                    </ListItem>
-
-                </List>
-                <Paragraph TextAlignment="Left" Margin="60,40,60,10" FontStyle="Italic">El ejecutable de esta aplicación y su código están bajo licencia Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International, lo que significa que puedes utilizarlos para usos no comerciales y distribuirlos sin modificaciones.</Paragraph>
-                <Paragraph TextAlignment="Center" Margin="0,20,0,0">
-                    <Image Source="/AboutLicense.png" Width="100" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Paragraph>
-            </FlowDocument>
-        </RichTextBox>
-        <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50"/>
+        <DockPanel DockPanel.Dock="Top">
+            <RichTextBox x:Name="Document" DockPanel.Dock="Left" IsReadOnly="True" IsDocumentEnabled="True" Padding="5,50,5,5" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" Width="150" Background="{x:Null}">
+                <FlowDocument>
+                    <Paragraph TextAlignment="Center">
+                        <InlineUIContainer>
+                            <Image Source="/AboutImage.png" Width="80" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </InlineUIContainer>
+                    </Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+            <TabControl DockPanel.Dock="Right" Margin="0,30,30,40">
+                <TabItem Header="Qué es">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                        <FlowDocument>
+                            <Paragraph>
+                                <Bold>
+                                    <Run Text="TrueStory"/>
+                                </Bold>
+                                es una herramienta que te permite proporcionar a tu profesor/a indicios de que estás adquiriendo las
+                                <Bold>competencias previstas en el temario</Bold> cuando realizas actividades sin supervisión, desincentivando que "copies y pegues" contenido generado por IA sin comprenderlo realmente.
+                                Estos indicios nunca deberían usarse como prueba, y se limitan registrar y validar
+                                <Bold>las modificaciones</Bold> que haces en los ficheros de la actividad.
+                            </Paragraph>
+                            <Paragraph Padding="8,5,8,10" BorderThickness="1,1,1,1" BorderBrush="#FF236DBF" Foreground="#FF236DBF" FontWeight="Bold">
+                                Recuerda que el objetivo de la educación es entrenar la red neuronal... que tienes en la cabeza.
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </TabItem>
+                <TabItem Header="Cómo funciona">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                        <FlowDocument>
+                                    <Paragraph Margin="0,0,0,10">
+                                        <Bold>
+                                            <Run Text="El editor guarda un registro de todas las modificaciones que haces en los documentos de la actividad"/>
+                                        </Bold>, es decir, no sólo guarda el resultado final sino también todos los pasos intermedios, carácter a carácter, así como todos los comandos que hayas ejecutado desde la consola del programa.
+                                    </Paragraph>
+                                    <Paragraph >Además, 
+                                <Bold>
+                                    <Run Text="no permite que copies y pegues desde fuentes externas"/>
+                                </Bold> . La aplicación dispone de su propio sistema de copia/pega, lo que quiere decir que podrás copiar y pegar sólo entre documentos de la actividad.
+                                    </Paragraph>
+                                    <Paragraph>
+                                Por último,
+                                <Bold>
+                                    <Run Text="realiza preguntas cada cierto tiempo acerca del contenido introducido en los documentos"/>
+                                </Bold>. Estas preguntas no deben tener un peso en la evaluación, pero pueden ser indicios de que estás introduciendo un contenido que no entiendes.
+                                    </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </TabItem>
+                <TabItem Header="Qué no hace">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                        <FlowDocument>
+                                    <Paragraph>La aplicación
+                                        <Bold>NO monitoriza tu ordenador de ninguna forma</Bold>. TrueStory no examina qué otras ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
+                                    </Paragraph>
+                            <Paragraph>La aplicación
+                                <Bold>NO te desincentiva a utilizar inteligencia artificial
+                                </Bold> . Puedes utilizar la inteligencia artificial para consultar información relevante, o pedir consejo sobre los pasos a seguir. Lo único que la aplicación intenta desincentivar es
+                                <Bold>que te suplante.</Bold>
+                            </Paragraph>
+                                    <Paragraph>Finalmente,
+                                <Bold>NO evita que &quot;hagas trampa&quot;</Bold>. Si te empeñas, puedes saltarte todos los controles que pone. Sólo espero que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir esa energía en formarte.
+                                    </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </TabItem>
+                <TabItem Header="Licencia">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                        <FlowDocument>
+                            <Paragraph TextAlignment="Left" Margin="0,0,0,10" FontStyle="Normal">
+                                El ejecutable de esta aplicación y su código están bajo licencia Creative Commons <Hyperlink NavigateUri="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</Hyperlink> , lo que significa que puedes utilizarlos para uso no comercial y distribuirlos sin modificaciones, siempre y cuando me acredites como autor.
+                            </Paragraph>
+                            <Paragraph TextAlignment="Center" Margin="0,20,0,0">
+                                <InlineUIContainer>
+                                    <Image Source="/AboutLicense.png" Width="100" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                </InlineUIContainer>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </TabItem>
+                <TabItem Header="Autor">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                        <FlowDocument>
+                            <Paragraph>Mi nombre es
+                                <Bold>José Manuel "Chema" Solís</Bold> y trabajo como profesor de Ciclos Formativos de Desarrollo de Aplicaciones.</Paragraph>
+                            <Paragraph>En el ámbito académico en estos momentos un tema de preocupación es que los alumnos/as están presentando trabajos generados con IA que
+                                <Bold>hacen difícil para el profesorado certificar
+                                que han adquirido las competencias</Bold>. Motivado por equilibrar un poco la balanza, decidí ponerme a trabajar en esta aplicación.</Paragraph>
+                            <Paragraph>Recalco nuevamente que su objetivo
+                                <Bold>no es prohibir el uso de IA</Bold>, cosa que ni es posible ni deseable, tan sólo desincentivar su uso para el fraude académico.</Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+        <DockPanel DockPanel.Dock="Top" LastChildFill="False" HorizontalAlignment="Center">
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}"/>
         </DockPanel>
     </DockPanel>
 </Window>

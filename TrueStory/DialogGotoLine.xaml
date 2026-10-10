@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
         mc:Ignorable="d"
-        Title="Ir a línea" Height="165" Width="338">
+        Title="Ir a línea" Height="165" Width="338" Background="{DynamicResource TrueEditorBackground}">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="True">
             <TextBlock x:Name="Message" DockPanel.Dock="Left" Text="Ir a línea" MinHeight="20" Padding="5,5,5,5" Width="140" Margin="50,20,0,20"/>
-            <TextBox x:Name="Input" DockPanel.Dock="Left" TextWrapping="Wrap" Text="Nombre" MaxLines="1" Margin="0,20,40,20" LostFocus="Input_LostFocus" PreviewTextInput="Input_PreviewTextInput"/>
+            <TextBox x:Name="Input" DockPanel.Dock="Left" TextWrapping="Wrap" Text="Nombre" MaxLines="1" Margin="0,20,40,20" LostFocus="Input_LostFocus" PreviewTextInput="Input_PreviewTextInput" Background="{DynamicResource TrueEditorEditableTextBackground}"/>
         </DockPanel>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click"/>
-            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}"/>
+            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}"/>
         </DockPanel>
     </DockPanel>
 </Window>

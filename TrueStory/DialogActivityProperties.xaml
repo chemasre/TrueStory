@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
-        mc:Ignorable="d" Height="202" Width="440" ResizeMode="NoResize" Title="Nueva actividad" Closing="Window_Closing" WindowStartupLocation="CenterOwner">
+        mc:Ignorable="d" Height="202" Width="440" ResizeMode="NoResize" Title="Nueva actividad" Closing="Window_Closing" WindowStartupLocation="CenterOwner" Background="{DynamicResource TrueEditorBackground}">
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
@@ -17,18 +17,18 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Content="Código (público) de actividad" MinWidth="200" Margin="5,5,5,5"/>
-            <TextBox x:Name="ActivityCodeText" Grid.Row ="0"  Grid.Column="1" Text="Nombre" MaxLines="1" Margin="5,5,5,5"/>
+            <TextBox x:Name="ActivityCodeText" Grid.Row ="0"  Grid.Column="1" Text="Nombre" MaxLines="1" Margin="5,5,5,5" SelectionTextBrush="{DynamicResource TrueEditorEditableTextBackground}" Background="{DynamicResource TrueEditorEditableTextBackground}"/>
             <Label Grid.Row="1" Grid.Column="0" Content="Nombre y apellidos del alumno/a" MinWidth="200" Margin="5,5,5,5"/>
-            <TextBox x:Name="StudentNameText" Grid.Row ="1"  Grid.Column="1" Text="Nombre" MaxLines="1" Margin="5,5,5,5"/>
+            <TextBox x:Name="StudentNameText" Grid.Row ="1"  Grid.Column="1" Text="Nombre" MaxLines="1" Margin="5,5,5,5" Background="{DynamicResource TrueEditorEditableTextBackground}"/>
             <Label Grid.Row="2" Grid.Column="0" Content="Carpeta de actividad" MinWidth="200" Margin="5,5,5,5"/>
             <DockPanel Grid.Row="2" Grid.Column="2" Margin="5,5,5,5">
-                <Button x:Name="PickActivityFolderButton" DockPanel.Dock="Right" Content="..."   MinWidth="30" Margin="5,0,0,0" Click="PickActivityFolderButton_Click"/>
-                <TextBox x:Name="ActivityFolderText" DockPanel.Dock="Left" Text="Nombre" MaxLines="1"/>
+                <Button x:Name="PickActivityFolderButton" DockPanel.Dock="Right" Content="..."   MinWidth="30" Margin="5,0,0,0" Click="PickActivityFolderButton_Click" Background="#FF7CE1FB"/>
+                <TextBox x:Name="ActivityFolderText" DockPanel.Dock="Left" Text="Nombre" MaxLines="1" Background="{DynamicResource TrueEditorEditableTextBackground}"/>
             </DockPanel>
         </Grid>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click"/>
-            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}"/>
+            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}"/>
         </DockPanel>
     </DockPanel>
 </Window>

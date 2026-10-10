@@ -30,7 +30,7 @@ namespace TrueStory
             p.TextAlignment = TextAlignment.Center;
             p.Margin = new Thickness(0, 5, 0, 10);
 
-            doc.Blocks.InsertBefore(doc.Blocks.FirstBlock.NextBlock, p);
+            doc.Blocks.InsertAfter(doc.Blocks.FirstBlock, p);
 
             p = new Paragraph(new Bold(new Run(Version.AppName)));
             p.FontSize *= 1.2f;
