@@ -8,17 +8,22 @@ namespace TrueStory
 {
     public class Version
     {
-        public const string AppName = "TrueEditor";
+        public const string AppName = "TrueStory Editor";
 
         public const int Major = 0;
-        public const int Minor = 4;
+        public const int Minor = 5;
         public const int Patch = 0;
 
-        public const string Alias = "basic questions"; 
+        public const string Alias = "Commands and changes questions"; 
 
-        public static string FullName()
+        public static string GetFullName()
         {
-            return AppName + " v" + Major + "." + Minor + "." + Patch + " [" + Alias + "]";
+            return AppName + " " + GetVersion();
+        }
+
+        public static string GetVersion(bool includeAlias = true)
+        {
+            return "v" + Major + "." + Minor + "." + Patch + (includeAlias ? " [" + Alias + "]" :"");
         }
 
     }

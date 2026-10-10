@@ -13,12 +13,12 @@ namespace TrueStory.Source
     public class CommandConsole
     {
         public event OnExecuteCommandHandler? OnExecuteCommand;
+        public event OnCommandExecutedHandler? OnCommandExecuted;
 
         public delegate string OnExecuteCommandHandler(string command);
+        public delegate void OnCommandExecutedHandler(string command, string output);
 
         TextBox textBox;
-
-        const string prompt = "> ";
 
         StringBuilder command;
 
@@ -36,8 +36,8 @@ namespace TrueStory.Source
 
             _textBox.IsReadOnly = true;
 
-            _textBox.Text = prompt;
-            _textBox.CaretIndex = prompt.Length;
+            _textBox.Text = Constants.consolePrompt;
+            _textBox.CaretIndex = Constants.consolePrompt.Length;
 
             textBox = _textBox;
 
@@ -50,8 +50,8 @@ namespace TrueStory.Source
         public void Clear()
         {
             command.Clear();
-            textBox.Text = prompt;
-            textBox.CaretIndex = prompt.Length;
+            textBox.Text = Constants.consolePrompt;
+            textBox.CaretIndex = Constants.consolePrompt.Length;
         }
 
         private void OnTextInput(object sender, TextCompositionEventArgs e)
@@ -80,10 +80,16 @@ namespace TrueStory.Source
                 textBox.AppendText(Environment.NewLine);
                 textBox.CaretIndex += Environment.NewLine.Length;
 
-                textBox.AppendText(prompt);
-                textBox.CaretIndex += prompt.Length;
+                textBox.AppendText(Constants.consolePrompt);
+                textBox.CaretIndex += Constants.consolePrompt.Length;
+
+                string executed = command.ToString();
 
                 command.Clear();
+
+                OnCommandExecuted?.Invoke(executed, output);
+
+
             }
             else if (e.Key == Key.Back)
             {

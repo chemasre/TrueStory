@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using static TrueStory.Instructor;
 
 namespace TrueStory
 {
@@ -15,6 +16,7 @@ namespace TrueStory
     {
         public struct Question
         {
+            public QuestionType type;
             public string text;
             public Context context;
             public string answer;
@@ -27,6 +29,7 @@ namespace TrueStory
             public string fileName;
             public ContextLine[] lines;
             public int currentLine;
+            public string command;
         }
 
         public struct ContextLine
@@ -35,43 +38,43 @@ namespace TrueStory
             public string text;
         }
 
-        enum TriggerType
+        public enum QuestionType
         {
-            fileChanges,
+            input,
+            time,
             fileSave,
             fileOpen,
             command,
-            time
 
         }
 
         struct QuestionTemplate
         {
-            public TriggerType trigger;
+            public QuestionType type;
             public float frequency;
             public string question;
-            public int contextLineCount;
-            public int contextLineSize;
+            public int contextLines;
+            public int contextWords;
             public int timeLimit;
         }
 
         QuestionTemplate[] questionTemplates = 
         {
-            new() { trigger = TriggerType.fileChanges, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLineCount = 10, contextLineSize = 10, timeLimit = 20 },
-            new() { trigger = TriggerType.fileChanges, question = "¿Qué es la palabra '[lineWord]' de la línea [lineIndex]?", contextLineCount = 10, contextLineSize = 10, timeLimit = 20 },
-            new() { trigger = TriggerType.fileChanges, question = "¿Para qué sirve la línea [lineIndex]?", contextLineCount = 10, contextLineSize = 10, timeLimit = 20 },
-            new() { trigger = TriggerType.fileChanges, question = "¿Qué estás cambiando en la línea [lineIndex]?", contextLineCount = 10, contextLineSize = 10, timeLimit = 20 },
-            new() { trigger = TriggerType.fileSave, question = "¿Qué has cambiado en el fichero [fileName] que has guardado recientemente?", contextLineCount = -1, timeLimit = 15  },
-            new() { trigger = TriggerType.fileOpen, question = "Has abierto hace poco el fichero [fileName] ¿Por qué?", contextLineCount = -1, timeLimit = 15  },
-            new() { trigger = TriggerType.command, question = "¿Por qué has ejecutado el comando [commandName] hace un momento?", contextLineCount = 0, timeLimit = 10  },
-            new() { trigger = TriggerType.command, question = "¿Qué significa la línea [lineIndex] en el resultado del comando [commandName]?", contextLineCount = 0, timeLimit = 10  },
-            new() { trigger = TriggerType.time, question = "¿Para qué sirve el fichero [fileName] que tienes abierto?", contextLineCount = 0, timeLimit = 10  },
-            new() { trigger = TriggerType.time, question = "¿Qué estás haciendo ahora mismo en el proyecto?", contextLineCount = 0, timeLimit = 10  },
-            new() { trigger = TriggerType.time, question = "¿Qué has hecho antes que esto?", contextLineCount = 0, timeLimit = 10  },
-            new() { trigger = TriggerType.time, question = "¿Cuál es el último problema que has tenido?", contextLineCount = 0, timeLimit = 20  },
-            new() { trigger = TriggerType.time, question = "¿Cuál es el problema más importante que has tenido hasta ahora?", contextLineCount = 0, timeLimit = 20  },
-            new() { trigger = TriggerType.time, question = "¿Qué te preocupa ahora mismo que crees que no sabrás resolver?", contextLineCount = 0, timeLimit = 20  },
-            new() { trigger = TriggerType.time, question = "Explica algo que estés particularmente feliz de haber solucionado", contextLineCount = 0, timeLimit = 20  },
+            new() { type = QuestionType.input, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+            new() { type = QuestionType.input, question = "¿Qué es la palabra '[lineWord]' de la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+            new() { type = QuestionType.input, question = "¿Para qué sirve la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+            new() { type = QuestionType.input, question = "¿Qué cambiaste en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+            new() { type = QuestionType.fileSave, question = "¿Qué has cambiado en el fichero [fileName] que has guardado recientemente?", contextLines = -1, timeLimit = 15  },
+            new() { type = QuestionType.fileOpen, question = "¿Por qué has abierto recientemente el fichero [fileName]?", contextLines = -1, timeLimit = 15  },
+            new() { type = QuestionType.fileOpen, question = "¿Para qué sirve el fichero [fileName] que has abierto recientemente?", contextLines = 0, timeLimit = 10  },
+            new() { type = QuestionType.command, question = "¿Por qué ejecutaste este comando recientemente?", contextLines = 0, timeLimit = 10  },
+            new() { type = QuestionType.command, question = "¿Tuviste algún problema cuando ejecutaste el comando '[commandName]'?", contextLines = 0, timeLimit = 10  },
+            new() { type = QuestionType.time, question = "¿Qué estás haciendo ahora mismo en la actividad?", contextLines = 0, timeLimit = 20  },
+            new() { type = QuestionType.time, question = "¿Qué has hecho antes que lo que estás haciendo ahora en la actividad?", contextLines = 0, timeLimit = 20  },
+            new() { type = QuestionType.time, question = "¿Cuál es el último problema que has tenido en esta actividad?", contextLines = 0, timeLimit = 20  },
+            new() { type = QuestionType.time, question = "¿Cuál es el problema más importante que has tenido hasta ahora en la actividad?", contextLines = 0, timeLimit = 20  },
+            new() { type = QuestionType.time, question = "¿Qué te preocupa ahora mismo que crees que no sabrás resolver en la actividad?", contextLines = 0, timeLimit = 20  },
+            new() { type = QuestionType.time, question = "Explica algo que estés particularmente feliz de haber solucionado en la actividad", contextLines = 0, timeLimit = 20  },
         };
 
         enum State
@@ -83,10 +86,25 @@ namespace TrueStory
 
         State state;
 
-        Question? questionChanges;
+        List<QuestionTemplate> templateCandidatesTime;
+        List<QuestionTemplate> templateCandidatesInput;
+        List<QuestionTemplate> templateCandidatesCommand;
+        List<QuestionTemplate> templateCandidatesOpen;
+        List<QuestionTemplate> templateCandidatesSave;
 
-        long questionIdleWait;
-        long questionWarningWait;
+        List<Question> questionCandidates;
+        List<Question> questionShortList;
+        List<QuestionType> questionShortListTypes;
+        Question? question;
+
+        char[] ignoreCharacters;
+
+
+        long questionCharactersWait;
+        long questionCommandsWait;
+        long questionOpensWait;
+        long questionSavesWait;
+
 
         Random random;
 
@@ -96,11 +114,26 @@ namespace TrueStory
         DispatcherTimer timer;
 
         TextBlock instructorTextBox;
+
+        long idleWait;
+        long fetchWait;
+
+        long idleTimer;
+        long fetchTimer;
+        long warningTimer;
+
+        long inactiveTimer;
+
+        long inputCharactersCounter;
+        long opensCounter;
+        long savesCounter;
+        long commandsCounter;
         
 
         public Instructor(MainWindow _window)
         {
             _window.FileEditor.OnContentsChanged += OnFileEditorContentsChanged;
+            _window.CommandConsole.OnCommandExecuted += OnCommandConsoleExecutedCommand;
 
             fileEditor = _window.FileEditor;
             instructorTextBox = _window.InstructorTextBox;
@@ -109,16 +142,49 @@ namespace TrueStory
 
             random = new Random((int)(DateTimeOffset.Now.ToUnixTimeSeconds() % Int32.MaxValue));
 
-            questionIdleWait = random.NextInt64(Constants.minQuestionWait, Constants.maxQuestionWait);
             instructorTextBox.Text = "";
             instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
 
+            questionCharactersWait = random.NextInt64(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
+            questionOpensWait = random.NextInt64(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
+            questionSavesWait = random.NextInt64(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
+            questionCommandsWait = random.NextInt64(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+
+            idleWait = random.NextInt64(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait + 1);
+
+            questionCandidates = new();
+            questionShortList = new();
+            questionShortListTypes = new();
+
+            idleTimer = 0;
+            fetchTimer = 0;
+
+            inputCharactersCounter = 0;
+            opensCounter = 0;
+            savesCounter = 0;
+            commandsCounter = 0;
+
+            inactiveTimer = 0;
+
             state = State.idle;
+
+            List<char> separators = new();
+            separators.AddRange(Constants.tabEquivalents);
+            separators.AddRange(Constants.wordSeparators);
+            ignoreCharacters = separators.ToArray();
+
+            List<QuestionTemplate> templatesList = new(questionTemplates);
+            templateCandidatesTime = templatesList.FindAll((q) => q.type == QuestionType.time);
+            templateCandidatesInput = templatesList.FindAll((q) => q.type == QuestionType.input);
+            templateCandidatesCommand = templatesList.FindAll((q) => q.type == QuestionType.command);
+            templateCandidatesOpen = templatesList.FindAll((q) => q.type == QuestionType.fileOpen);
+            templateCandidatesSave = templatesList.FindAll((q) => q.type == QuestionType.fileSave);
 
 
             timer = new();
             timer.Tick += OnTimerTick;
             timer.Interval = new TimeSpan(0, 0, 1);
+
 
             if (!Switches.NoQuestions)
             {
@@ -127,36 +193,305 @@ namespace TrueStory
 
         }
 
-        void TryFetchChangesQuestion()
+        void OnTimerTick(object? sender, EventArgs e)
         {
-            List<QuestionTemplate> templates = new(questionTemplates);
-            templates.RemoveAll((q) => q.trigger != TriggerType.fileChanges);
+            if (Switches.NoQuestions) { return; }
 
-            if (templates.Count > 0)
+            if (!fileEditor.IsFileLoaded) { return;  }
+
+            Console.WriteLine("Instructor: " + state + ": IDLE " + idleTimer + "/" + idleWait +
+                                                       ", FETC" + fetchTimer + "/" + fetchWait +
+                                                       ", WARN " + warningTimer + "/" + Constants.questionWarningTime +
+                                                       " IC " + inputCharactersCounter + "/" + questionCharactersWait + 
+                                                       " CC " + commandsCounter + "/" + questionCommandsWait);
+
+            inactiveTimer++;
+
+            if (CanFetchQuestion(QuestionType.time))
             {
-                int index = random.Next(templates.Count);
+                TryFetchTimeQuestion();
+            }
 
-                QuestionTemplate template = templates[index];
+            if (state == State.idle)
+            {
+                if (inactiveTimer <= Constants.inactiveWait)
+                {
+                    idleTimer++;
+                }
 
-                Console.WriteLine("Trying to apply template " + index);
+                if (idleTimer > idleWait)
+                {
+                    fetchWait = random.NextInt64(Constants.minQuestionsFetchWait, Constants.maxQuestionsFetchWait + 1);
+                    fetchTimer = 0;
 
-                if (template.contextLineCount > 0)
+                    questionCandidates.Clear();
+                    
+                    instructorTextBox.Text = "Observando";
+                    instructorTextBox.Background = new SolidColorBrush(Colors.Orange);
+
+                    state = State.fetching;
+                }
+
+            }
+            else if (state == State.fetching)
+            {
+                if (inactiveTimer <= Constants.inactiveWait)
+                {
+                    fetchTimer++;
+                }
+
+                if (fetchTimer > fetchWait)
+                {
+                    if(questionCandidates.Count > 0)
+                    {
+                        Console.WriteLine("Choosing question between " + questionCandidates.Count + " candidates");
+
+                        Predicate<Question> filter = (Question q) => q.type == QuestionType.time;
+                        Question? timeQuestion = questionCandidates.FindLastIndex(filter) >= 0 ? questionCandidates.Find(filter) : null;
+
+                        filter = (Question q) => q.type == QuestionType.input;
+                        Question? inputQuestion = questionCandidates.FindLastIndex(filter) >= 0 ? questionCandidates.Find(filter) : null;
+
+                        filter = (Question q) => q.type == QuestionType.command;
+                        Question? commandsQuestion = questionCandidates.FindLastIndex(filter) >= 0 ? questionCandidates.Find(filter) : null;
+
+                        filter = (Question q) => q.type == QuestionType.fileOpen;
+                        Question? opensQuestion = questionCandidates.FindLastIndex(filter) >= 0 ? questionCandidates.Find(filter) : null;
+
+                        filter = (Question q) => q.type == QuestionType.fileSave;
+                        Question? savesQuestion = questionCandidates.FindLastIndex(filter) >= 0 ? questionCandidates.Find(filter) : null;
+
+                        questionShortList.Clear();
+
+                        if (timeQuestion.HasValue) { questionShortList.Add(timeQuestion.Value); }
+                        if (inputQuestion.HasValue) { questionShortList.Add(inputQuestion.Value); }
+                        if (commandsQuestion.HasValue) { questionShortList.Add(commandsQuestion.Value); }
+                        if (opensQuestion.HasValue) { questionShortList.Add(opensQuestion.Value); }
+                        if (savesQuestion.HasValue) { questionShortList.Add(savesQuestion.Value); }
+
+                        Console.WriteLine("Shortlist:");
+                        foreach (Question q in questionShortList)
+                        {
+                            Console.WriteLine(q.type + ": " + q.text);
+                        }
+
+                        questionShortListTypes.Clear();
+
+                        if (questionShortList.FindIndex(q => q.type == QuestionType.time) >= 0) { questionShortListTypes.Add(QuestionType.time); }
+                        if (questionShortList.FindIndex(q => q.type == QuestionType.input) >= 0) { questionShortListTypes.Add(QuestionType.input); }
+                        if (questionShortList.FindIndex(q => q.type == QuestionType.command) >= 0) { questionShortListTypes.Add(QuestionType.command); }
+                        if (questionShortList.FindIndex(q => q.type == QuestionType.fileOpen) >= 0) { questionShortListTypes.Add(QuestionType.fileOpen); }
+                        if (questionShortList.FindIndex(q => q.type == QuestionType.fileSave) >= 0) { questionShortListTypes.Add(QuestionType.fileSave); }
+
+                        int totalWeight = 0;
+
+                        bool hasTime = questionShortListTypes.Contains(QuestionType.time);
+                        bool hasInput = questionShortListTypes.Contains(QuestionType.input);
+                        bool hasCommand = questionShortListTypes.Contains(QuestionType.command);
+                        bool hasOpen = questionShortListTypes.Contains(QuestionType.fileOpen);
+                        bool hasSave = questionShortListTypes.Contains(QuestionType.fileSave);
+
+                        if (hasTime) { totalWeight += Constants.questionsTimeWeight; }
+                        if (hasInput) { totalWeight += Constants.questionsInputWeight; }
+                        if (hasCommand) { totalWeight += Constants.questionsCommandsWeight; }
+                        if (hasOpen) { totalWeight += Constants.questionsOpensWeight; }
+                        if (hasSave) { totalWeight += Constants.questionsSavesWeight; }
+
+                        int randomWeight = random.Next(0, totalWeight);
+
+                        Predicate<Question> criteria;
+
+                        if (hasTime)
+                        {
+                            if (randomWeight < Constants.questionsTimeWeight)
+                            {
+                                criteria = (q => q.type == QuestionType.time);
+                                question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
+                            }
+
+                            randomWeight -= Constants.questionsTimeWeight;
+
+                        }
+
+
+                        if (question == null && hasInput)
+                        {
+                            if (randomWeight < Constants.questionsInputWeight)
+                            {
+                                criteria = (q => q.type == QuestionType.input);
+                                question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
+                            }
+
+                            randomWeight -= Constants.questionsInputWeight;
+                        }
+
+
+                        if (question == null && hasCommand)
+                        {
+                            if (randomWeight < Constants.questionsCommandsWeight)
+                            {
+                                criteria = (q => q.type == QuestionType.command);
+                                question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
+                            }
+
+                            randomWeight -= Constants.questionsCommandsWeight;
+                        }
+
+                        if (question == null && hasOpen)
+                        {
+                            if (randomWeight < Constants.questionsOpensWeight)
+                            {
+                                criteria = (q => q.type == QuestionType.fileOpen);
+                                question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
+                            }
+
+                            randomWeight -= Constants.questionsOpensWeight;
+                        }
+
+
+                        if (question == null)
+                        {
+                            criteria = (q => q.type == QuestionType.fileSave);
+                            question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
+                        }
+
+
+                        // Question should be != null by this point, but I leave the condition check
+                        // to avoid crashes for the students
+
+                        Debug.Assert(question != null);
+
+                        //if (question != null)
+                        //{
+                            warningTimer = 0;
+                            state = State.warning;
+                        //}
+
+
+                    }
+                }
+
+            }
+            else if (state == State.warning)
+            {
+                warningTimer++;
+
+                if (warningTimer < Constants.questionWarningTime)
+                {
+                    instructorTextBox.Text = "Pregunta en " + (Constants.questionWarningTime - warningTimer);
+                    instructorTextBox.Background = new SolidColorBrush(Colors.Yellow);
+                }
+                else
+                {
+                    instructorTextBox.Text = "";
+                    instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
+
+                    Debug.Assert(question.HasValue);
+
+                    DialogQuestion d = new();
+                    d.Question = question.Value;
+                    d.Show();
+
+                    question = null;
+
+                    inputCharactersCounter = 0;
+                    commandsCounter = 0;
+                    opensCounter = 0;
+                    savesCounter = 0;
+
+                    idleWait = random.NextInt64(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait);
+                    idleTimer = 0;
+
+                    state = State.idle;
+
+                }
+            }
+
+        }
+
+        void OnFileEditorContentsChanged(FileEditor.ContentChange c)
+        {
+            if (Switches.NoQuestions) { return;  }
+
+            if(c.Added > 0)
+            {
+                inputCharactersCounter += c.AddedText.Count(c => !ignoreCharacters.Contains(c));
+
+                if (CanFetchQuestion(QuestionType.input))
+                {
+                    TryFetchInputQuestion();
+                }
+
+            }
+
+            inactiveTimer = 0;
+        }
+
+        void OnCommandConsoleExecutedCommand(string command, string _)
+        {
+            commandsCounter++;
+
+            if (CanFetchQuestion(QuestionType.command))
+            {
+                TryFetchCommandQuestion(command);
+            }
+
+            inactiveTimer = 0;
+        }
+
+        bool CanFetchQuestion(QuestionType t)
+        {
+            bool charactersWaitFinished = inputCharactersCounter >= questionCharactersWait;
+            bool opensWaitFinished = opensCounter >= questionOpensWait;
+            bool savesWaitFinished = savesCounter >= questionSavesWait;
+            bool commandsWaitFinished = commandsCounter >= questionCommandsWait;
+
+            bool isTimeTrigger = (t == QuestionType.time);
+            bool isCharactersTrigger = (t == QuestionType.input);
+            bool isOpensTrigger = (t == QuestionType.fileOpen);
+            bool isSavesTrigger = (t == QuestionType.fileSave);
+            bool isCommandsTrigger = (t == QuestionType.command);
+
+            bool result = (state == State.fetching) &&
+                          (
+                            charactersWaitFinished && isCharactersTrigger ||
+                            opensWaitFinished && isOpensTrigger ||
+                            savesWaitFinished && isSavesTrigger ||
+                            commandsWaitFinished && isCommandsTrigger ||
+                            isTimeTrigger
+                          );
+
+            return result;
+        }
+
+        void TryFetchInputQuestion()
+        {
+            if (templateCandidatesInput.Count > 0)
+            {
+                int index = random.Next(templateCandidatesInput.Count);
+
+                QuestionTemplate template = templateCandidatesInput[index];
+
+                Console.WriteLine("Trying to fetch input question");
+
+                if (template.contextLines > 0)
                 {
                     int currentLine = fileEditor.TextBox.GetLineIndexFromCharacterIndex(fileEditor.TextBox.CaretIndex);
                     int numLines = fileEditor.TextBox.LineCount;
-                    int contextStart = currentLine - template.contextLineCount / 2;
-                    int contextEnd = currentLine + template.contextLineCount / 2;
+                    int contextStart = currentLine - template.contextLines / 2;
+                    int contextEnd = currentLine + template.contextLines / 2;
 
                     if (contextStart < 0) { contextEnd += -contextStart; contextStart = 0; }
                     else if (contextEnd >= numLines) { contextStart += -(contextEnd - (numLines - 1)); contextEnd = numLines - 1; }
 
                     string lineText = fileEditor.TextBox.GetLineText(currentLine).Replace("\r\n", "");
 
-                    int lineSize = lineText.Count((c) => !(Constants.wordSeparators.Contains(c) || Constants.tabEquivalents.Contains(c)));
+                    //int lineSize = lineText.Count((c) => !(Constants.wordSeparators.Contains(c) || Constants.tabEquivalents.Contains(c)));
+                    int lineWords = lineText.Split(ignoreCharacters, StringSplitOptions.RemoveEmptyEntries).Length;
 
                     if (contextStart >= 0 && contextEnd < numLines &&
-                        (contextEnd - contextStart + 1) > template.contextLineCount &&
-                        lineSize >= template.contextLineSize)
+                        (contextEnd - contextStart + 1) > template.contextLines &&
+                        lineWords >= template.contextWords)
                     {
                         Context context = new();
 
@@ -181,11 +516,7 @@ namespace TrueStory
                         Question q = new Question();
 
 
-                        List<char> separators = new();
-                        separators.AddRange(Constants.tabEquivalents);
-                        separators.AddRange(Constants.wordSeparators);
-
-                        string[] words = lineText.Split(separators.ToArray(), StringSplitOptions.RemoveEmptyEntries);
+                        string[] words = lineText.Split(ignoreCharacters, StringSplitOptions.RemoveEmptyEntries);
                         string anyWord = words[random.Next(words.Length)];
 
                         string text = template.question;
@@ -199,17 +530,17 @@ namespace TrueStory
                         q.usedTime = 0;
                         q.timeLimit = template.timeLimit;
 
-                        questionChanges = q;
+                        questionCandidates.Add(q);
                     }
                     else
                     {
-                        if (contextStart < 0 || contextEnd > numLines || (contextEnd - contextStart + 1) < template.contextLineCount)
+                        if (contextStart < 0 || contextEnd > numLines || (contextEnd - contextStart + 1) < template.contextLines)
                         {
-                            Console.WriteLine("Not enough context size");
+                            Console.WriteLine("Not enough context available (lines)");
                         }
                         else
                         {
-                            Console.WriteLine("Not enough words size");
+                            Console.WriteLine("Not enough context available (words)");
                         }
 
                     }
@@ -220,70 +551,47 @@ namespace TrueStory
             }
         }
 
-        void OnTimerTick(object? sender, EventArgs e)
+        private void TryFetchTimeQuestion()
         {
-            if (Switches.NoQuestions) { return; }
-
-
-            if (state == State.idle)
+            if (templateCandidatesTime.Count > 0)
             {
-                questionIdleWait -= 1;
+                int index = random.Next(templateCandidatesTime.Count);
 
-                if (questionIdleWait <= 0)
-                {
-                    state = State.fetching;
-                }
+                QuestionTemplate template = templateCandidatesTime[index];
+
+                Question q = new();
+
+                q.text = template.question;
+                q.timeLimit = template.timeLimit;
+                q.type = template.type;
+
+                questionCandidates.Add(q);
+
             }
-            else if (state == State.fetching)
-            {
-                if (questionChanges.HasValue)
-                {
-                    questionWarningWait = Constants.questionWarningTime;
-                    instructorTextBox.Text = "Pregunta en " + questionWarningWait;
-                    instructorTextBox.Background = new SolidColorBrush(Colors.Yellow);
-
-                    state = State.warning;
-                }
-            }
-            else if (state == State.warning)
-            {
-                questionWarningWait -= 1;
-
-                if (questionWarningWait > 0)
-                {
-                    instructorTextBox.Text = "Pregunta en " + questionWarningWait;
-                    instructorTextBox.Background = new SolidColorBrush(Colors.Yellow);
-                }
-                else
-                {
-                    instructorTextBox.Text = "";
-                    instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
-
-                    Debug.Assert(questionChanges.HasValue);
-
-                    DialogQuestion d = new();
-                    d.Question = questionChanges.Value;
-                    d.Show();
-
-                    questionChanges = null;
-                    questionIdleWait = random.NextInt64(Constants.minQuestionWait, Constants.maxQuestionWait);
-
-                    state = State.idle;
-
-                }
-            }
-
         }
 
-        void OnFileEditorContentsChanged(FileEditor.ContentChange c)
+        private void TryFetchCommandQuestion(string command)
         {
-            if (Switches.NoQuestions) { return;  }
-
-            if (questionWarningWait >= 0)
+            if (templateCandidatesCommand.Count > 0)
             {
-                TryFetchChangesQuestion();
-            }
+                int index = random.Next(templateCandidatesCommand.Count);
 
+                QuestionTemplate template = templateCandidatesCommand[index];
+
+                Question q = new();
+
+                string text = template.question;
+                text = text.Replace("[commandName]", command);
+                q.text = text;
+
+                q.context.command = command;
+
+                q.timeLimit = template.timeLimit;
+                q.type = template.type;
+
+                questionCandidates.Add(q);
+
+            }
         }
     }
 }

@@ -245,10 +245,7 @@ namespace TrueStory
                 long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 cc.DeltaTime = time - lastChangeTime;
 
-                Console.WriteLine("Delta time: " + cc.DeltaTime);
-
                 lastChangeTime = time;
-                
 
                 OnContentsChanged?.Invoke(cc);
             }

@@ -8,6 +8,13 @@ namespace TrueStory
 {
     public class Constants
     {
+        // Console
+
+        public const string consolePrompt = "> ";
+
+
+        // Folder view
+
         public const string parentFolderName = "..";
         public const string folderPrefix = "[Carpeta] ";
 
@@ -25,13 +32,66 @@ namespace TrueStory
             "java"
         };
 
-        public static readonly char[] wordSeparators = new char[] { ';', '(', ')', '"', '\'', '.', ',' };
+        public static readonly char[] wordSeparators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' };
+
+        public const int minQuestionOpensWait = 1;
+        public const int maxQuestionOpensWait = 3;
+
+        public const int minQuestionSavesWait = 1;
+        public const int maxQuestionSavesWait = 3;
+
+        public const long minQuestionCharactersWait = 4 * 4;
+        public const long maxQuestionCharactersWait = 8 * 4;
+
+        public const long minQuestionCommandsWait = 1;
+        public const long maxQuestionCommandsWait = 3;
+
+        public const long minQuestionsTimeWait = 10;
+        public const long maxQuestionsTimeWait = 20;
+
+        public const long minQuestionsFetchWait = 5;
+        public const long maxQuestionsFetchWait = 10;
+
+        public const int questionsTimeWeight = 1;
+        public const int questionsInputWeight = 100;
+        public const int questionsOpensWeight = 1;
+        public const int questionsSavesWeight = 1;
+        public const int questionsCommandsWeight = 1;
 
 
-        public const long minQuestionWait = 60 * 5;
-        public const long maxQuestionWait = 60 * 10;
+
+        //public const int minQuestionOpensWait = 1;
+        //public const int maxQuestionOpensWait = 3;
+
+        //public const int minQuestionSavesWait = 1;
+        //public const int maxQuestionSavesWait = 3;
+
+        //public const long minQuestionCharactersWait = 300 * 4;
+        //public const long maxQuestionCharactersWait = 400 * 4;
+
+
+        //public const long minQuestionCommandsWait = 10;
+        //public const long maxQuestionCommandsWait = 15;
+
+        //public const long minQuestionsTimeWait = 60 * 5;
+        //public const long maxQuestionsTimeWait = 60 * 10;
+
+        //public const long minQuestionsFetchWait = 10;
+        //public const long maxQuestionsFetchWait =     60;
+
+        //public const int questionsTimeWeight = 10;
+        //public const int questionsInputWeight = 60;
+        //public const int questionsOpensWeight = 10;
+        //public const int questionsSavesWeight = 10;
+        //public const int questionsCommandsWeight = 10;
+
 
         public const long questionWarningTime = 5;
+
+        public const long inactiveWait = 3;
+
+        public const float questionDialogHurryUp2 = 0.8f;
+        public const float questionDialogHurryUp1 = 0.5f;
 
     }
 }

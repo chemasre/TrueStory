@@ -19,6 +19,7 @@ namespace TrueStory
     {
         public string? LoadedFile { get { return loadedFile;  } }
         public FileEditor FileEditor { get { return fileEditor; } }
+        public CommandConsole CommandConsole { get { return commandConsole; } }
 
         Story? story;
         StoryActions? performer;
@@ -81,7 +82,7 @@ namespace TrueStory
 
             UpdateFileTitle();
 
-            Title = Version.FullName();
+            Title = Version.GetFullName();
         }
 
         private void OnClosing(object? sender, CancelEventArgs e)

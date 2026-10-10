@@ -4,13 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
-        mc:Ignorable="d"
-        Title="Acerca de TrueStory" Width="630" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        mc:Ignorable="d" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de ">
     <DockPanel>
-        <RichTextBox DockPanel.Dock="Top" MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40">
+        <RichTextBox x:Name="Document" DockPanel.Dock="Top" MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="150,50,150,30">
             <FlowDocument>
+                <Paragraph TextAlignment="Center">
+                    <Image Source="/AboutImage.png" Width="100" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Paragraph>
                 <Paragraph>
-                    TrueStory es una aplicación que trata de <Bold>ayudarte a adquirir las competencias previstas en el temario</Bold> poniéndote un poco más difícil que copies y pegues el contenido generado con IA sin comprenderlo realmente.
+                    El editor <Bold>TrueStory</Bold> trata de <Bold>ayudarte a adquirir las competencias previstas en el temario</Bold> poniéndote un poco más difícil que copies y pegues el contenido generado con IA sin comprenderlo realmente.
                 </Paragraph>
                 <Paragraph>
                     La forma en que lo hace es:
@@ -39,7 +41,7 @@
                 <List MarkerStyle="Decimal">
                     <ListItem>
                         <Paragraph>
-                            <Bold>No monitoriza tu ordenador de ninguna forma</Bold>. TrueStory no examina qué ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
+                            <Bold>No monitoriza tu ordenador de ninguna forma</Bold> . TrueStory no examina qué ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
                         </Paragraph>
                     </ListItem>
                     <ListItem>
@@ -49,18 +51,22 @@
                     </ListItem>
                     <ListItem>
                         <Paragraph>
-                        <Bold>No evita que "hagas trampa"</Bold> . Si te empeñas, puedes saltarte todos los controles que pone la aplicación. Sólo esperamos que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir esa energía en formarte.
+                            <Bold>No evita que "hagas trampa"</Bold> . Si te empeñas, puedes saltarte todos los controles que pone la aplicación. Sólo esperamos que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir esa energía en formarte.
                         </Paragraph>
-                     </ListItem>
+                        <Paragraph TextAlignment="Center" BorderBrush="#FF0B52C5" BorderThickness="1,1,1,1" Padding="5,5,5,5" Margin="10,20,10,20" Foreground="#FF1E3CB5">
+                            <Bold>El objetivo de la formación es entrenar la red neuronal que tienes en la cabeza</Bold>
+                        </Paragraph>
+                    </ListItem>
 
                 </List>
-                <Paragraph TextAlignment="Center" BorderBrush="#FF0B52C5" BorderThickness="1,1,1,1" Padding="5,5,5,5" Margin="Auto,42,Auto,15" Foreground="#FF1E3CB5">
-                    <Bold>Recuerda que el objetivo de la formación es que entrenes la red neuronal que tienes en la cabeza</Bold>
+                <Paragraph TextAlignment="Left" Margin="60,40,60,10" FontStyle="Italic">El ejecutable de esta aplicación y su código están bajo licencia Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International, lo que significa que puedes utilizarlos para usos no comerciales y distribuirlos sin modificaciones.</Paragraph>
+                <Paragraph TextAlignment="Center" Margin="0,20,0,0">
+                    <Image Source="/AboutLicense.png" Width="100" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50"/>
         </DockPanel>
     </DockPanel>
 </Window>

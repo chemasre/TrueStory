@@ -20,5 +20,45 @@ namespace ActivityDesigner
         {
             InitializeComponent();
         }
+
+        private void OnNewActivity(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuOpenActivity(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuCloseActivity(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuNewFolder(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuNewFile(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuDeleteFileOrFolder(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuSaveFile(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnMenuAboutApp(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -61,27 +61,65 @@ namespace TrueStory
             FlowDocument doc = QuestionDocument.Document;
 
             doc.Blocks.Clear();
-            doc.Blocks.Add(new Paragraph(new Run("Fichero '" + Question.context.fileName + "'")));
 
-            Paragraph p = null;
+            Paragraph? p = null;
 
-            foreach (Instructor.ContextLine l in Question.context.lines)
+            if (Question.type == Instructor.QuestionType.input)
             {
-                p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
+
+                Table table = new ();
+                TableColumn column = new();
+                table.Columns.Add(column);
+                TableRowGroup rowGroup = new();
+                TableRow row = new();
+                TableCell cell = new();
+
+                p = new Paragraph(new Run(Question.context.fileName));
+                p.FontSize *= 1.2f;
+                doc.Blocks.Add(p);
+
+                foreach (Instructor.ContextLine l in Question.context.lines)
+                {
+                    p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
+
+                    p.Margin = new Thickness(0);
+                    cell.Blocks.Add(p);
+                }
+
+                table.BorderBrush = new SolidColorBrush(Colors.LightGray);
+                table.BorderThickness = new Thickness(1);
+                table.Padding = new Thickness(5);
+
+                row.Cells.Add(cell);
+                rowGroup.Rows.Add(row);
+                table.RowGroups.Add(rowGroup);
+
+                doc.Blocks.Add(table);
+            }
+            else if(Question.type == Instructor.QuestionType.command)
+            {
+                p = new Paragraph(new Run(Constants.consolePrompt + Question.context.command));
+                p.TextAlignment = TextAlignment.Center;
+                p.FontSize *= 1.2f;
                 p.Margin = new Thickness(0);
                 doc.Blocks.Add(p);
             }
 
+
             p = new Paragraph(new Run(Question.text));
             p.Margin = new Thickness(0, 20, 0, 0);
+            p.FontSize *= 1.2f;
             doc.Blocks.Add(p);
 
             AnswerTextBox.Focus();
 
             TimeBar.Maximum = Question.timeLimit;
             TimeBar.Minimum = 0;
+            TimeBar.Value = Question.timeLimit;
+            TimeBar.Foreground = new SolidColorBrush(Colors.Green);
 
             usedTime = 0;
+
 
             timer.Tick += OnTick;
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -92,6 +130,20 @@ namespace TrueStory
         private void OnTick(object? sender, EventArgs e)
         {
             usedTime += 1;
+
+            if (usedTime > (Question.timeLimit * Constants.questionDialogHurryUp2))
+            {
+                TimeBar.Foreground = new SolidColorBrush(Colors.DeepPink);
+            }
+            else if (usedTime > (Question.timeLimit * Constants.questionDialogHurryUp1))
+            {
+                TimeBar.Foreground = new SolidColorBrush(Colors.Orange);
+            }
+            else
+            {
+                TimeBar.Foreground = new SolidColorBrush(Colors.Green);
+            }
+
 
             if (usedTime >= Question.timeLimit)
             {
