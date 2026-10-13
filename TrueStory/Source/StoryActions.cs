@@ -12,13 +12,17 @@ namespace TrueStory
     public class StoryActions : IDisposable
     {
         Story story;
+        MainWindow window;
 
         Encoding encoding;
 
-        public StoryActions(Story _story)
+        public StoryActions(Story _story, MainWindow _window)
         {
+            window = _window;
+
             story = _story;
 
+            story.OnOpenStory += OnOpenStory;
             story.OnCreateFolder += OnCreateFolder;
             story.OnCreateFile += OnCreateFile;
             story.OnDeleteFile += OnDeleteFile;
@@ -26,11 +30,27 @@ namespace TrueStory
             story.OnLoadFile += OnLoadFile;
             story.OnSaveFile += OnSaveFile;
             story.OnExecuteCommand += OnExecuteCommand;
+            story.OnQuestion += OnQuestion;
+            story.OnCloseStory += OnCloseStory;
 
             encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
 
+        void OnOpenStory(Story.PersistentData data)
+        {
+            Instructor.CountersState p;
 
+            p.charactersCounter = data.instructorCharactersCounter;
+            p.charactersWait = data.instructorCharactersWait;
+            p.commandsCounter = data.instructorCommandsCounter;
+            p.commandsWait = data.instructorCommandsWait;
+            p.opensCounter = data.instructorOpensCounter;
+            p.opensWait = data.instructorOpensWait;
+            p.savesCounter = data.instructorSavesCounter;
+            p.savesWait = data.instructorSavesWait;
+
+            window.Instructor.Counters = p;
+        }
 
         void OnDeleteFolder(string name)
         {
@@ -66,6 +86,36 @@ namespace TrueStory
             return text;
         }
 
+        Story.QuestionData OnQuestion(Story.QuestionData question)
+        {
+            DialogQuestion d = new();
+            d.Question = question;
+            d.ShowDialog();
+
+            return d.Question;
+
+        }
+
+        Story.PersistentData OnCloseStory()
+        {
+            Instructor.CountersState p = window.Instructor.Counters;
+            Story.PersistentData d = new();
+
+            d.instructorCharactersCounter = p.charactersCounter;
+            d.instructorCharactersWait = p.charactersWait;
+            d.instructorCommandsCounter = p.commandsCounter;
+            d.instructorCommandsWait = p.commandsWait;
+            d.instructorOpensCounter = p.opensCounter;
+            d.instructorOpensWait = p.opensWait;
+            d.instructorSavesCounter = p.savesCounter;
+            d.instructorSavesWait = p.savesWait;
+
+            return d;
+
+
+        }
+
+
         string OnExecuteCommand(string command)
         {
             string output;
@@ -92,12 +142,17 @@ namespace TrueStory
 
         public void Dispose()
         {
+            story.OnOpenStory -= OnOpenStory;
             story.OnCreateFolder -= OnCreateFolder;
             story.OnCreateFile -= OnCreateFile;
             story.OnDeleteFile -= OnDeleteFile;
             story.OnDeleteFolder -= OnDeleteFolder;
             story.OnLoadFile -= OnLoadFile;
             story.OnSaveFile -= OnSaveFile;
+            story.OnExecuteCommand -= OnExecuteCommand;
+            story.OnQuestion -= OnQuestion;
+            story.OnCloseStory -= OnCloseStory;
         }
+
     }
 }

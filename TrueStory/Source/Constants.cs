@@ -40,17 +40,17 @@ namespace TrueStory
         public const int minQuestionSavesWait = 1;
         public const int maxQuestionSavesWait = 3;
 
-        public const long minQuestionCharactersWait = 4 * 4;
-        public const long maxQuestionCharactersWait = 8 * 4;
+        public const int minQuestionCharactersWait = 4 * 4;
+        public const int maxQuestionCharactersWait = 8 * 4;
 
-        public const long minQuestionCommandsWait = 1;
-        public const long maxQuestionCommandsWait = 3;
+        public const int minQuestionCommandsWait = 1;
+        public const int maxQuestionCommandsWait = 3;
 
-        public const long minQuestionsTimeWait = 10;
-        public const long maxQuestionsTimeWait = 20;
+        public const int minQuestionsTimeWait = 10;
+        public const int maxQuestionsTimeWait = 20;
 
-        public const long minQuestionsFetchWait = 5;
-        public const long maxQuestionsFetchWait = 10;
+        public const int minQuestionsFetchWait = 5;
+        public const int maxQuestionsFetchWait = 10;
 
         public const int questionsTimeWeight = 1;
         public const int questionsInputWeight = 100;

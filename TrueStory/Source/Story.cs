@@ -12,6 +12,8 @@ namespace TrueStory
 {
     public class Story : IDisposable
     {
+        public const string signature = "TSRY";
+
         public enum Mode
         {
             Create,
@@ -42,10 +44,81 @@ namespace TrueStory
 
         public struct QuestionData
         {
-            public string question;
+            public QuestionType type;
+            public string text;
+            public QuestionContextData context;
             public string answer;
             public int usedTime;
-            public int totalTime;
+            public int timeLimit;
+
+            public QuestionData()
+            {
+                type = QuestionType.input;
+                text = "";
+                context = new QuestionContextData();
+                answer = "";
+                usedTime = 0;
+                timeLimit = 0;
+
+            }
+
+        }
+
+        public struct QuestionContextData
+        {
+            public string fileName;
+            public QuestionContextLineData[] lines;
+            public int currentLine;
+            public string command;
+
+            public QuestionContextData()
+            {
+                fileName = "";
+                lines = Array.Empty<QuestionContextLineData>();
+                currentLine = 0;
+                command = "";
+            }
+
+        }
+
+        public struct QuestionContextLineData
+        {
+            public int number;
+            public string text;
+
+            public QuestionContextLineData()
+            {
+                number = 0;
+                text = "";
+            }
+        }
+
+        public enum QuestionType
+        {
+            input,
+            time,
+            fileSave,
+            fileOpen,
+            command,
+
+        }
+
+        public struct PersistentData
+        {
+            public int instructorCharactersCounter;
+            public int instructorCharactersWait;
+            public int instructorCommandsCounter;
+            public int instructorCommandsWait;
+            public int instructorOpensCounter;
+            public int instructorOpensWait;
+            public int instructorSavesCounter;
+            public int instructorSavesWait;
+        }
+
+        public enum ReadDirection
+        {
+            Forward,
+            Backwards
         }
 
         public enum RecordType
@@ -57,7 +130,11 @@ namespace TrueStory
             DeleteDirectory,
             LoadFile,
             SaveFile,
-            ExecuteCommand
+            ExecuteCommand,
+            CloseStory,
+            OpenStory,
+            Question
+
         }
 
         public struct Record
@@ -66,15 +143,19 @@ namespace TrueStory
             public byte[] data;
         }
 
+        public event OpenStoryHandler? OnOpenStory;
         public event CreateFileHandler? OnCreateFile;
-        public event CreateFileHandler? OnCreateFolder;
-        public event CreateFileHandler? OnDeleteFile;
-        public event CreateFileHandler? OnDeleteFolder;
+        public event CreateFolderHandler? OnCreateFolder;
+        public event DeleteFileHandler? OnDeleteFile;
+        public event DeleteFolderHandler? OnDeleteFolder;
         public event LoadFileHandler? OnLoadFile;
         public event SaveFileHandler? OnSaveFile;
         public event ExecuteCommandHandler? OnExecuteCommand;
+        public event QuestionHandler? OnQuestion;
+        public event CloseStoryHandler? OnCloseStory;
 
 
+        public delegate void OpenStoryHandler(PersistentData data);
         public delegate void CreateFileHandler(string name);
         public delegate void CreateFolderHandler(string name);
         public delegate void DeleteFileHandler(string name);
@@ -82,6 +163,8 @@ namespace TrueStory
         public delegate string LoadFileHandler(string name);
         public delegate void SaveFileHandler(string name, string text);
         public delegate string ExecuteCommandHandler(string name);
+        public delegate QuestionData QuestionHandler(QuestionData q);
+        public delegate PersistentData CloseStoryHandler();
 
 
         public const string StoryFilename = ".truestory";
@@ -92,6 +175,8 @@ namespace TrueStory
         string rootPath;
         Mode mode;
 
+        byte[] signatureBytes;
+
         bool disposed;
 
         public Story(string _rootPath, Mode _mode, HeaderData? header = null)
@@ -101,32 +186,44 @@ namespace TrueStory
 
             string filePath = _rootPath + Path.DirectorySeparatorChar + StoryFilename;
 
-            Debug.Assert(!(_mode == Mode.Create && header == null), "Se ha de proveer una cabecera al crear la historia");
+            Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            signatureBytes = encoding.GetBytes(Story.signature);
+
+            Debug.Assert(!(_mode == Mode.Create && header == null), "Story: No header provided");
 
             if (_mode == Mode.Create)
             {
                 Debug.Assert(header.HasValue);
 
-                file = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write);
+                file = new FileStream(filePath, FileMode.CreateNew, FileAccess.ReadWrite);
 
+                AddSignature();
 
                 Record r = new();
                 r.type = RecordType.Header;
 
-                BinaryBuffer buffer = new();
+                BinaryBufferWriter buffer = new();
 
+                buffer.WriteString(Guid.NewGuid().ToString());
                 buffer.WriteString(header.Value.publicKey);
-                buffer.WriteString(header.Value.author);
+                buffer.WriteString(header.Value.author);                
 
                 r.data = buffer.GetBytes();
 
                 AddRecord(r);
 
             }
-            else if (_mode == Mode.Append) { file = new FileStream(filePath, FileMode.Append, FileAccess.Write);  }
+            else if (_mode == Mode.Append)
+            {
+                file = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+                file.Seek(0, SeekOrigin.End);
+            }
             else // _mode == Mode.Read
-            { file = new FileStream(filePath, FileMode.Open, FileAccess.Read);  }
+            {
+                file = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            }
 
+            Dump();
         }
 
         public static bool ExistsStory(string path)
@@ -147,7 +244,7 @@ namespace TrueStory
 
             record.type = RecordType.CreateFolder;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(name);
 
@@ -159,16 +256,38 @@ namespace TrueStory
 
         }
 
+        void AddSignature()
+        {
+            file.Write(signatureBytes);
+            file.Flush();
+        }
+
         void AddRecord(Record record)
         {
-            int bufferSize = sizeof(int) + sizeof(RecordType) + sizeof(int) + record.data.Length;
+            int bufferSize = sizeof(RecordType) +
+                             sizeof(int) +
+                             record.data.Length +
+                             sizeof(RecordType) +
+                             sizeof(int);
+
 
             int offset = 0;
+
             byte[] buffer = new byte[bufferSize];
 
-            byte[] bytes = BitConverter.GetBytes(bufferSize);
+            byte[] bytes = BitConverter.GetBytes((int)record.type);
             bytes.CopyTo(buffer, offset);
             offset += sizeof(int);
+
+            bytes = BitConverter.GetBytes(record.data.Length);
+            bytes.CopyTo(buffer, offset);
+            offset += sizeof(int);
+
+            record.data.CopyTo(buffer, offset);
+            offset += record.data.Length;
+            
+            // Data length and type is added again to make
+            // it easier to read the contents backwards
 
             bytes = BitConverter.GetBytes((int)record.type);
             bytes.CopyTo(buffer, offset);
@@ -178,11 +297,100 @@ namespace TrueStory
             bytes.CopyTo(buffer, offset);
             offset += sizeof(int);
 
-            record.data.CopyTo(buffer, offset);
+
 
             file.Write(buffer);
             file.Flush();
 
+        }
+
+        public Record? ReadRecord(ReadDirection direction = ReadDirection.Forward)
+        {
+            int blockHeaderSize = 2 * sizeof(int);
+            int minimumBlockSize = 2 * blockHeaderSize;
+
+            if (direction == ReadDirection.Backwards && file.Position <= signatureBytes.Length)
+            {
+                // No block before current position
+
+                return null;
+            }
+            else if (direction == ReadDirection.Backwards)
+            {
+
+                Debug.Assert(file.Position >= signatureBytes.Length + minimumBlockSize, "Story: found too small block reading backwards");
+
+                Record r = new();
+
+                file.Seek(-blockHeaderSize, SeekOrigin.Current);
+
+                byte[] bytes = new byte[sizeof(int)];
+                file.Read(bytes);
+
+                r.type = (RecordType)BitConverter.ToInt32(bytes);
+
+                int blockDataLength;
+
+                bytes = new byte[sizeof(int)];
+                file.Read(bytes);
+
+                blockDataLength = BitConverter.ToInt32(bytes);
+
+                Debug.Assert(file.Position >= signatureBytes.Length + blockHeaderSize + blockDataLength, "Story: Block data not found when reading backwards");
+
+                // Place the file pointer at the beginning of the block data
+
+                file.Seek(-(blockHeaderSize + blockDataLength), SeekOrigin.Current);
+
+                bytes = new byte[blockDataLength];
+                file.Read(bytes);
+
+                r.data = bytes;
+
+                // Place the file pointer at the beginning of the block we just read
+
+                file.Seek(-(blockHeaderSize + blockDataLength), SeekOrigin.Current);
+
+                return r;
+            }
+            else if (direction == ReadDirection.Forward && file.Position == file.Length)
+            {
+                // Already at end of file
+
+                return null;
+            }
+            else // direction == ReadDirection.Forward
+            {
+                Debug.Assert(file.Position <= file.Length - minimumBlockSize, "Story: found too small block reading forwards");
+
+                Record r = new();
+
+                byte[] bytes = new byte[sizeof(int)];
+                file.Read(bytes);
+
+                r.type = (RecordType)BitConverter.ToInt32(bytes);
+
+                int blockDataLength;
+
+                bytes = new byte[sizeof(int)];
+                file.Read(bytes);
+
+                blockDataLength = BitConverter.ToInt32(bytes);
+
+                Debug.Assert(file.Position <= file.Length - blockDataLength - blockHeaderSize, "Story: no room for block data when reading forward");
+
+                bytes = new byte[blockDataLength];
+                file.Read(bytes);
+
+                r.data = bytes;
+
+                // Place the file pointer at the end of the block
+
+                file.Seek(blockHeaderSize, SeekOrigin.Current);
+
+                return r;
+
+            }
         }
 
         public void AddCreateFile(string name)
@@ -194,7 +402,7 @@ namespace TrueStory
 
             record.type = RecordType.CreateFile;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(name);
 
@@ -215,7 +423,7 @@ namespace TrueStory
 
             record.type = RecordType.DeleteDirectory;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(name);
 
@@ -235,7 +443,7 @@ namespace TrueStory
 
             record.type = RecordType.DeleteFile;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(name);
 
@@ -246,7 +454,7 @@ namespace TrueStory
             OnDeleteFile?.Invoke(name);
         }
 
-        public string LoadFile(string name)
+        public string AddLoadFile(string name)
         {
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
@@ -259,7 +467,7 @@ namespace TrueStory
 
             record.type = RecordType.LoadFile;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(name);
             buffer.WriteString(result);
@@ -272,7 +480,7 @@ namespace TrueStory
             return result;
         }
 
-        public void SaveFile(string name, string text, FileChangeData[] changes)
+        public void AddSaveFile(string name, string text, FileChangeData[] changes)
         {
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
@@ -281,7 +489,7 @@ namespace TrueStory
 
             record.type = RecordType.SaveFile;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(name);
             buffer.WriteInt(changes.Length);
@@ -305,7 +513,7 @@ namespace TrueStory
             OnSaveFile?.Invoke(name, text);
         }
 
-        public string ExecuteCommand(string command)
+        public string AddExecuteCommand(string command)
         {
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
@@ -316,7 +524,7 @@ namespace TrueStory
 
             record.type = RecordType.ExecuteCommand;
 
-            BinaryBuffer buffer = new();
+            BinaryBufferWriter buffer = new();
 
             buffer.WriteString(command);
             buffer.WriteString(result);
@@ -330,12 +538,173 @@ namespace TrueStory
 
         }
 
+        public void AddQuestion(QuestionData question)
+        {
+            Debug.Assert(!disposed);
+            Debug.Assert(mode == Mode.Append || mode == Mode.Create);
+
+            question = OnQuestion?.Invoke(question) ?? new QuestionData();
+
+            Record record = new();
+
+            record.type = RecordType.Question;
+
+            BinaryBufferWriter buffer = new();
+
+            buffer.WriteInt((int)question.type);
+            buffer.WriteString(question.text);
+
+            buffer.WriteString(question.context.fileName);
+
+            buffer.WriteInt(question.context.lines.Length);
+            for (int i = 0; i < question.context.lines.Length; i++)
+            {
+                Story.QuestionContextLineData line = question.context.lines[i];
+                buffer.WriteInt(line.number);
+                buffer.WriteString(line.text);
+            }
+
+            buffer.WriteInt(question.context.currentLine);
+            buffer.WriteString(question.context.command);
+
+            buffer.WriteString(question.answer);
+            buffer.WriteInt(question.usedTime);
+            buffer.WriteInt(question.timeLimit);
+
+            record.data = buffer.GetBytes();
+
+            AddRecord(record);
+
+
+        }
+
+        public void AddOpenStory()
+        {
+            Debug.Assert(!disposed);
+            Debug.Assert(mode == Mode.Append);
+
+            Console.WriteLine("On open story");
+            Dump();
+
+            PersistentData p = new();
+
+            Record? previous = ReadRecord(ReadDirection.Backwards);
+
+            if (previous.HasValue)
+            {
+                if (previous.Value.type == RecordType.CloseStory)
+                {
+                    BinaryBufferReader buffer = new(previous.Value.data);
+
+                    p.instructorCharactersCounter = buffer.ReadInt();
+                    p.instructorCharactersWait = buffer.ReadInt();
+                    p.instructorCommandsCounter = buffer.ReadInt();
+                    p.instructorCommandsWait = buffer.ReadInt();
+                    p.instructorOpensCounter = buffer.ReadInt();
+                    p.instructorOpensWait = buffer.ReadInt();
+                    p.instructorSavesCounter = buffer.ReadInt();
+                    p.instructorSavesWait = buffer.ReadInt();
+
+                    Console.WriteLine("Recovered CharsCounter " + p.instructorCharactersCounter + " CharsWait " + p.instructorCharactersWait);
+                    Console.WriteLine("Recovered CommandsCounter " + p.instructorCommandsCounter + " CommandsWait " + p.instructorCommandsWait);
+                    Console.WriteLine("Recovered OpensCounter " + p.instructorOpensCounter + " OpensWait " + p.instructorOpensWait);
+                    Console.WriteLine("Recovered SavesCounter " + p.instructorOpensCounter + " SavesWait " + p.instructorSavesWait);
+
+                }
+                else
+                {
+                    Console.WriteLine("No previous close block found");
+                }
+            }
+
+            OnOpenStory?.Invoke(p);
+
+            Record record = new();
+
+            record.type = RecordType.OpenStory;
+            record.data = Array.Empty<byte>();
+
+            AddRecord(record);
+        }
+
+        public void AddCloseStory()
+        {
+            Debug.Assert(!disposed);
+            Debug.Assert(mode == Mode.Append || mode == Mode.Create);
+
+            PersistentData result = OnCloseStory?.Invoke() ?? new PersistentData();
+
+            Record record = new();
+
+            record.type = RecordType.CloseStory;
+
+            BinaryBufferWriter buffer = new();
+
+            buffer.WriteInt(result.instructorCharactersCounter);
+            buffer.WriteInt(result.instructorCharactersWait);
+            buffer.WriteInt(result.instructorCommandsCounter);
+            buffer.WriteInt(result.instructorCommandsWait);
+            buffer.WriteInt(result.instructorOpensCounter);
+            buffer.WriteInt(result.instructorOpensWait);
+            buffer.WriteInt(result.instructorSavesCounter);
+            buffer.WriteInt(result.instructorSavesWait);
+
+            record.data = buffer.GetBytes();
+
+            AddRecord(record);
+
+        }
+
+        public void Dump()
+        {
+            long previousPos = file.Position;
+
+            file.Seek(0, SeekOrigin.Begin);
+
+            byte[] bytes = new byte[signatureBytes.Length];
+            file.Read(bytes);
+
+            Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+            string signature = encoding.GetString(bytes);
+
+            Console.WriteLine("Signature: " + signature);
+
+            int blockCounter = 0;
+
+            Record? record;
+            do
+            {
+                record = ReadRecord();
+
+                if (record.HasValue)
+                {
+                    Console.WriteLine("Block " + blockCounter + ": type " + record.Value.type + " data size " + record.Value.data.Length);
+
+                    blockCounter++;
+                }
+            }
+            while (record.HasValue);
+
+            for (int i = blockCounter - 1; i >= 0; i--)
+            {
+                record = ReadRecord(ReadDirection.Backwards);
+
+                Debug.Assert(record.HasValue, "Error when reading backwards");
+
+                Console.WriteLine("Block " + i + ": type " + record.Value.type + " data size " + record.Value.data.Length);
+            }
+
+            file.Position = previousPos;
+        }
+
         public void Dispose()
         {
             file.Dispose();
 
             disposed = true;
         }
+
 
 
     }

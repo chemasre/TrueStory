@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace TrueStory
 {
-    public class BinaryBuffer : IDisposable
+    public class BinaryBufferWriter : IDisposable
     {
         BinaryWriter writer;
         MemoryStream stream;
 
-        public BinaryBuffer()
+        public BinaryBufferWriter()
         {
             stream = new MemoryStream();
             writer = new BinaryWriter(stream);
@@ -51,4 +51,5 @@ namespace TrueStory
             stream.Dispose();
         }
     }
+
 }
