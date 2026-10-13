@@ -4,7 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
-        mc:Ignorable="d" Width="640" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de " Background="{DynamicResource TrueEditorBackground}">
+        mc:Ignorable="d" Width="640" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de " Background="{DynamicResource TrueEditorBackground}" FontFamily="{DynamicResource TrueStoryFont}" FontSize="{DynamicResource TrueStoryFontSize}">
+    <Window.Resources>
+
+    </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <RichTextBox x:Name="Document" DockPanel.Dock="Left" IsReadOnly="True" IsDocumentEnabled="True" Padding="5,50,5,5" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" Width="150" Background="{x:Null}">
@@ -16,9 +19,9 @@
                     </Paragraph>
                 </FlowDocument>
             </RichTextBox>
-            <TabControl DockPanel.Dock="Right" Margin="0,30,30,40">
-                <TabItem Header="Qué es">
-                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+            <TabControl DockPanel.Dock="Right" Margin="0,30,30,40" Background="{DynamicResource TrueStoryTabControlBackground}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Qué es" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>
                                 <Bold>
@@ -35,8 +38,8 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Cómo funciona">
-                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                <TabItem Header="Cómo funciona" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                                     <Paragraph Margin="0,0,0,10">
                                         <Bold>
@@ -57,8 +60,8 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Qué no hace">
-                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                <TabItem Header="Qué no hace" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                                     <Paragraph>La aplicación
                                         <Bold>NO monitoriza tu ordenador de ninguna forma</Bold>. TrueStory no examina qué otras ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
@@ -74,8 +77,8 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Licencia">
-                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                <TabItem Header="Licencia" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph TextAlignment="Left" Margin="0,0,0,10" FontStyle="Normal">
                                 El ejecutable de esta aplicación y su código están bajo licencia Creative Commons <Hyperlink NavigateUri="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</Hyperlink> , lo que significa que puedes utilizarlos para uso no comercial y distribuirlos sin modificaciones, siempre y cuando me acredites como autor.
@@ -88,8 +91,8 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Autor">
-                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}">
+                <TabItem Header="Autor" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                    <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>Mi nombre es
                                 <Bold>José Manuel "Chema" Solís</Bold> y trabajo como profesor de Ciclos Formativos de Desarrollo de Aplicaciones.</Paragraph>
@@ -104,7 +107,7 @@
             </TabControl>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
         </DockPanel>
     </DockPanel>
 </Window>

@@ -17,12 +17,14 @@ namespace TrueStory
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string? LoadedFile { get { return loadedFile;  } }
+        public string? LoadedFile { get { return loadedFile; } }
         public FileEditor FileEditor { get { return fileEditor; } }
         public CommandConsole CommandConsole { get { return commandConsole; } }
+        public Instructor Instructor { get { return instructor; } }
+        public Story? Story { get { return story; } }
 
         Story? story;
-        StoryActions? performer;
+        StoryActions? storyActions;
 
         string? loadedFile;
         List<Story.FileChangeData> loadedFileChanges;
@@ -96,7 +98,7 @@ namespace TrueStory
         {
             Debug.Assert(story != null);
 
-            return story.ExecuteCommand(command);
+            return story.AddExecuteCommand(command);
         }
 
         private void OnFolderViewFolderSelected(string _folder)
@@ -120,7 +122,7 @@ namespace TrueStory
 
             SetUIState(UIState.StoryFileLoadedNoNeedsSave);
 
-            fileEditor.Load(story.LoadFile(file));
+            fileEditor.Load(story.AddLoadFile(file));
             loadedFile = file;
             loadedFileNeedsSave = false;
             UpdateFileTitle();
@@ -264,7 +266,7 @@ namespace TrueStory
             if(result.GetValueOrDefault())
             {
                 story = new Story(dialog.ActivityFolderText.Text.Trim(), Story.Mode.Create, dialog.Header);
-                performer = new StoryActions(story);
+                storyActions = new StoryActions(story, this);
 
                 SetUIState(UIState.StoryNoSelection);
 
@@ -287,13 +289,15 @@ namespace TrueStory
                 if (Story.ExistsStory(path))
                 {
                     story = new Story(path, Story.Mode.Append);
-                    performer = new StoryActions(story);
+                    storyActions = new StoryActions(story, this);
 
                     SetUIState(UIState.StoryNoSelection);
 
                     UpdateFileTitle();
 
                     folderView.RootPath = story.RootPath;
+
+                    story.AddOpenStory();
 
 
                 }
@@ -316,10 +320,12 @@ namespace TrueStory
             FolderViewList.Items.Clear();
             commandConsole.Clear();
 
-            Debug.Assert(performer != null);
+            Debug.Assert(storyActions != null);
 
-            performer.Dispose();
-            performer = null;
+            story.AddCloseStory();
+
+            storyActions.Dispose();
+            storyActions = null;
 
             story.Dispose();
             story = null;
@@ -468,7 +474,7 @@ namespace TrueStory
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    story.SaveFile(loadedFile, FileEditorTextBox.Text, loadedFileChanges.ToArray());
+                    story.AddSaveFile(loadedFile, FileEditorTextBox.Text, loadedFileChanges.ToArray());
 
                     loadedFile = null;
                     loadedFileNeedsSave = false;
@@ -490,7 +496,7 @@ namespace TrueStory
 
             Debug.Assert(!item.StartsWith(Constants.folderPrefix) && item != Constants.parentFolderName);
 
-            story.SaveFile(item, FileEditorTextBox.Text, loadedFileChanges.ToArray());
+            story.AddSaveFile(item, FileEditorTextBox.Text, loadedFileChanges.ToArray());
             loadedFileChanges.Clear();
 
             if(loadedFileNeedsSave)

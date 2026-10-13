@@ -25,7 +25,7 @@ namespace TrueStory
         [DllImport("user32.dll")]
         public static extern bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 
-        public Instructor.Question Question { get; set; }
+        public Story.QuestionData Question { get; set; }
 
         long usedTime;
         DispatcherTimer timer;
@@ -64,7 +64,7 @@ namespace TrueStory
 
             Paragraph? p = null;
 
-            if (Question.type == Instructor.QuestionType.input)
+            if (Question.type == Story.QuestionType.input)
             {
 
                 Table table = new ();
@@ -78,7 +78,7 @@ namespace TrueStory
                 p.FontSize *= 1.2f;
                 doc.Blocks.Add(p);
 
-                foreach (Instructor.ContextLine l in Question.context.lines)
+                foreach (Story.QuestionContextLineData l in Question.context.lines)
                 {
                     p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
 
@@ -96,7 +96,7 @@ namespace TrueStory
 
                 doc.Blocks.Add(table);
             }
-            else if(Question.type == Instructor.QuestionType.command)
+            else if(Question.type == Story.QuestionType.command)
             {
                 p = new Paragraph(new Run(Constants.consolePrompt + Question.context.command));
                 p.TextAlignment = TextAlignment.Center;
@@ -137,7 +137,7 @@ namespace TrueStory
             }
             else if (usedTime > (Question.timeLimit * Constants.questionDialogHurryUp1))
             {
-                TimeBar.Foreground = new SolidColorBrush(Colors.Orange);
+                TimeBar.Foreground = new SolidColorBrush(Color.FromRgb(255, 105, 0));
             }
             else
             {
@@ -171,6 +171,10 @@ namespace TrueStory
         void Accept_Click(object sender, RoutedEventArgs e)
         {
             timer.Stop();
+
+            Story.QuestionData q = Question;
+            q.answer = AnswerTextBox.Text;
+            Question = q;
 
             Close();
         }

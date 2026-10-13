@@ -5,15 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
         mc:Ignorable="d"
-        Title="Ir a línea" Height="165" Width="338" Background="{DynamicResource TrueEditorBackground}">
+        Title="Ir a línea" Height="165" Width="338" Background="{DynamicResource TrueEditorBackground}" FontFamily="{DynamicResource TrueStoryFont}">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="True">
-            <TextBlock x:Name="Message" DockPanel.Dock="Left" Text="Ir a línea" MinHeight="20" Padding="5,5,5,5" Width="140" Margin="50,20,0,20"/>
-            <TextBox x:Name="Input" DockPanel.Dock="Left" TextWrapping="Wrap" Text="Nombre" MaxLines="1" Margin="0,20,40,20" LostFocus="Input_LostFocus" PreviewTextInput="Input_PreviewTextInput" Background="{DynamicResource TrueEditorEditableTextBackground}"/>
+            <TextBlock x:Name="Message" DockPanel.Dock="Left" Text="Ir a línea" MinHeight="20" Padding="5,5,5,5" Width="140" Margin="50,20,0,20" Foreground="{DynamicResource TrueStoryNonEditableText}" Background="{DynamicResource TrueEditorNonEditableTextBackground}"/>
+            <TextBox x:Name="Input" DockPanel.Dock="Left" TextWrapping="Wrap" Text="Nombre" MaxLines="1" Margin="0,20,40,20" LostFocus="Input_LostFocus" PreviewTextInput="Input_PreviewTextInput" Background="{DynamicResource TrueEditorEditableTextBackground}" FontFamily="{DynamicResource TrueStoryFont}"/>
         </DockPanel>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}"/>
-            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
+            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
         </DockPanel>
     </DockPanel>
 </Window>

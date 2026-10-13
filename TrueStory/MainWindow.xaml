@@ -8,13 +8,13 @@
         mc:Ignorable="d"
         Title="TrueStory 0.1.0" Height="640" Width="960" MinWidth="400" MinHeight="300" Background="{DynamicResource TrueEditorBackground}">
     <DockPanel>
-        <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource TrueEditorMenu}" FontFamily="{DynamicResource TrueStoryFont}" FontSize="{DynamicResource TrueStoryFontSize}">
-            <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource TrueEditorMenu}">
+        <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource TrueEditorMenu}" FontFamily="{DynamicResource TrueStoryFont}" FontSize="{DynamicResource TrueStoryFontSize}" Foreground="{DynamicResource TrueStoryMenuText}">
+            <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
                 <MenuItem x:Name="NewActivityMenuAction" Header="Nueva actividad..." Click="OnNewActivity"/>
                 <MenuItem x:Name="OpenActivityMenuAction" Header="Abrir actividad..." Click="OnMenuOpenActivity"/>
                 <MenuItem x:Name="CloseActivityMenuAction" Header="Cerrar actividad" Click="OnMenuCloseActivity"/>
             </MenuItem>
-            <MenuItem x:Name="FileMenu" Header="Archivo" Background="{DynamicResource TrueEditorMenu}">
+            <MenuItem x:Name="FileMenu" Header="Archivo" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
                 <MenuItem x:Name="NewMenu" Header="Nuevo">
                     <MenuItem x:Name="NewFolderMenuAction" Header="Carpeta" Click="OnMenuNewFolder"/>
                     <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="OnMenuNewFile" InputGestureText="Ctrl+N"/>
@@ -22,27 +22,27 @@
                 <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="OnMenuDeleteFileOrFolder"/>
                 <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile" InputGestureText="Ctrl+S"/>
             </MenuItem>
-            <MenuItem x:Name="EditMenu" Header="Edición" Background="{DynamicResource TrueEditorMenu}">
+            <MenuItem x:Name="EditMenu" Header="Edición" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
                 <MenuItem x:Name="CutMenuAction" Header="Cortar"/>
                 <MenuItem x:Name="CopyMenuAction" Header="Copiar"/>
                 <MenuItem x:Name="PasteMenuAction" Header="Pegar"/>
                 <Separator/>
                 <MenuItem x:Name="GotoLineMenuAction" Header="Ir a línea..."/>
             </MenuItem>
-            <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource TrueEditorMenu}">
+            <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de TrueStory" Click="OnMenuAboutApp"/>
             </MenuItem>
         </Menu>
         <DockPanel LastChildFill="True" DockPanel.Dock="Right" MinWidth="200" Width="100">
-            <TextBlock x:Name="InstructorTextBox" DockPanel.Dock="Bottom" TextWrapping="Wrap" MinHeight="146" Text="Question soon" TextAlignment="Center" Padding="0,60,0,0" FontSize="20" FontWeight="Bold" Foreground="#FF525252" FontFamily="{DynamicResource TrueStoryFont}"/>
-            <Label x:Name="FolderViewTitleLabel" DockPanel.Dock="Top" Content="Carpeta de actividad" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" Height="24" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
-            <ListBox x:Name="FolderViewList" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="{DynamicResource TrueStoryFont}" Background="{DynamicResource TrueEditorNonEditableTextBackground}" />
+            <TextBlock x:Name="InstructorTextBox" DockPanel.Dock="Bottom" TextWrapping="Wrap" MinHeight="146" Text="Question soon" TextAlignment="Center" Padding="0,60,0,0" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TrueStoryNonEditableText}" FontFamily="{DynamicResource TrueStoryFont}" Background="{DynamicResource TrueEditorNonEditableTextBackground}"/>
+            <Label x:Name="FolderViewTitleLabel" DockPanel.Dock="Top" Content="Carpeta de actividad" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
+            <ListBox x:Name="FolderViewList" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="{DynamicResource TrueStoryFont}" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" />
         </DockPanel>
         <TextBox x:Name="CommandConsoleTextBox" DockPanel.Dock="Bottom" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="{DynamicResource TrueStoryFont}" AcceptsReturn="True" AcceptsTab="True" MinHeight="120" MaxHeight="120" Height="100" Background="{DynamicResource TrueEditorEditableTextBackground}" FontSize="{DynamicResource TrueStoryFontSize}"/>
-        <Label x:Name="FileEditorInfoBarLabel_Copiar" DockPanel.Dock="Bottom" Content="Consola de comandos" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" BorderBrush="#FF868686" Height="26" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
-        <Label x:Name="FileEditorInfoBarLabel" DockPanel.Dock="Bottom" Content="Información" Width="auto" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" BorderBrush="#FFD4D3D3" Foreground="#FF969696" Background="{DynamicResource TrueEditorNonEditableTextBackground}" FontSize="{DynamicResource TrueStoryFontSize}"/>
-        <Label x:Name="FileEditorTitleLabel" DockPanel.Dock="Top" Content="Título" MinHeight="21" FontFamily="Courier New" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Height="24" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
-        <TextBox FontSize="{DynamicResource TrueStoryFontSize}" x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="{DynamicResource TrueStoryFont}" AcceptsReturn="True" AcceptsTab="True" Background="{DynamicResource TrueEditorEditableTextBackground}"/>
+        <Label x:Name="FileEditorInfoBarLabel_Copiar" DockPanel.Dock="Bottom" Content="Consola de comandos" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" BorderBrush="#FF868686" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
+        <Label x:Name="FileEditorInfoBarLabel" DockPanel.Dock="Bottom" Content="Información" Width="auto" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource TrueStoryInfobarText}" Background="{DynamicResource TrueEditorNonEditableTextBackground}" FontSize="{DynamicResource TrueStoryFontSize}"/>
+        <Label x:Name="FileEditorTitleLabel" DockPanel.Dock="Top" Content="Título" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
+        <TextBox FontSize="{DynamicResource TrueStoryFontSize}" x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="{DynamicResource TrueStoryCodeFont}" AcceptsReturn="True" AcceptsTab="True" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}"/>
     </DockPanel>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutSaveFile}" Executed="OnShortcutSaveFile"/>
