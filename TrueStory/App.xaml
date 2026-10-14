@@ -15,8 +15,6 @@
         <SolidColorBrush x:Key="TrueEditorPanelTitle" Color="#FFED9B35"/>
         <SolidColorBrush x:Key="TrueEditorMenu" Color="#FFF9E3A5"/>
         <SolidColorBrush x:Key="TrueStoryPanelTitleText" Color="#FF884D11"/>
-        <FontFamily x:Key="TrueStoryFont">IBM Plex Sans</FontFamily>
-        <FontFamily x:Key="TrueStoryCodeFont">IBM Plex Mono</FontFamily>
         <System:Double x:Key="TrueStoryFontSize">12</System:Double>
         <Thickness x:Key="TrueStoryTabItemPadding">8,6,8,4</Thickness>
         <SolidColorBrush x:Key="TrueStoryInfobarText" Color="#FFAB5933"/>
@@ -26,5 +24,7 @@
         <SolidColorBrush x:Key="TrueStoryTabItemText" Color="#FF7B3A1C"/>
         <SolidColorBrush x:Key="TrueStoryTabControlBackground" Color="#FFF5E1BC"/>
         <SolidColorBrush x:Key="TrueStoryEditableText" Color="#FF080605"/>
+        <FontFamily x:Key="TrueStoryFont">pack://application:,,,/Resources/Fonts/#IBM Plex Sans</FontFamily>
+        <FontFamily x:Key="TrueStoryCodeFont">pack://application:,,,/Resources/Fonts/#IBM Plex Mono</FontFamily>
     </Application.Resources>
 </Application>
