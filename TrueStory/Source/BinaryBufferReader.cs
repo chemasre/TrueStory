@@ -37,7 +37,7 @@ namespace TrueStory
 
             int bytesLength = reader.ReadInt32();
             byte[] bytes = new byte[bytesLength];
-            reader.Read(bytes);
+            Utils.ReadAllBytes(reader, bytes);
 
             Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static TrueStory.Instructor;
@@ -14,6 +15,13 @@ namespace TrueStory
 {
     public class Instructor
     {
+        public event OnQuestionStartsHandler? OnQuestionStarts;
+        public event OnQuestionEndsHandler? OnQuestionEnds;
+
+        public delegate void OnQuestionStartsHandler();
+        public delegate void OnQuestionEndsHandler();
+
+
         public struct CountersState
         {
             public int charactersCounter;
@@ -40,12 +48,12 @@ namespace TrueStory
             new() { type = Story.QuestionType.input, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
             new() { type = Story.QuestionType.input, question = "¿Qué es la palabra '[lineWord]' de la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
             new() { type = Story.QuestionType.input, question = "¿Para qué sirve la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
-            new() { type = Story.QuestionType.input, question = "¿Qué cambiaste en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+            new() { type = Story.QuestionType.input, question = "¿Por qué cambiaste la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
             new() { type = Story.QuestionType.fileSave, question = "¿Qué has cambiado en el fichero [fileName] que has guardado recientemente?", contextLines = -1, timeLimit = 15  },
             new() { type = Story.QuestionType.fileOpen, question = "¿Por qué has abierto recientemente el fichero [fileName]?", contextLines = -1, timeLimit = 15  },
             new() { type = Story.QuestionType.fileOpen, question = "¿Para qué sirve el fichero [fileName] que has abierto recientemente?", contextLines = 0, timeLimit = 10  },
-            new() { type = Story.QuestionType.command, question = "¿Por qué ejecutaste este comando recientemente?", contextLines = 0, timeLimit = 10  },
-            new() { type = Story.QuestionType.command, question = "¿Tuviste algún problema cuando ejecutaste el comando '[commandName]'?", contextLines = 0, timeLimit = 10  },
+            new() { type = Story.QuestionType.command, question = "¿Qué querías probar la última vez que ejecutaste este comando?", contextLines = 0, timeLimit = 10  },
+            new() { type = Story.QuestionType.command, question = "¿Tuviste algún problema la última vez que ejecutaste el comando '[commandName]'?", contextLines = 0, timeLimit = 10  },
             new() { type = Story.QuestionType.time, question = "¿Qué estás haciendo ahora mismo en la actividad?", contextLines = 0, timeLimit = 20  },
             new() { type = Story.QuestionType.time, question = "¿Qué has hecho antes que lo que estás haciendo ahora en la actividad?", contextLines = 0, timeLimit = 20  },
             new() { type = Story.QuestionType.time, question = "¿Cuál es el último problema que has tenido en esta actividad?", contextLines = 0, timeLimit = 20  },
@@ -120,19 +128,26 @@ namespace TrueStory
                 s.savesCounter = savesCounter;
                 s.savesWait = questionSavesWait;
 
+
                 return s;
             }
 
             set
             {
+                int randCharsWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
+                int randOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
+                int randSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
+                int randCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+
+
                 inputCharactersCounter = value.charactersCounter;
-                questionCharactersWait = value.charactersWait;
+                questionCharactersWait = value.charactersWait > 0 ? value.charactersWait : randCharsWait;
                 commandsCounter = value.commandsCounter;
-                questionCommandsWait = value.commandsWait;
+                questionCommandsWait = value.commandsWait > 0 ? value.commandsWait : randCommandsWait; ;
                 opensCounter = value.opensCounter;
-                questionOpensWait = value.opensWait;
+                questionOpensWait = value.opensWait > 0 ? value.opensWait: randOpensWait; ;
                 savesCounter = value.savesCounter;
-                questionSavesWait = value.savesWait;
+                questionSavesWait = value.savesWait > 0 ? value.savesWait: randSavesWait; ;
             }
         }
         
@@ -193,24 +208,19 @@ namespace TrueStory
             timer.Interval = new TimeSpan(0, 0, 1);
 
 
-            if (!Switches.NoQuestions)
-            {
-                timer.Start();
-            }
+            timer.Start();
 
         }
 
         void OnTimerTick(object? sender, EventArgs e)
         {
-            if (Switches.NoQuestions) { return; }
-
             if (!fileEditor.IsFileLoaded) { return;  }
 
             Console.WriteLine("Instructor: " + state + ": IDLE " + idleTimer + "/" + idleWait +
-                                                       ", FETC" + fetchTimer + "/" + fetchWait +
-                                                       ", WARN " + warningTimer + "/" + Constants.questionWarningTime +
-                                                       " IC " + inputCharactersCounter + "/" + questionCharactersWait + 
-                                                       " CC " + commandsCounter + "/" + questionCommandsWait);
+                                                    ", FETC" + fetchTimer + "/" + fetchWait +
+                                                    ", WARN " + warningTimer + "/" + Constants.questionWarningTime +
+                                                    " IC " + inputCharactersCounter + "/" + questionCharactersWait + 
+                                                    " CC " + commandsCounter + "/" + questionCommandsWait);
 
             inactiveTimer++;
 
@@ -226,6 +236,16 @@ namespace TrueStory
                     idleTimer++;
                 }
 
+                if (Keyboard.IsKeyDown(Key.F12))
+                {
+                    idleTimer = idleWait;
+                    inputCharactersCounter = questionCharactersWait;
+                    opensCounter = questionOpensWait;
+                    savesCounter = questionSavesWait;
+                    commandsCounter = questionCommandsWait;
+                }
+
+
                 if (idleTimer > idleWait)
                 {
                     fetchWait = random.Next(Constants.minQuestionsFetchWait, Constants.maxQuestionsFetchWait + 1);
@@ -233,8 +253,9 @@ namespace TrueStory
 
                     questionCandidates.Clear();
                     
-                    instructorTextBox.Text = "Observando";
-                    instructorTextBox.Background = new SolidColorBrush(Colors.Orange);
+
+                    //instructorTextBox.Text = "Observando";
+                    //instructorTextBox.Background = new SolidColorBrush(Colors.Orange);
 
                     state = State.fetching;
                 }
@@ -369,6 +390,8 @@ namespace TrueStory
 
                         if (question != null)
                         {
+                            OnQuestionStarts?.Invoke();
+
                             warningTimer = 0;
                             state = State.warning;
                         }
@@ -400,12 +423,19 @@ namespace TrueStory
 
                     question = null;
 
+                    OnQuestionEnds?.Invoke();
+
                     inputCharactersCounter = 0;
                     commandsCounter = 0;
                     opensCounter = 0;
                     savesCounter = 0;
 
-                    idleWait = random.Next(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait);
+                    questionCharactersWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
+                    questionOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
+                    questionSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
+                    questionCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+
+                    idleWait = random.Next(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait + 1);
                     idleTimer = 0;
 
                     state = State.idle;
@@ -417,8 +447,6 @@ namespace TrueStory
 
         void OnFileEditorContentsChanged(FileEditor.ContentChange c)
         {
-            if (Switches.NoQuestions) { return;  }
-
             if(c.Added > 0)
             {
                 inputCharactersCounter += c.AddedText.Count(c => !ignoreCharacters.Contains(c));

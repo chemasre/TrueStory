@@ -58,5 +58,41 @@ namespace TrueStory
 
             return allowed;
         }
+
+        public static void ReadAllBytes(Stream stream, byte[] bytes)
+        {
+            if (bytes.Length == 0) { return;  }
+
+            int readed = 0;
+            int readedTotal = 0;
+
+            do
+            {
+                readed = stream.Read(bytes, readedTotal, bytes.Length - readedTotal);
+
+                if (readed == 0) { throw new InvalidOperationException(); }
+                else { readedTotal += readed;  }
+            }
+            while (readedTotal < bytes.Length);
+
+        }
+
+        public static void ReadAllBytes(BinaryReader reader, byte[] bytes)
+        {
+            if (bytes.Length == 0) { return; }
+
+            int readed = 0;
+            int readedTotal = 0;
+
+            do
+            {
+                readed = reader.Read(bytes, readedTotal, bytes.Length - readedTotal);
+
+                if (readed == 0) { throw new InvalidOperationException(); }
+                else { readedTotal += readed; }
+            }
+            while (readedTotal < bytes.Length);
+
+        }
     }
 }

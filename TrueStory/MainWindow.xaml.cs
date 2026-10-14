@@ -38,7 +38,8 @@ namespace TrueStory
             StoryNoSelection,
             StoryFileLoadedNoNeedsSave,
             StoryFileLoadedNeedsSave,
-            StoryFolderSelected
+            StoryFolderSelected,
+            Question
         }
 
         UIState uiState;
@@ -50,6 +51,8 @@ namespace TrueStory
 
         public static RoutedCommand ShortcutNewFile = new RoutedCommand();
         public static RoutedCommand ShortcutSaveFile = new RoutedCommand();
+
+        UIState questionPreviousUIState;
 
         public MainWindow()
         {
@@ -70,6 +73,9 @@ namespace TrueStory
 
             instructor = new(this);
 
+            instructor.OnQuestionStarts += OnInstructorQuestionStarts;
+            instructor.OnQuestionEnds += OnInstructorQuestionEnds;
+
             ShortcutSaveFile.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
             ShortcutNewFile.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
 
@@ -87,9 +93,23 @@ namespace TrueStory
             Title = Version.GetFullName();
         }
 
+        private void OnInstructorQuestionStarts()
+        {
+            Console.WriteLine("Blocking UI");
+            questionPreviousUIState = uiState;
+            SetUIState(UIState.Question);
+        }
+
+        private void OnInstructorQuestionEnds()
+        {
+            Console.WriteLine("Unblocking UI");
+            SetUIState(questionPreviousUIState);
+        }
+
         private void OnClosing(object? sender, CancelEventArgs e)
         {
             if (story == null) { return;  }
+            if (uiState == UIState.Question) { e.Cancel = true; return;  }
 
             CheckFileNeedsSave();
         }
@@ -168,6 +188,9 @@ namespace TrueStory
                 FolderViewList.IsEnabled = false;
                 CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
+                FileEditorTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.IsReadOnly = false;
+                FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryNoSelection)
             {
@@ -183,6 +206,9 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
+                FileEditorTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.IsReadOnly = false;
+                FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFileLoadedNoNeedsSave)
             {
@@ -198,6 +224,9 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                FileEditorTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.IsReadOnly = false;
+                FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFileLoadedNeedsSave)
             {
@@ -213,8 +242,11 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = true;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                FileEditorTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.IsReadOnly = false;
+                FolderViewList.Visibility = Visibility.Visible;
             }
-            else // uiState == UIState.StoryFolderSelected
+            else if (_uiState == UIState.StoryFolderSelected)
             {
                 NewActivityMenuAction.IsEnabled = false;
                 OpenActivityMenuAction.IsEnabled = false;
@@ -229,7 +261,30 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
+                FileEditorTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.IsReadOnly = false;
+                FolderViewList.Visibility = Visibility.Visible;
             }
+            else if (_uiState == UIState.Question)
+            {
+                NewActivityMenuAction.IsEnabled = false;
+                OpenActivityMenuAction.IsEnabled = false;
+                CloseActivityMenuAction.IsEnabled = false;
+                FileEditorTextBox.IsEnabled = false;
+                FolderViewList.IsEnabled = false;
+                CommandConsoleTextBox.IsEnabled = false;
+                FileMenu.IsEnabled = false;
+                NewMenu.IsEnabled = false;
+                NewFileMenuAction.IsEnabled = false;
+                NewFolderMenuAction.IsEnabled = false;
+                SaveFileMenuAction.IsEnabled = false;
+                DeleteFileOrFolderMenuAction.IsEnabled = false;
+                EditMenu.IsEnabled = false;
+                FileEditorTextBox.IsReadOnly = true;
+                CommandConsoleTextBox.IsReadOnly = true;
+                FolderViewList.Visibility = Visibility.Hidden;
+            }
+
 
 
             uiState = _uiState;

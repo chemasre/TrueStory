@@ -11,10 +11,10 @@ namespace TrueStory
         public const string AppName = "TrueStory Editor";
 
         public const int Major = 0;
-        public const int Minor = 5;
+        public const int Minor = 6;
         public const int Patch = 0;
 
-        public const string Alias = "Commands and changes questions"; 
+        public const string Alias = "Questions recorded"; 
 
         public static string GetFullName()
         {
