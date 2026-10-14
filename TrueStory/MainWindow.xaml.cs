@@ -190,7 +190,7 @@ namespace TrueStory
                 FileMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
                 CommandConsoleTextBox.IsReadOnly = false;
-                FolderViewList.Visibility = Visibility.Visible;
+                FolderViewList.Visibility = Visibility.Hidden;
             }
             else if (_uiState == UIState.StoryNoSelection)
             {
