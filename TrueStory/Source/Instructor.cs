@@ -236,7 +236,7 @@ namespace TrueStory
                     idleTimer++;
                 }
 
-                if (Keyboard.IsKeyDown(Key.F12))
+                if (Keyboard.IsKeyDown(Key.F11))
                 {
                     idleTimer = idleWait;
                     inputCharactersCounter = questionCharactersWait;
@@ -266,6 +266,11 @@ namespace TrueStory
                 if (inactiveTimer <= Constants.inactiveWait)
                 {
                     fetchTimer++;
+                }
+
+                if (Keyboard.IsKeyDown(Key.F12))
+                {
+                    fetchTimer = fetchWait + 1;
                 }
 
                 if (fetchTimer > fetchWait)

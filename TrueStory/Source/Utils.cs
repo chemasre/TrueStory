@@ -97,10 +97,14 @@ namespace TrueStory
 
         public static void Log(string message)
         {
+            if (Switches.NoLog) { return;  }
+
             if (MainWindow.Log != null)
             {
                 MainWindow.Log.Add(message);
             }
+
+            Console.WriteLine(message);
         }
     }
 }

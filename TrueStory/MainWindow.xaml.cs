@@ -200,7 +200,7 @@ namespace TrueStory
                 CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.Visibility = Visibility.Hidden;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
             else if (_uiState == UIState.StoryNoSelection)
@@ -218,7 +218,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFileLoadedNoNeedsSave)
@@ -236,7 +236,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFileLoadedNeedsSave)
@@ -254,7 +254,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = true;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFolderSelected)
@@ -273,7 +273,7 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.IsReadOnly = false;
+                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.Question)
@@ -292,7 +292,7 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
                 EditMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = true;
-                CommandConsoleTextBox.IsReadOnly = true;
+                CommandConsoleTextBox.Visibility = Visibility.Hidden;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
 

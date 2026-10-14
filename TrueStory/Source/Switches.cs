@@ -10,6 +10,6 @@ namespace TrueStory
     {
         public const bool NoFolders = true;
         public const bool NoFileChangesDeltaTime = true;
-        public const bool NoLog = true;
+        public const bool NoLog = false;
     }
 }

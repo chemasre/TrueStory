@@ -14,15 +14,12 @@ namespace TrueStory
 
         public Log(string filename)
         {
-            if (Switches.NoLog) { return;  }
-
             FileStream stream = new FileStream(filename, FileMode.Append, FileAccess.Write);
             writer = new StreamWriter(stream);
         }
 
         public void Add(string message)
         {
-            if (Switches.NoLog) { return; }
 
             Debug.Assert(writer != null);
 
@@ -32,7 +29,6 @@ namespace TrueStory
 
         public void Dispose()
         {
-            if (Switches.NoLog) { return;  }
 
             Debug.Assert(writer != null);
 

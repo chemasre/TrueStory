@@ -233,7 +233,7 @@ namespace TrueStory
                 if (signature != foundSignature) { throw new InvalidDataException(); }
             }
 
-            Dump();
+            if (!Switches.NoLog) { Dump(); }
         }
 
         string ReadSignature()
