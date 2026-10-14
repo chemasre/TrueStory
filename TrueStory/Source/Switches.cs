@@ -8,6 +8,8 @@ namespace TrueStory
 {
     public class Switches
     {
-        public static bool NoFolders = true;
+        public const bool NoFolders = true;
+        public const bool NoFileChangesDeltaTime = true;
+        public const bool NoLog = true;
     }
 }

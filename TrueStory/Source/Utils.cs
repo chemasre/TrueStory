@@ -94,5 +94,13 @@ namespace TrueStory
             while (readedTotal < bytes.Length);
 
         }
+
+        public static void Log(string message)
+        {
+            if (MainWindow.Log != null)
+            {
+                MainWindow.Log.Add(message);
+            }
+        }
     }
 }

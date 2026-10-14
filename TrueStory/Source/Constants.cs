@@ -18,6 +18,8 @@ namespace TrueStory
         public const string parentFolderName = "..";
         public const string folderPrefix = "[Carpeta] ";
 
+        // File editor
+
         public const string tabAsSpaces = "    ";
         public static readonly char[] tabEquivalents = new char[] { ' ', '\t' };
 
@@ -33,6 +35,10 @@ namespace TrueStory
         };
 
         public static readonly char[] wordSeparators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' };
+
+        public static int defaultFileChangeTime = 200;
+
+        // Instructor
 
         public const int minQuestionOpensWait = 1;
         public const int maxQuestionOpensWait = 3;
@@ -92,6 +98,10 @@ namespace TrueStory
 
         public const float questionDialogHurryUp2 = 0.8f;
         public const float questionDialogHurryUp1 = 0.5f;
+
+        // Log
+
+        public const string logFileName = "log.txt";
 
     }
 }

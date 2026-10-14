@@ -216,7 +216,7 @@ namespace TrueStory
         {
             if (!fileEditor.IsFileLoaded) { return;  }
 
-            Console.WriteLine("Instructor: " + state + ": IDLE " + idleTimer + "/" + idleWait +
+            Utils.Log("Instructor: " + state + ": IDLE " + idleTimer + "/" + idleWait +
                                                     ", FETC" + fetchTimer + "/" + fetchWait +
                                                     ", WARN " + warningTimer + "/" + Constants.questionWarningTime +
                                                     " IC " + inputCharactersCounter + "/" + questionCharactersWait + 
@@ -272,7 +272,7 @@ namespace TrueStory
                 {
                     if(questionCandidates.Count > 0)
                     {
-                        Console.WriteLine("Choosing question between " + questionCandidates.Count + " candidates");
+                        Utils.Log("Choosing question between " + questionCandidates.Count + " candidates");
 
                         Predicate<Story.QuestionData> filter = (Story.QuestionData q) => q.type == Story.QuestionType.time;
                         Story.QuestionData? timeQuestion = questionCandidates.FindLastIndex(filter) >= 0 ? questionCandidates.Find(filter) : null;
@@ -297,10 +297,10 @@ namespace TrueStory
                         if (opensQuestion.HasValue) { questionShortList.Add(opensQuestion.Value); }
                         if (savesQuestion.HasValue) { questionShortList.Add(savesQuestion.Value); }
 
-                        Console.WriteLine("Shortlist:");
+                        Utils.Log("Shortlist:");
                         foreach (Story.QuestionData q in questionShortList)
                         {
-                            Console.WriteLine(q.type + ": " + q.text);
+                            Utils.Log(q.type + ": " + q.text);
                         }
 
                         questionShortListTypes.Clear();
@@ -506,7 +506,7 @@ namespace TrueStory
 
                 QuestionTemplate template = templateCandidatesInput[index];
 
-                Console.WriteLine("Trying to fetch input question");
+                Utils.Log("Trying to fetch input question");
 
                 if (template.contextLines > 0)
                 {
@@ -570,11 +570,11 @@ namespace TrueStory
                     {
                         if (contextStart < 0 || contextEnd > numLines || (contextEnd - contextStart + 1) < template.contextLines)
                         {
-                            Console.WriteLine("Not enough context available (lines)");
+                            Utils.Log("Not enough context available (lines)");
                         }
                         else
                         {
-                            Console.WriteLine("Not enough context available (words)");
+                            Utils.Log("Not enough context available (words)");
                         }
 
                     }

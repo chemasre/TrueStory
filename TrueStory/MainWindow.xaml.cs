@@ -17,11 +17,14 @@ namespace TrueStory
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public string? LoadedFile { get { return loadedFile; } }
         public FileEditor FileEditor { get { return fileEditor; } }
         public CommandConsole CommandConsole { get { return commandConsole; } }
         public Instructor Instructor { get { return instructor; } }
         public Story? Story { get { return story; } }
+
+        public static Log Log { get { return log;  } }
 
         Story? story;
         StoryActions? storyActions;
@@ -54,9 +57,13 @@ namespace TrueStory
 
         UIState questionPreviousUIState;
 
+        static Log log;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            log = new Log(Constants.logFileName);
 
             Closing += OnClosing;
 
@@ -91,18 +98,19 @@ namespace TrueStory
             UpdateFileTitle();
 
             Title = Version.GetFullName();
+
         }
 
         private void OnInstructorQuestionStarts()
         {
-            Console.WriteLine("Blocking UI");
+            Utils.Log("Blocking UI");
             questionPreviousUIState = uiState;
             SetUIState(UIState.Question);
         }
 
         private void OnInstructorQuestionEnds()
         {
-            Console.WriteLine("Unblocking UI");
+            Utils.Log("Unblocking UI");
             SetUIState(questionPreviousUIState);
         }
 
@@ -112,6 +120,9 @@ namespace TrueStory
             if (uiState == UIState.Question) { e.Cancel = true; return;  }
 
             CheckFileNeedsSave();
+
+            log.Dispose();
+            log = null;
         }
 
         private string OnExecuteCommand(string command)
@@ -306,7 +317,7 @@ namespace TrueStory
             fc.Added = c.Added;
             fc.AddedText = c.AddedText;
             fc.Removed = c.Removed;
-            fc.DeltaTime = c.DeltaTime;
+            fc.DeltaTime = Switches.NoFileChangesDeltaTime ? Constants.defaultFileChangeTime : c.DeltaTime;
 
             loadedFileChanges.Add(fc);
         }

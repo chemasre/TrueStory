@@ -172,7 +172,7 @@ namespace TrueStory
             {
                 string text = (string)e.DataObject.GetData(DataFormats.UnicodeText);
 
-                Console.WriteLine("Detected copy: " + text);
+                Utils.Log("Detected copy: " + text);
 
                 DoCopyOrCut(Keyboard.IsKeyDown(Key.X));
 
@@ -181,11 +181,11 @@ namespace TrueStory
             }
             else
             {
-                Console.WriteLine("Unrecognized copy");
+                Utils.Log("Unrecognized copy");
             }
 
             e.CancelCommand();
-            Console.WriteLine("Copy cancelled");
+            Utils.Log("Copy cancelled");
 
         }
 
@@ -198,7 +198,7 @@ namespace TrueStory
                 string text = (string)e.SourceDataObject.GetData(DataFormats.UnicodeText);
                 e.FormatToApply = DataFormats.Text;
 
-                Console.WriteLine("Detected paste: " + text);
+                Utils.Log("Detected paste: " + text);
 
 
                 DoPaste();
@@ -206,11 +206,11 @@ namespace TrueStory
             }
             else
             {
-                Console.WriteLine("Unrecognized paste");
+                Utils.Log("Unrecognized paste");
             }
 
             e.CancelCommand();
-            Console.WriteLine("Paste cancelled");
+            Utils.Log("Paste cancelled");
         }
 
         void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
@@ -219,7 +219,7 @@ namespace TrueStory
 
             //foreach (TextChange c in e.Changes)
             //{
-            //    Console.WriteLine("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
+            //    Utils.Log("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
             //}
 
             Debug.Assert(e.Changes.Count == 1);
@@ -231,7 +231,7 @@ namespace TrueStory
                 if (c.AddedLength > 0 && c.RemovedLength == 0)
                 {
                     text = textBox.Text.Substring(c.Offset, c.AddedLength);
-                    // Console.WriteLine("Added text " + text);
+                    // Utils.Log("Added text " + text);
 
                     
                 }
@@ -280,7 +280,7 @@ namespace TrueStory
             }
             if (e.Key == Key.Return)
             {
-                // Console.WriteLine("Detected return");
+                // Utils.Log("Detected return");
 
                 int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
                 string lineText = textBox.GetLineText(lineIndex);

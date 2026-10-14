@@ -622,15 +622,15 @@ namespace TrueStory
                     p.instructorSavesCounter = buffer.ReadInt();
                     p.instructorSavesWait = buffer.ReadInt();
 
-                    Console.WriteLine("Recovered CharsCounter " + p.instructorCharactersCounter + " CharsWait " + p.instructorCharactersWait);
-                    Console.WriteLine("Recovered CommandsCounter " + p.instructorCommandsCounter + " CommandsWait " + p.instructorCommandsWait);
-                    Console.WriteLine("Recovered OpensCounter " + p.instructorOpensCounter + " OpensWait " + p.instructorOpensWait);
-                    Console.WriteLine("Recovered SavesCounter " + p.instructorOpensCounter + " SavesWait " + p.instructorSavesWait);
+                    Utils.Log("Recovered CharsCounter " + p.instructorCharactersCounter + " CharsWait " + p.instructorCharactersWait);
+                    Utils.Log("Recovered CommandsCounter " + p.instructorCommandsCounter + " CommandsWait " + p.instructorCommandsWait);
+                    Utils.Log("Recovered OpensCounter " + p.instructorOpensCounter + " OpensWait " + p.instructorOpensWait);
+                    Utils.Log("Recovered SavesCounter " + p.instructorOpensCounter + " SavesWait " + p.instructorSavesWait);
 
                 }
                 else
                 {
-                    Console.WriteLine("No previous close block found");
+                    Utils.Log("No previous close block found");
                 }
             }
 
@@ -685,7 +685,7 @@ namespace TrueStory
 
             string signature = encoding.GetString(bytes);
 
-            Console.WriteLine("Signature: " + signature);
+            Utils.Log("Signature: " + signature);
 
             int blockCounter = 0;
 
@@ -696,7 +696,7 @@ namespace TrueStory
 
                 if (record.HasValue)
                 {
-                    Console.WriteLine("Block " + blockCounter + ": type " + record.Value.type + " data size " + record.Value.data.Length);
+                    Utils.Log("Block " + blockCounter + ": type " + record.Value.type + " data size " + record.Value.data.Length);
 
                     if (record.Value.type == RecordType.Header)
                     {
@@ -706,9 +706,9 @@ namespace TrueStory
                         string publicKey = reader.ReadString();
                         string author = reader.ReadString();
 
-                        Console.WriteLine("    GUID       : " + guid);
-                        Console.WriteLine("    Public key : " + publicKey);
-                        Console.WriteLine("    Author     : " + author);
+                        Utils.Log("    GUID       : " + guid);
+                        Utils.Log("    Public key : " + publicKey);
+                        Utils.Log("    Author     : " + author);
                     }
                     else if (record.Value.type == RecordType.LoadFile)
                     {
@@ -717,8 +717,8 @@ namespace TrueStory
                         string fileName = reader.ReadString();
                         string result = reader.ReadString();
 
-                        Console.WriteLine("    File       : " + fileName);
-                        Console.WriteLine("    Loaded     : " + result.Length + " chars");
+                        Utils.Log("    File       : " + fileName);
+                        Utils.Log("    Loaded     : " + result.Length + " chars");
 
                     }
                     else if (record.Value.type == RecordType.SaveFile)
@@ -740,9 +740,9 @@ namespace TrueStory
 
                         string result = reader.ReadString();
 
-                        Console.WriteLine("    File       : " + fileName);
-                        Console.WriteLine("    Changes    : " + changesCount);
-                        Console.WriteLine("    Saved      : " + result.Length + " chars");
+                        Utils.Log("    File       : " + fileName);
+                        Utils.Log("    Changes    : " + changesCount);
+                        Utils.Log("    Saved      : " + result.Length + " chars");
 
                     }
                     else if (record.Value.type == RecordType.CreateFile ||
@@ -750,22 +750,22 @@ namespace TrueStory
                     {
                         BinaryBufferReader reader = new(record.Value.data);
                         string fileName = reader.ReadString();
-                        Console.WriteLine("    File       : " + fileName);
+                        Utils.Log("    File       : " + fileName);
                     }
                     else if (record.Value.type == RecordType.CreateDirectory ||
                              record.Value.type == RecordType.DeleteDirectory)
                     {
                         BinaryBufferReader reader = new(record.Value.data);
                         string fileName = reader.ReadString();
-                        Console.WriteLine("    Directory  : " + fileName);
+                        Utils.Log("    Directory  : " + fileName);
                     }
                     else if (record.Value.type == RecordType.ExecuteCommand)
                     {
                         BinaryBufferReader reader = new(record.Value.data);
                         string command = reader.ReadString();
                         string result = reader.ReadString();
-                        Console.WriteLine("    Command    : " + command);
-                        Console.WriteLine("    Result     : " + result.Length + " chars");
+                        Utils.Log("    Command    : " + command);
+                        Utils.Log("    Result     : " + result.Length + " chars");
                     }
                     else if (record.Value.type == RecordType.CloseStory)
                     {
@@ -780,14 +780,14 @@ namespace TrueStory
                         int instructorSavesCounter = reader.ReadInt();
                         int instructorSavesWait = reader.ReadInt();
 
-                        Console.WriteLine("    CharsCount : " + instructorCharactersCounter);
-                        Console.WriteLine("    CharsWait  : " + instructorCharactersWait);
-                        Console.WriteLine("    CommandCount : " + instructorCommandsCounter);
-                        Console.WriteLine("    CommandWait  : " + instructorCommandsWait);
-                        Console.WriteLine("    OpensCount : " + instructorOpensCounter);
-                        Console.WriteLine("    OpensWait  : " + instructorOpensWait);
-                        Console.WriteLine("    SavesCount : " + instructorSavesCounter);
-                        Console.WriteLine("    SavesWait  : " + instructorSavesWait);
+                        Utils.Log("    CharsCount : " + instructorCharactersCounter);
+                        Utils.Log("    CharsWait  : " + instructorCharactersWait);
+                        Utils.Log("    CommandCount : " + instructorCommandsCounter);
+                        Utils.Log("    CommandWait  : " + instructorCommandsWait);
+                        Utils.Log("    OpensCount : " + instructorOpensCounter);
+                        Utils.Log("    OpensWait  : " + instructorOpensWait);
+                        Utils.Log("    SavesCount : " + instructorSavesCounter);
+                        Utils.Log("    SavesWait  : " + instructorSavesWait);
 
                     }
                     else if (record.Value.type == RecordType.OpenStory)
@@ -817,15 +817,15 @@ namespace TrueStory
                         int usedTime = reader.ReadInt();
                         int timeLimit = reader.ReadInt();
 
-                        Console.WriteLine("    Type       : " + type);
-                        Console.WriteLine("    Text       : " + text);
-                        Console.WriteLine("    CtxFilename: " + fileName);
-                        Console.WriteLine("    CtxLines   : " + linesCount);
-                        Console.WriteLine("    CtxCurrentLine : " + currentLine);
-                        Console.WriteLine("    CtxCommand : " + command);
-                        Console.WriteLine("    Answer     : " + answer);
-                        Console.WriteLine("    UsedTime   : " + usedTime);
-                        Console.WriteLine("    TimeLimit  : " + timeLimit);
+                        Utils.Log("    Type       : " + type);
+                        Utils.Log("    Text       : " + text);
+                        Utils.Log("    CtxFilename: " + fileName);
+                        Utils.Log("    CtxLines   : " + linesCount);
+                        Utils.Log("    CtxCurrentLine : " + currentLine);
+                        Utils.Log("    CtxCommand : " + command);
+                        Utils.Log("    Answer     : " + answer);
+                        Utils.Log("    UsedTime   : " + usedTime);
+                        Utils.Log("    TimeLimit  : " + timeLimit);
 
                     }
 
