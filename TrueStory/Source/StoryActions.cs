@@ -22,16 +22,16 @@ namespace TrueStory
 
             story = _story;
 
-            story.OnOpenStory += OnOpenStory;
-            story.OnCreateFolder += OnCreateFolder;
-            story.OnCreateFile += OnCreateFile;
-            story.OnDeleteFile += OnDeleteFile;
-            story.OnDeleteFolder += OnDeleteFolder;
-            story.OnLoadFile += OnLoadFile;
-            story.OnSaveFile += OnSaveFile;
-            story.OnExecuteCommand += OnExecuteCommand;
-            story.OnQuestion += OnQuestion;
-            story.OnCloseStory += OnCloseStory;
+            story.OnAddedOpenStory += OnOpenStory;
+            story.OnAddedCreateFolder += OnCreateFolder;
+            story.OnAddedCreateFile += OnCreateFile;
+            story.OnAddedDeleteFile += OnDeleteFile;
+            story.OnAddedDeleteFolder += OnDeleteFolder;
+            story.OnAddedLoadFile += OnLoadFile;
+            story.OnAddedSaveFile += OnSaveFile;
+            story.OnAddedExecuteCommand += OnExecuteCommand;
+            story.OnAddedQuestion += OnQuestion;
+            story.OnAddedCloseStory += OnCloseStory;
 
             encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
@@ -142,16 +142,16 @@ namespace TrueStory
 
         public void Dispose()
         {
-            story.OnOpenStory -= OnOpenStory;
-            story.OnCreateFolder -= OnCreateFolder;
-            story.OnCreateFile -= OnCreateFile;
-            story.OnDeleteFile -= OnDeleteFile;
-            story.OnDeleteFolder -= OnDeleteFolder;
-            story.OnLoadFile -= OnLoadFile;
-            story.OnSaveFile -= OnSaveFile;
-            story.OnExecuteCommand -= OnExecuteCommand;
-            story.OnQuestion -= OnQuestion;
-            story.OnCloseStory -= OnCloseStory;
+            story.OnAddedOpenStory -= OnOpenStory;
+            story.OnAddedCreateFolder -= OnCreateFolder;
+            story.OnAddedCreateFile -= OnCreateFile;
+            story.OnAddedDeleteFile -= OnDeleteFile;
+            story.OnAddedDeleteFolder -= OnDeleteFolder;
+            story.OnAddedLoadFile -= OnLoadFile;
+            story.OnAddedSaveFile -= OnSaveFile;
+            story.OnAddedExecuteCommand -= OnExecuteCommand;
+            story.OnAddedQuestion -= OnQuestion;
+            story.OnAddedCloseStory -= OnCloseStory;
         }
 
     }

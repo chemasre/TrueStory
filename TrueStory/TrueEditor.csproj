@@ -80,6 +80,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TrueStoryBase\TrueStoryBase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\Fonts\IBMPlexMono-Bold.ttf" />
     <Resource Include="Resources\Fonts\IBMPlexMono-BoldItalic.ttf" />
     <Resource Include="Resources\Fonts\IBMPlexMono-ExtraLight.ttf" />

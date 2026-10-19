@@ -1,0 +1,49 @@
+﻿<Window x:Class="StoryPlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoryPlayer"
+        mc:Ignorable="d"
+        Title="StoryPlayer Player" Height="636" Width="960" Background="{DynamicResource StoryPlayerNonEditableTextBackground}">
+    <DockPanel>
+        <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource StoryPlayerMenu}" FontFamily="{DynamicResource StoryPlayerFont}" FontSize="{DynamicResource StoryPlayerFontSize}" Foreground="{DynamicResource StoryPlayerMenuText}">
+            <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
+                <MenuItem x:Name="OpenActivityMenuAction" Header="Abrir actividad..." Click="OnMenuOpenActivity"/>
+                <MenuItem x:Name="CloseActivityMenuAction" Header="Cerrar actividad" Click="OnMenuCloseActivity"/>
+            </MenuItem>
+            <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
+                <MenuItem x:Name="AboutMenuAction" Header="Acerca de StoryPlayer"/>
+            </MenuItem>
+        </Menu>
+        <StackPanel x:Name="StoryControls" DockPanel.Dock="Bottom" Background="{DynamicResource StoryPlayerNonEditableTextBackground}">
+            <Label x:Name="StoryControlsTitleLabel" Content="Controles de reproducción" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" BorderBrush="#FF868686" Background="{DynamicResource StoryPlayerPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource StoryPlayerPanelTitleText}" HorizontalContentAlignment="Center"/>
+            <DockPanel LastChildFill="False" VerticalAlignment="Center" Margin="20,20,20,20">
+                <Label x:Name="BlockInfoLabel" DockPanel.Dock="Top" Content="Información del bloque" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Margin="{DynamicResource StoryPlayerPanelPadding}"/>
+                <ProgressBar x:Name="BlockProgress" DockPanel.Dock="Top" Padding="{DynamicResource StoryPlayerPanelPadding}" MinHeight="20" Background="{DynamicResource StoryPlayerProgressBarBackground}" Value="50" Foreground="{DynamicResource StoryPlayerProgressBarForeground}"/>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{DynamicResource StoryPlayerPanelPadding}">
+                    <CheckBox x:Name="FileChangesStopCheckBox" Content="Cambios en documento" Padding="{DynamicResource StoryPlayerTabItemPadding}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsChecked="True"/>
+                    <CheckBox x:Name="FileSaveOrLoadStopCheckBox" Content="Abrir o guardar documento" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True"/>
+                    <CheckBox x:Name="ConsoleCommandsStopCheckBox" Content="Comandos de consola" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True"/>
+                    <CheckBox x:Name="QuestionsStopCheckBox" Content="Preguntas" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True"/>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{DynamicResource StoryPlayerPanelPadding}">
+                    <Button x:Name="GotoStartButton" Content="Inicio" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Click="OnGotoStart"/>
+                    <Button x:Name="PreviousChangeButton" Content="Paso anterior" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Click="OnPreviousStep"/>
+                    <Button x:Name="PlayButton" Content="Reproducir" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}"/>
+                    <Button x:Name="PauseButton" Content="Pausar" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}"/>
+                    <Button x:Name="NextChangeButton" Content="Paso siguiente" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Click="OnNextStep"/>
+                    <Button x:Name="GotoEndButton" Content="Fin" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Click="OnGotoEnd"/>
+                </StackPanel>
+            </DockPanel>
+        </StackPanel>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Right" MinWidth="200" Width="100">
+            <Label x:Name="FolderViewTitleLabel" DockPanel.Dock="Top" Content="Carpeta de actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Background="{DynamicResource StoryPlayerPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource StoryPlayerPanelTitleText}"/>
+            <ListBox x:Name="FolderViewList" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="{DynamicResource StoryPlayerFont}" Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Foreground="{DynamicResource StoryPlayerNonEditableText}" />
+        </DockPanel>
+        <TextBox x:Name="CommandConsoleTextBox" DockPanel.Dock="Bottom" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="{DynamicResource StoryPlayerFont}" AcceptsReturn="True" AcceptsTab="True" MinHeight="120" MaxHeight="120" Height="100" Background="{DynamicResource StoryPlayerEditableTextBackground}" FontSize="{DynamicResource StoryPlayerFontSize}" IsReadOnly="True"/>
+        <Label Padding="{DynamicResource StoryPlayerPanelPadding}" x:Name="CommandConsoleTitleLabel" DockPanel.Dock="Bottom" Content="Consola de comandos" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" BorderBrush="#FF868686" Background="{DynamicResource StoryPlayerPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource StoryPlayerPanelTitleText}"/>
+        <Label x:Name="FileEditorTitleLabel" DockPanel.Dock="Top" Content="Título" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" BorderBrush="#FF929292" Background="{DynamicResource StoryPlayerPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource StoryPlayerPanelTitleText}"/>
+        <TextBox FontSize="{DynamicResource StoryPlayerFontSize}" x:Name="FileEditorTextBox" DockPanel.Dock="Left" TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="5,5,5,5" FontFamily="{DynamicResource StoryPlayerCodeFont}" AcceptsReturn="True" AcceptsTab="True" Background="{DynamicResource StoryPlayerEditableTextBackground}" Foreground="{DynamicResource StoryPlayerEditableText}" IsReadOnly="True"/>
+    </DockPanel>
+</Window>

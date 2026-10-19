@@ -462,7 +462,7 @@ namespace TrueStory
                 {
                     MessageBox.Show("El nombre del fichero no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
-                else if (!Utils.HasAllowedExtension(name))
+                else if (!Utils.HasAllowedExtension(name, Constants.allowedExtensions))
                 {
                     string extensions = string.Join(';', Constants.allowedExtensions);
                     MessageBox.Show("Sólo se permite crear ficheros que tengan alguna de estas extensiones: " + extensions, "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);

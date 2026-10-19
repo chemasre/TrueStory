@@ -25,8 +25,22 @@ namespace TrueStory
 
         public struct HeaderData
         {
+            public string guid;
             public string publicKey;
             public string author;
+        }
+
+        public struct LoadFileData
+        {
+            public string fileName;
+            public string text;
+        }
+
+        public struct SaveFileData
+        {
+            public string fileName;
+            public string text;
+            public FileChangeData[] changes;
         }
 
         public struct FileChangeData
@@ -42,6 +56,32 @@ namespace TrueStory
         {
             public string command;
             public string output;
+        }
+
+        public struct CreateFileData
+        {
+            public string fileName;
+        }
+
+        public struct DeleteFileData
+        {
+            public string fileName;
+        }
+
+        public struct CreateFolderData
+        {
+            public string folderName;
+        }
+
+        public struct DeleteFolderData
+        {
+            public string folderName;
+        }
+
+        public struct ExecuteCommandData
+        {
+            public string name;
+            public string result;
         }
 
         public struct QuestionData
@@ -145,39 +185,88 @@ namespace TrueStory
             public byte[] data;
         }
 
-        public event OpenStoryHandler? OnOpenStory;
-        public event CreateFileHandler? OnCreateFile;
-        public event CreateFolderHandler? OnCreateFolder;
-        public event DeleteFileHandler? OnDeleteFile;
-        public event DeleteFolderHandler? OnDeleteFolder;
-        public event LoadFileHandler? OnLoadFile;
-        public event SaveFileHandler? OnSaveFile;
-        public event ExecuteCommandHandler? OnExecuteCommand;
-        public event QuestionHandler? OnQuestion;
-        public event CloseStoryHandler? OnCloseStory;
+        public event OpenStoryAddedHandler? OnAddedOpenStory;
+        public event CreateFileAddedHandler? OnAddedCreateFile;
+        public event CreateFolderAddedHandler? OnAddedCreateFolder;
+        public event DeleteFileAddedHandler? OnAddedDeleteFile;
+        public event DeleteFolderAddedHandler? OnAddedDeleteFolder;
+        public event LoadFileAddedHandler? OnAddedLoadFile;
+        public event SaveFileAddedHandler? OnAddedSaveFile;
+        public event ExecuteCommandAddedHandler? OnAddedExecuteCommand;
+        public event QuestionAddedHandler? OnAddedQuestion;
+        public event CloseStoryAddedHandler? OnAddedCloseStory;
 
 
-        public delegate void OpenStoryHandler(PersistentData data);
-        public delegate void CreateFileHandler(string name);
-        public delegate void CreateFolderHandler(string name);
-        public delegate void DeleteFileHandler(string name);
-        public delegate void DeleteFolderHandler(string name);
-        public delegate string LoadFileHandler(string name);
-        public delegate void SaveFileHandler(string name, string text);
-        public delegate string ExecuteCommandHandler(string name);
-        public delegate QuestionData QuestionHandler(QuestionData q);
-        public delegate PersistentData CloseStoryHandler();
+        public delegate void OpenStoryAddedHandler(PersistentData data);
+        public delegate void CreateFileAddedHandler(string name);
+        public delegate void CreateFolderAddedHandler(string name);
+        public delegate void DeleteFileAddedHandler(string name);
+        public delegate void DeleteFolderAddedHandler(string name);
+        public delegate string LoadFileAddedHandler(string name);
+        public delegate void SaveFileAddedHandler(string name, string text);
+        public delegate string ExecuteCommandAddedHandler(string name);
+        public delegate QuestionData QuestionAddedHandler(QuestionData q);
+        public delegate PersistentData CloseStoryAddedHandler();
 
+        public event HeaderReadedHandler? OnReadedHeader;
+        public event OpenStoryReadedHandler? OnReadedOpenStory;
+        public event CreateFileReadedHandler? OnReadedCreateFile;
+        public event CreateFolderReadedHandler? OnReadedCreateFolder;
+        public event DeleteFileReadedHandler? OnReadedDeleteFile;
+        public event DeleteFolderReadedHandler? OnReadedDeleteFolder;
+        public event LoadFileReadedHandler? OnReadedLoadFile;
+        public event SaveFileReadedHandler? OnReadedSaveFile;
+        public event ExecuteCommandReadedHandler? OnReadedExecuteCommand;
+        public event QuestionReadedHandler? OnReadedQuestion;
+        public event CloseStoryReadedHandler? OnReadedCloseStory;
+
+        public delegate void HeaderReadedHandler(HeaderData data);
+        public delegate void OpenStoryReadedHandler(PersistentData data);
+        public delegate void CreateFileReadedHandler(CreateFileData data);
+        public delegate void CreateFolderReadedHandler(CreateFolderData data);
+        public delegate void DeleteFileReadedHandler(DeleteFileData data);
+        public delegate void DeleteFolderReadedHandler(DeleteFolderData data);
+        public delegate void LoadFileReadedHandler(LoadFileData data);
+        public delegate void SaveFileReadedHandler(SaveFileData data);
+        public delegate void ExecuteCommandReadedHandler(ExecuteCommandData data);
+        public delegate void QuestionReadedHandler(QuestionData q);
+        public delegate void CloseStoryReadedHandler(PersistentData data);
 
         public const string StoryFilename = ".truestory";
 
         public string RootPath { get { return rootPath;  } }
+
+        public long TotalRecords
+        {
+            get
+            {
+                Debug.Assert(mode == Mode.Read);
+
+                return readTotalRecords;
+            }
+        }
+
+        public long RecordIndex
+        {
+            get
+            {
+                Debug.Assert(mode == Mode.Read);
+
+                return readRecordIndex;
+            }
+        }
+
 
         FileStream file;
         string rootPath;
         Mode mode;
 
         byte[] signatureBytes;
+
+        bool internalCall;
+
+        long readRecordIndex;
+        long readTotalRecords;
 
         bool disposed;
 
@@ -191,11 +280,20 @@ namespace TrueStory
             Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
             signatureBytes = encoding.GetBytes(Story.signature);
 
+            internalCall = false;
+
             Debug.Assert(!(_mode == Mode.Create && header == null), "Story: No header provided");
 
             if (_mode == Mode.Create)
             {
                 Debug.Assert(header.HasValue);
+
+                if (header.Value.guid == null)
+                {
+                    HeaderData h = header.Value;
+                    h.guid = Guid.NewGuid().ToString();
+                    header = h;
+                }
 
                 file = new FileStream(filePath, FileMode.CreateNew, FileAccess.ReadWrite);
 
@@ -206,7 +304,7 @@ namespace TrueStory
 
                 BinaryBufferWriter buffer = new();
 
-                buffer.WriteString(Guid.NewGuid().ToString());
+                buffer.WriteString(header.Value.guid);
                 buffer.WriteString(header.Value.publicKey);
                 buffer.WriteString(header.Value.author);                
 
@@ -223,17 +321,44 @@ namespace TrueStory
                 if (signature != foundSignature) { throw new InvalidDataException(); }
 
                 file.Seek(0, SeekOrigin.End);
+
             }
             else // _mode == Mode.Read
             {
                 file = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                file.Seek(signatureBytes.Length, SeekOrigin.Begin);
 
                 string foundSignature = ReadSignature();
                 if (signature != foundSignature) { throw new InvalidDataException(); }
+
+                readRecordIndex = 0;
+                readTotalRecords = CountRecords();
+
             }
 
-            if (!Switches.NoLog) { Dump(); }
+        }
+
+        long CountRecords()
+        {
+            long count = 0;
+
+            long previousPosition = file.Position;
+
+            file.Seek(signature.Length, SeekOrigin.Begin);
+
+            internalCall = true;
+
+            Record? r;
+            do
+            {
+                r = ReadRecord();
+                if (r.HasValue) { count++; }
+            } while (r.HasValue);
+
+            internalCall = false;
+
+            file.Position = previousPosition;
+
+            return count;
         }
 
         string ReadSignature()
@@ -270,7 +395,7 @@ namespace TrueStory
 
             AddRecord(record);
 
-            OnCreateFolder?.Invoke(name);
+            OnAddedCreateFolder?.Invoke(name);
 
         }
 
@@ -322,16 +447,235 @@ namespace TrueStory
 
         }
 
+        public HeaderData DecodeHeaderRecord(Record r)
+        {
+            HeaderData data = new();
+
+            BinaryBufferReader buffer = new(r.data);
+
+            data.guid = buffer.ReadString();
+            data.publicKey = buffer.ReadString();
+            data.author = buffer.ReadString();
+
+            return data;
+        }
+
+        public LoadFileData DecodeLoadFileRecord(Record r)
+        {
+            LoadFileData data = new();
+
+            BinaryBufferReader buffer = new(r.data);
+
+            data.fileName = buffer.ReadString();
+            data.text = buffer.ReadString();
+
+            return data;
+        }
+
+        public SaveFileData DecodeSaveFileRecord(Record r)
+        {
+            SaveFileData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+
+            data.fileName = reader.ReadString();
+            int changesCount = reader.ReadInt();
+
+            List<FileChangeData> changes = new();
+
+            for (int i = 0; i < changesCount; i++)
+            {
+                FileChangeData changeData = new();
+
+                changeData.Offset = reader.ReadInt();
+                changeData.Added = reader.ReadInt();
+                changeData.AddedText = reader.ReadString();
+                changeData.Removed = reader.ReadInt();
+                changeData.DeltaTime = reader.ReadLong();
+
+                changes.Add(changeData);
+
+            }
+
+            data.changes = changes.ToArray();
+            data.text = reader.ReadString();
+
+            return data;
+
+        }
+
+        public CreateFileData DecodeCreateFileRecord(Record r)
+        {
+            CreateFileData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+            data.fileName = reader.ReadString();
+
+            return data;
+        }
+
+        public DeleteFileData DecodeDeleteFileRecord(Record r)
+        {
+            DeleteFileData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+            data.fileName = reader.ReadString();
+
+            return data;
+        }
+
+        public CreateFolderData DecodeCreateFolderRecord(Record r)
+        {
+            CreateFolderData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+            data.folderName = reader.ReadString();
+
+            return data;
+        }
+
+        public DeleteFolderData DecodeDeleteFolderRecord(Record r)
+        {
+            DeleteFolderData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+            data.folderName = reader.ReadString();
+
+            return data;
+        }
+
+        public ExecuteCommandData DecodeExecuteCommandRecord(Record r)
+        {
+            ExecuteCommandData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+            data.name = reader.ReadString();
+            data.result = reader.ReadString();
+
+            return data;
+        }
+
+        public QuestionData DecodeQuestionRecord(Record r)
+        {
+            QuestionData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+
+            data.type = (QuestionType)reader.ReadInt();
+            data.text = reader.ReadString();
+
+            QuestionContextData contextData = new();
+
+            contextData.fileName = reader.ReadString();
+
+            List<QuestionContextLineData> lines = new();
+
+            int linesCount = reader.ReadInt();
+            for (int i = 0; i < linesCount; i++)
+            {
+                QuestionContextLineData lineData = new();
+
+                lineData.number = reader.ReadInt();
+                lineData.text = reader.ReadString();
+            }
+
+            contextData.lines = lines.ToArray();
+
+            contextData.currentLine = reader.ReadInt();
+            contextData.command = reader.ReadString();
+
+            data.context = contextData;
+
+            data.answer = reader.ReadString();
+            data.usedTime = reader.ReadInt();
+            data.timeLimit = reader.ReadInt();
+
+
+            return data;
+        }
+
+
+        /*
+        public void Decode()
+        {
+
+            else if (record.Value.type == RecordType.CloseStory)
+            {
+                BinaryBufferReader reader = new(record.Value.data);
+
+                int instructorCharactersCounter = reader.ReadInt();
+                int instructorCharactersWait = reader.ReadInt();
+                int instructorCommandsCounter = reader.ReadInt();
+                int instructorCommandsWait = reader.ReadInt();
+                int instructorOpensCounter = reader.ReadInt();
+                int instructorOpensWait = reader.ReadInt();
+                int instructorSavesCounter = reader.ReadInt();
+                int instructorSavesWait = reader.ReadInt();
+
+                Utils.Log("    CharsCount : " + instructorCharactersCounter);
+                Utils.Log("    CharsWait  : " + instructorCharactersWait);
+                Utils.Log("    CommandCount : " + instructorCommandsCounter);
+                Utils.Log("    CommandWait  : " + instructorCommandsWait);
+                Utils.Log("    OpensCount : " + instructorOpensCounter);
+                Utils.Log("    OpensWait  : " + instructorOpensWait);
+                Utils.Log("    SavesCount : " + instructorSavesCounter);
+                Utils.Log("    SavesWait  : " + instructorSavesWait);
+
+            }
+            else if (record.Value.type == RecordType.OpenStory)
+            {
+                // Nothing
+            }
+            else if (record.Value.type == RecordType.Question)
+            {
+                BinaryBufferReader reader = new(record.Value.data);
+
+                QuestionType type = (QuestionType)reader.ReadInt();
+                string text = reader.ReadString();
+
+                string fileName = reader.ReadString();
+
+                int linesCount = reader.ReadInt();
+                for (int i = 0; i < linesCount; i++)
+                {
+                    reader.ReadInt();
+                    reader.ReadString();
+                }
+
+                int currentLine = reader.ReadInt();
+                string command = reader.ReadString();
+
+                string answer = reader.ReadString();
+                int usedTime = reader.ReadInt();
+                int timeLimit = reader.ReadInt();
+
+                Utils.Log("    Type       : " + type);
+                Utils.Log("    Text       : " + text);
+                Utils.Log("    CtxFilename: " + fileName);
+                Utils.Log("    CtxLines   : " + linesCount);
+                Utils.Log("    CtxCurrentLine : " + currentLine);
+                Utils.Log("    CtxCommand : " + command);
+                Utils.Log("    Answer     : " + answer);
+                Utils.Log("    UsedTime   : " + usedTime);
+                Utils.Log("    TimeLimit  : " + timeLimit);
+
+            }
+
+        }
+        */
+
         public Record? ReadRecord(ReadDirection direction = ReadDirection.Forward)
         {
             int blockHeaderSize = 2 * sizeof(int);
             int minimumBlockSize = 2 * blockHeaderSize;
 
+            Record? result;
+
             if (direction == ReadDirection.Backwards && file.Position <= signatureBytes.Length)
             {
                 // No block before current position
 
-                return null;
+                result = null;
             }
             else if (direction == ReadDirection.Backwards)
             {
@@ -369,13 +713,18 @@ namespace TrueStory
 
                 file.Seek(-(blockHeaderSize + blockDataLength), SeekOrigin.Current);
 
-                return r;
+                if (!internalCall)
+                {
+                    readRecordIndex--;
+                }
+
+                result = r;
             }
             else if (direction == ReadDirection.Forward && file.Position == file.Length)
             {
                 // Already at end of file
 
-                return null;
+                result = null;
             }
             else // direction == ReadDirection.Forward
             {
@@ -406,9 +755,65 @@ namespace TrueStory
 
                 file.Seek(blockHeaderSize, SeekOrigin.Current);
 
-                return r;
+                if (!internalCall)
+                {
+                    readRecordIndex++;
+                }
+
+                result = r;
 
             }
+
+            if (!internalCall && result.HasValue)
+            {
+                if (result.Value.type == RecordType.Header)
+                {
+                    HeaderData d = DecodeHeaderRecord(result.Value);
+                    OnReadedHeader?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.LoadFile)
+                {
+                    LoadFileData d = DecodeLoadFileRecord(result.Value);
+                    OnReadedLoadFile?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.SaveFile)
+                {
+                    SaveFileData d = DecodeSaveFileRecord(result.Value);
+                    OnReadedSaveFile?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.CreateFile)
+                {
+                    CreateFileData d = DecodeCreateFileRecord(result.Value);
+                    OnReadedCreateFile?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.DeleteFile)
+                {
+                    DeleteFileData d = DecodeDeleteFileRecord(result.Value);
+                    OnReadedDeleteFile?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.CreateDirectory)
+                {
+                    CreateFolderData d = DecodeCreateFolderRecord(result.Value);
+                    OnReadedCreateFolder?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.DeleteDirectory)
+                {
+                    DeleteFolderData d = DecodeDeleteFolderRecord(result.Value);
+                    OnReadedDeleteFolder?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.ExecuteCommand)
+                {
+                    ExecuteCommandData d = DecodeExecuteCommandRecord(result.Value);
+                    OnReadedExecuteCommand?.Invoke(d);
+                }
+                else if (result.Value.type == RecordType.Question)
+                {
+                    QuestionData d = DecodeQuestionRecord(result.Value);
+                    OnReadedQuestion?.Invoke(d);
+                }
+            }
+
+            return result;
         }
 
         public void AddCreateFile(string name)
@@ -428,7 +833,7 @@ namespace TrueStory
 
             AddRecord(record);
 
-            OnCreateFile?.Invoke(name);
+            OnAddedCreateFile?.Invoke(name);
 
         }
 
@@ -449,7 +854,7 @@ namespace TrueStory
 
             AddRecord(record);
 
-            OnDeleteFolder?.Invoke(name);
+            OnAddedDeleteFolder?.Invoke(name);
         }
 
         public void AddDeleteFile(string name)
@@ -469,7 +874,7 @@ namespace TrueStory
 
             AddRecord(record);
 
-            OnDeleteFile?.Invoke(name);
+            OnAddedDeleteFile?.Invoke(name);
         }
 
         public string AddLoadFile(string name)
@@ -477,7 +882,7 @@ namespace TrueStory
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            string? result = OnLoadFile?.Invoke(name);
+            string? result = OnAddedLoadFile?.Invoke(name);
 
             Debug.Assert(result != null);
 
@@ -528,7 +933,7 @@ namespace TrueStory
 
             AddRecord(record);
 
-            OnSaveFile?.Invoke(name, text);
+            OnAddedSaveFile?.Invoke(name, text);
         }
 
         public string AddExecuteCommand(string command)
@@ -536,7 +941,7 @@ namespace TrueStory
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            string result = OnExecuteCommand?.Invoke(command) ?? "";
+            string result = OnAddedExecuteCommand?.Invoke(command) ?? "";
 
             Record record = new();
 
@@ -561,7 +966,7 @@ namespace TrueStory
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            question = OnQuestion?.Invoke(question) ?? new QuestionData();
+            question = OnAddedQuestion?.Invoke(question) ?? new QuestionData();
 
             Record record = new();
 
@@ -634,7 +1039,7 @@ namespace TrueStory
                 }
             }
 
-            OnOpenStory?.Invoke(p);
+            OnAddedOpenStory?.Invoke(p);
 
             Record record = new();
 
@@ -649,7 +1054,7 @@ namespace TrueStory
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            PersistentData result = OnCloseStory?.Invoke() ?? new PersistentData();
+            PersistentData result = OnAddedCloseStory?.Invoke() ?? new PersistentData();
 
             Record record = new();
 
@@ -675,6 +1080,8 @@ namespace TrueStory
         public void Dump()
         {
             long previousPos = file.Position;
+
+            internalCall = true;
 
             file.Seek(0, SeekOrigin.Begin);
 
@@ -835,6 +1242,8 @@ namespace TrueStory
                 }
             }
             while (record.HasValue);
+
+            internalCall = false;
 
             file.Position = previousPos;
         }

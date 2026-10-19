@@ -44,15 +44,15 @@ namespace TrueStory
             return valid;
         }
 
-        public static bool HasAllowedExtension(string name)
+        public static bool HasAllowedExtension(string fileName, string[] allowedExtensions)
         {
-            string ext = Path.GetExtension(name);
+            string ext = Path.GetExtension(fileName);
 
             bool allowed = false;
             int i = 0;
-            while (!allowed && i < Constants.allowedExtensions.Length)
+            while (!allowed && i < allowedExtensions.Length)
             {
-                if (ext.Substring(1).ToLower() == Constants.allowedExtensions[i]) { allowed = true; }
+                if (ext.Substring(1).ToLower() == allowedExtensions[i]) { allowed = true; }
                 else { i++;  }
             }
 
@@ -97,13 +97,6 @@ namespace TrueStory
 
         public static void Log(string message)
         {
-            if (Switches.NoLog) { return;  }
-
-            if (MainWindow.Log != null)
-            {
-                MainWindow.Log.Add(message);
-            }
-
             Console.WriteLine(message);
         }
     }

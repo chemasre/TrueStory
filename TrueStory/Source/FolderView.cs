@@ -51,7 +51,7 @@ namespace TrueStory.Source
             {
                 string n = Path.GetFileName(f);
 
-                if (Utils.HasAllowedExtension(n) && n != Story.StoryFilename)
+                if (Utils.HasAllowedExtension(n, Constants.allowedExtensions) && n != Story.StoryFilename)
                 {
                     listBox.Items.Add(n);
                 }

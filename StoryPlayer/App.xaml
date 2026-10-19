@@ -1,0 +1,31 @@
+﻿<Application x:Class="StoryPlayer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:StoryPlayer" xmlns:System="clr-namespace:System;assembly=mscorlib"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="StoryPlayerButtonNeutral" Color="#FF7CE1FB"/>
+        <SolidColorBrush x:Key="StoryPlayerButtonAccept" Color="#FFEFDE24"/>
+        <SolidColorBrush x:Key="StoryPlayerButtonCancel" Color="#FFF1CF70"/>
+        <SolidColorBrush x:Key="StoryPlayerBackground" Color="#FF45D49D"/>
+        <SolidColorBrush x:Key="StoryPlayerEditableTextBackground" Color="#FFE2FFFE"/>
+        <SolidColorBrush x:Key="StoryPlayerNonEditableTextBackground" Color="#FFA6ECCA"/>
+        <SolidColorBrush x:Key="StoryPlayerMenuText" Color="#FF065B1F"/>
+        <SolidColorBrush x:Key="StoryPlayerPanelTitle" Color="#FF35EDA5"/>
+        <SolidColorBrush x:Key="StoryPlayerMenu" Color="#FFA5F9D4"/>
+        <SolidColorBrush x:Key="StoryPlayerPanelTitleText" Color="#FF11887A"/>
+        <System:Double x:Key="StoryPlayerFontSize">12</System:Double>
+        <Thickness x:Key="StoryPlayerTabItemPadding">8,6,8,4</Thickness>
+        <SolidColorBrush x:Key="StoryPlayerNonEditableText" Color="#FF964621"/>
+        <SolidColorBrush x:Key="StoryPlayerButtonsText" Color="#FF214E96"/>
+        <SolidColorBrush x:Key="StoryPlayerTabItem" Color="#FFF9E3A5"/>
+        <SolidColorBrush x:Key="StoryPlayerTabItemText" Color="#FF7B3A1C"/>
+        <SolidColorBrush x:Key="StoryPlayerTabControlBackground" Color="#FFF5E1BC"/>
+        <SolidColorBrush x:Key="StoryPlayerEditableText" Color="#FF080605"/>
+        <FontFamily x:Key="StoryPlayerFont">pack://application:,,,/Resources/Fonts/#IBM Plex Sans</FontFamily>
+        <FontFamily x:Key="StoryPlayerCodeFont">pack://application:,,,/Resources/Fonts/#IBM Plex Mono</FontFamily>
+        <Thickness x:Key="StoryPlayerPanelPadding">5,5,5,5</Thickness>
+        <SolidColorBrush x:Key="StoryPlayerProgressBarBackground" Color="#FFD6FEFF"/>
+        <SolidColorBrush x:Key="StoryPlayerProgressBarForeground" Color="#FF1C8B9A"/>
+    </Application.Resources>
+</Application>
