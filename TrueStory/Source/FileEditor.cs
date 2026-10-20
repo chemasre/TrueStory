@@ -217,10 +217,12 @@ namespace TrueStory
         {
             if (ignoreChanges) { return;  }
 
-            //foreach (TextChange c in e.Changes)
-            //{
-            //    Utils.Log("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
-            //}
+            //Utils.Log("----------------------------------------------------");
+
+            foreach (TextChange c in e.Changes)
+            {
+                // Utils.Log("Text changed at " + c.Offset + ": added length " + c.AddedLength + ", removed length " + c.RemovedLength);
+            }
 
             Debug.Assert(e.Changes.Count == 1);
 
@@ -228,12 +230,9 @@ namespace TrueStory
             {
                 TextChange c = e.Changes.First();
                 string text = "";
-                if (c.AddedLength > 0 && c.RemovedLength == 0)
+                if (c.AddedLength > 0)
                 {
                     text = textBox.Text.Substring(c.Offset, c.AddedLength);
-                    // Utils.Log("Added text " + text);
-
-                    
                 }
 
                 ContentChange cc = new();
@@ -246,6 +245,8 @@ namespace TrueStory
                 cc.DeltaTime = time - lastChangeTime;
 
                 lastChangeTime = time;
+
+                Utils.Log("Change Offset:" + cc.Offset + " Added: " + cc.Added + " Removed: " + cc.Removed + " Text: " + cc.AddedText);
 
                 OnContentsChanged?.Invoke(cc);
             }
@@ -273,6 +274,9 @@ namespace TrueStory
                 c.DeltaTime = time - lastChangeTime;
 
                 lastChangeTime = time;
+
+                Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
+
 
                 OnContentsChanged?.Invoke(c);
 
@@ -307,6 +311,8 @@ namespace TrueStory
                 c.DeltaTime = time - lastChangeTime;
 
                 lastChangeTime = time;
+
+                Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
 
                 OnContentsChanged?.Invoke(c);
 

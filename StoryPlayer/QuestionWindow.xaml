@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoryPlayer"
         mc:Ignorable="d"
-        Title="QuestionWindow" Height="450" Width="800" Topmost="True">
+        Title="QuestionWindow" Height="450" Width="800" Topmost="True" WindowStyle="None" Closing="OnClosing">
     <DockPanel Background="{DynamicResource StoryPlayerBackground}">
         <RichTextBox x:Name="QuestionDocument" DockPanel.Dock="Top" MinHeight="100" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40" AutoWordSelection="False" Focusable="False" IsHitTestVisible="False" FontFamily="{DynamicResource StoryPlayerCodeFont}" Margin="20,20,20,10" Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Foreground="{DynamicResource StoryPlayerEditableText}">
             <FlowDocument/>

@@ -36,7 +36,7 @@ namespace TrueStory
             encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
 
-        void OnOpenStory(Story.PersistentData data)
+        void OnOpenStory(Story.CloseStoryData data)
         {
             Instructor.CountersState p;
 
@@ -96,10 +96,10 @@ namespace TrueStory
 
         }
 
-        Story.PersistentData OnCloseStory()
+        Story.CloseStoryData OnCloseStory()
         {
             Instructor.CountersState p = window.Instructor.Counters;
-            Story.PersistentData d = new();
+            Story.CloseStoryData d = new();
 
             d.instructorCharactersCounter = p.charactersCounter;
             d.instructorCharactersWait = p.charactersWait;

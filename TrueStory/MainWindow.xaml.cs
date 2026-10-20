@@ -380,7 +380,7 @@ namespace TrueStory
             
             CheckFileNeedsSave();
 
-            FileEditorTextBox.Clear();
+            FileEditor.Unload();
             loadedFile = null;
 
             FolderViewList.Items.Clear();

@@ -92,5 +92,10 @@ namespace StoryPlayer
         {
             InitializeComponent();
         }
+
+        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+        }
     }
 }

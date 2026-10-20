@@ -145,7 +145,7 @@ namespace TrueStory
 
         }
 
-        public struct PersistentData
+        public struct CloseStoryData
         {
             public int instructorCharactersCounter;
             public int instructorCharactersWait;
@@ -197,7 +197,7 @@ namespace TrueStory
         public event CloseStoryAddedHandler? OnAddedCloseStory;
 
 
-        public delegate void OpenStoryAddedHandler(PersistentData data);
+        public delegate void OpenStoryAddedHandler(CloseStoryData data);
         public delegate void CreateFileAddedHandler(string name);
         public delegate void CreateFolderAddedHandler(string name);
         public delegate void DeleteFileAddedHandler(string name);
@@ -206,7 +206,7 @@ namespace TrueStory
         public delegate void SaveFileAddedHandler(string name, string text);
         public delegate string ExecuteCommandAddedHandler(string name);
         public delegate QuestionData QuestionAddedHandler(QuestionData q);
-        public delegate PersistentData CloseStoryAddedHandler();
+        public delegate CloseStoryData CloseStoryAddedHandler();
 
         public event HeaderReadedHandler? OnReadedHeader;
         public event OpenStoryReadedHandler? OnReadedOpenStory;
@@ -221,7 +221,7 @@ namespace TrueStory
         public event CloseStoryReadedHandler? OnReadedCloseStory;
 
         public delegate void HeaderReadedHandler(HeaderData data);
-        public delegate void OpenStoryReadedHandler(PersistentData data);
+        public delegate void OpenStoryReadedHandler();
         public delegate void CreateFileReadedHandler(CreateFileData data);
         public delegate void CreateFolderReadedHandler(CreateFolderData data);
         public delegate void DeleteFileReadedHandler(DeleteFileData data);
@@ -230,7 +230,7 @@ namespace TrueStory
         public delegate void SaveFileReadedHandler(SaveFileData data);
         public delegate void ExecuteCommandReadedHandler(ExecuteCommandData data);
         public delegate void QuestionReadedHandler(QuestionData q);
-        public delegate void CloseStoryReadedHandler(PersistentData data);
+        public delegate void CloseStoryReadedHandler(CloseStoryData data);
 
         public const string StoryFilename = ".truestory";
 
@@ -594,75 +594,25 @@ namespace TrueStory
             return data;
         }
 
-
-        /*
-        public void Decode()
+        public CloseStoryData DecodeCloseStoryRecord(Record r)
         {
+            CloseStoryData data = new();
 
-            else if (record.Value.type == RecordType.CloseStory)
-            {
-                BinaryBufferReader reader = new(record.Value.data);
+            BinaryBufferReader reader = new(r.data);
 
-                int instructorCharactersCounter = reader.ReadInt();
-                int instructorCharactersWait = reader.ReadInt();
-                int instructorCommandsCounter = reader.ReadInt();
-                int instructorCommandsWait = reader.ReadInt();
-                int instructorOpensCounter = reader.ReadInt();
-                int instructorOpensWait = reader.ReadInt();
-                int instructorSavesCounter = reader.ReadInt();
-                int instructorSavesWait = reader.ReadInt();
+            data.instructorCharactersCounter = reader.ReadInt();
+            data.instructorCharactersWait = reader.ReadInt();
+            data.instructorCommandsCounter = reader.ReadInt();
+            data.instructorCommandsWait = reader.ReadInt();
+            data.instructorOpensCounter = reader.ReadInt();
+            data.instructorOpensWait = reader.ReadInt();
+            data.instructorSavesCounter = reader.ReadInt();
+            data.instructorSavesWait = reader.ReadInt();
 
-                Utils.Log("    CharsCount : " + instructorCharactersCounter);
-                Utils.Log("    CharsWait  : " + instructorCharactersWait);
-                Utils.Log("    CommandCount : " + instructorCommandsCounter);
-                Utils.Log("    CommandWait  : " + instructorCommandsWait);
-                Utils.Log("    OpensCount : " + instructorOpensCounter);
-                Utils.Log("    OpensWait  : " + instructorOpensWait);
-                Utils.Log("    SavesCount : " + instructorSavesCounter);
-                Utils.Log("    SavesWait  : " + instructorSavesWait);
 
-            }
-            else if (record.Value.type == RecordType.OpenStory)
-            {
-                // Nothing
-            }
-            else if (record.Value.type == RecordType.Question)
-            {
-                BinaryBufferReader reader = new(record.Value.data);
-
-                QuestionType type = (QuestionType)reader.ReadInt();
-                string text = reader.ReadString();
-
-                string fileName = reader.ReadString();
-
-                int linesCount = reader.ReadInt();
-                for (int i = 0; i < linesCount; i++)
-                {
-                    reader.ReadInt();
-                    reader.ReadString();
-                }
-
-                int currentLine = reader.ReadInt();
-                string command = reader.ReadString();
-
-                string answer = reader.ReadString();
-                int usedTime = reader.ReadInt();
-                int timeLimit = reader.ReadInt();
-
-                Utils.Log("    Type       : " + type);
-                Utils.Log("    Text       : " + text);
-                Utils.Log("    CtxFilename: " + fileName);
-                Utils.Log("    CtxLines   : " + linesCount);
-                Utils.Log("    CtxCurrentLine : " + currentLine);
-                Utils.Log("    CtxCommand : " + command);
-                Utils.Log("    Answer     : " + answer);
-                Utils.Log("    UsedTime   : " + usedTime);
-                Utils.Log("    TimeLimit  : " + timeLimit);
-
-            }
+            return data;
 
         }
-        */
 
         public Record? ReadRecord(ReadDirection direction = ReadDirection.Forward)
         {
@@ -811,6 +761,18 @@ namespace TrueStory
                     QuestionData d = DecodeQuestionRecord(result.Value);
                     OnReadedQuestion?.Invoke(d);
                 }
+                else if (result.Value.type == RecordType.CloseStory)
+                {
+                    CloseStoryData d = DecodeCloseStoryRecord(result.Value);
+                    OnReadedCloseStory?.Invoke(d);
+                }
+                else // result.Value.type == RecordType.OpenStory
+                {
+                    OnReadedOpenStory?.Invoke();
+                }
+
+
+                // CONTINUE
             }
 
             return result;
@@ -1006,7 +968,7 @@ namespace TrueStory
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append);
 
-            PersistentData p = new();
+            CloseStoryData p = new();
 
             long restore = file.Position;
             Record? previous = ReadRecord(ReadDirection.Backwards);
@@ -1054,7 +1016,7 @@ namespace TrueStory
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            PersistentData result = OnAddedCloseStory?.Invoke() ?? new PersistentData();
+            CloseStoryData result = OnAddedCloseStory?.Invoke() ?? new CloseStoryData();
 
             Record record = new();
 

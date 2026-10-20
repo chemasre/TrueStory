@@ -36,7 +36,12 @@ namespace StoryPlayer
 
         HashSet<string> files;
         HashSet<string> folders;
-        ReadDirection readDirection;
+
+        ReadDirection? lastReadDirection;
+        bool lastReadedIsQuestion;
+        bool lastReadedIsFileSave;
+        SaveFileData? lastReadedSaveFileData;
+        int lastReadedChangeIndex;
 
         public MainWindow()
         {
@@ -76,7 +81,7 @@ namespace StoryPlayer
                 FileEditorTextBox.Visibility = Visibility.Visible;
                 CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
-                questionWindow.Visibility = Visibility.Visible;
+                questionWindow.Visibility = Visibility.Hidden;
 
                 ClearFolderView();
             }
@@ -115,6 +120,15 @@ namespace StoryPlayer
                     BlockProgress.Maximum = story.TotalRecords;
                     BlockProgress.Minimum = 0;
                     BlockProgress.Value = story.RecordIndex;
+
+                    files.Clear();
+                    folders.Clear();
+                    lastReadDirection = null;
+                    lastReadedIsQuestion = false;
+                    lastReadedIsFileSave = false;
+                    lastReadedSaveFileData = null;
+                    lastReadedChangeIndex = 0;
+
                 }
                 else
                 {
@@ -124,139 +138,18 @@ namespace StoryPlayer
 
         }
 
-        private void OnHeaderReaded(Story.HeaderData data)
-        {
-            BlockInfoLabel.Content = "Creada actividad por " + data.author + " con código " + data.publicKey;
-        }
-
-        private void OnQuestionReaded(Story.QuestionData q)
-        {
-            BlockInfoLabel.Content = "Contestada pregunta en " + q.usedTime + " segundos de " + q.timeLimit;
-
-            questionWindow.Question = q;
-        }
-
-        private void OnSaveFileReaded(SaveFileData data)
-        {
-            BlockInfoLabel.Content = "Guardado fichero " + data.fileName + " con " + data.text.Length + " carácteres y " + data.changes.Length + " cambios";
-
-            files.Add(data.fileName);
-            SelectFileInFolderView(data.fileName);
-
-            FileEditorTextBox.Text = data.text;
-        }
-
-        private void OnLoadFileReaded(LoadFileData data)
-        {
-            BlockInfoLabel.Content = "Abierto fichero " + data.fileName + " con " + data.text.Length + " carácteres";
-
-            files.Add(data.fileName);
-            SelectFileInFolderView(data.fileName);
-
-            FileEditorTextBox.Text = data.text;
-        }
-
-        private void OnExecuteCommandReaded(ExecuteCommandData data)
-        {
-            BlockInfoLabel.Content = "Ejecutado comando " + data.name;
-
-            CommandConsoleTextBox.Text = "> " + data.name + "\n" + data.result + "\n";
-        }
-
-        private void OnDeleteFileReaded(DeleteFileData data)
-        {
-            BlockInfoLabel.Content = "Eliminado fichero " + data.fileName;
-
-            if (readDirection == ReadDirection.Forward)
-            {
-                if (files.Contains(data.fileName))
-                {
-                    files.Remove(data.fileName);
-                    UpdateFolderView();
-                }
-            }
-            else
-            {
-                // Don't try to understand it: feel it
-
-                files.Add(data.fileName);
-                UpdateFolderView();
-            }
-        }
-
-        private void OnCreateFolderReaded(CreateFolderData data)
-        {
-            BlockInfoLabel.Content = "Creada carpeta " + data.folderName;
-
-            if (readDirection == ReadDirection.Forward)
-            {
-                folders.Add(data.folderName);
-                UpdateFolderView();
-            }
-            else
-            {
-                if (folders.Contains(data.folderName))
-                {
-                    folders.Remove(data.folderName);
-                    UpdateFolderView();
-                }
-            }
-        }
-
-        private void OnCreateFileReaded(CreateFileData data)
-        {
-            BlockInfoLabel.Content = "Creado fichero " + data.fileName;
-
-            if (readDirection == ReadDirection.Forward)
-            {
-                files.Add(data.fileName);
-                UpdateFolderView();
-            }
-            else
-            {
-                if (files.Contains(data.fileName))
-                {
-                    files.Remove(data.fileName);
-                    UpdateFolderView();
-                }
-            }
-
-        }
-
-        void OnDeleteFolderReaded(DeleteFolderData data)
-        {
-            BlockInfoLabel.Content = "Eliminada carpeta " + data.folderName;
-
-            if (readDirection == ReadDirection.Forward)
-            {
-                if (folders.Contains(data.folderName))
-                {
-                    folders.Remove(data.folderName);
-                    UpdateFolderView();
-                }
-            }
-            else
-            {
-                // Don't try to understand it: feel it
-
-                folders.Add(data.folderName);
-                UpdateFolderView();
-            }
-        }
-
-        private void OnCloseStoryReaded(Story.PersistentData data)
-        {
-            BlockInfoLabel.Content = "Actividad cerrada";
-        }
-
-        private void OnOpenStoryReaded(Story.PersistentData data)
-        {
-            BlockInfoLabel.Content = "Actividad abierta";
-        }
-
         private void OnMenuCloseActivity(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
+
+            files.Clear();
+            folders.Clear();
+            lastReadDirection = null;
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+            lastReadedSaveFileData = null;
+            lastReadedChangeIndex = 0;
+
 
             FileEditorTextBox.Clear();
             FolderViewList.Items.Clear();
@@ -268,90 +161,338 @@ namespace StoryPlayer
             SetUIState(UIState.NoStory);
         }
 
+        private void OnHeaderReaded(Story.HeaderData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Creada actividad por " + data.author + " con código " + data.publicKey;
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+        }
+
+        private void OnQuestionReaded(Story.QuestionData q)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Contestada pregunta en " + q.usedTime + " segundos de " + q.timeLimit;
+
+            questionWindow.Question = q;
+            lastReadedIsQuestion = true;
+            lastReadedIsFileSave = false;
+        }
+
+        private void OnSaveFileReaded(SaveFileData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Guardado fichero " + data.fileName + " con " + data.text.Length + " carácteres y " + data.changes.Length + " cambios";
+
+            files.Add(data.fileName);
+            SelectFileInFolderView(data.fileName);
+
+            if(lastReadDirection == ReadDirection.Backwards)
+            {
+                FileEditorTextBox.Text = data.text;
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = true;
+
+            lastReadedSaveFileData = data;
+        }
+
+        private void OnLoadFileReaded(LoadFileData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Abierto fichero " + data.fileName + " con " + data.text.Length + " carácteres";
+
+            files.Add(data.fileName);
+            SelectFileInFolderView(data.fileName);
+
+            if (lastReadDirection == ReadDirection.Forward)
+            {
+                FileEditorTextBox.Text = data.text;
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+        }
+
+        private void OnExecuteCommandReaded(ExecuteCommandData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Ejecutado comando " + data.name;
+
+            CommandConsoleTextBox.Text = "> " + data.name + "\n" + data.result + "\n";
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+        }
+
+        private void OnDeleteFileReaded(DeleteFileData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Eliminado fichero " + data.fileName;
+
+            if (lastReadDirection == ReadDirection.Forward)
+            {
+                if (files.Contains(data.fileName))
+                {
+                    files.Remove(data.fileName);
+                    UpdateFolderView();
+                }
+            }
+            else
+            {
+                // Don't try to understand it: feel it
+
+                files.Add(data.fileName);
+                UpdateFolderView();
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+
+        }
+
+        private void OnCreateFolderReaded(CreateFolderData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Creada carpeta " + data.folderName;
+
+            if (lastReadDirection == ReadDirection.Forward)
+            {
+                folders.Add(data.folderName);
+                UpdateFolderView();
+            }
+            else
+            {
+                if (folders.Contains(data.folderName))
+                {
+                    folders.Remove(data.folderName);
+                    UpdateFolderView();
+                }
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+
+        }
+
+        private void OnCreateFileReaded(CreateFileData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Creado fichero " + data.fileName;
+
+            if (lastReadDirection == ReadDirection.Forward)
+            {
+                files.Add(data.fileName);
+                UpdateFolderView();
+            }
+            else
+            {
+                if (files.Contains(data.fileName))
+                {
+                    files.Remove(data.fileName);
+                    UpdateFolderView();
+                }
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+
+        }
+
+        void OnDeleteFolderReaded(DeleteFolderData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Eliminada carpeta " + data.folderName;
+
+            if (lastReadDirection == ReadDirection.Forward)
+            {
+                if (folders.Contains(data.folderName))
+                {
+                    folders.Remove(data.folderName);
+                    UpdateFolderView();
+                }
+            }
+            else
+            {
+                // Don't try to understand it: feel it
+
+                folders.Add(data.folderName);
+                UpdateFolderView();
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+
+        }
+
+        private void OnCloseStoryReaded(Story.CloseStoryData data)
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Actividad cerrada";
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+
+        }
+
+        private void OnOpenStoryReaded()
+        {
+            BlockInfoLabel.Content = GetCursorText() + " Actividad abierta";
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
+
+        }
+
+
         void OnGotoStart(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
-            readDirection = ReadDirection.Backwards;
+            lastReadDirection = ReadDirection.Backwards;
 
             Record? record;
 
             do
-            { record = story.ReadRecord(ReadDirection.Backwards);
+            {
+                lastReadDirection = ReadDirection.Forward;
+                record = story.ReadRecord(ReadDirection.Backwards);
+
             } while (record != null);
 
             BlockProgress.Value = story.RecordIndex;
+
+            if (lastReadedIsQuestion) { questionWindow.Show(); }
+            else { questionWindow.Hide(); }
+
         }
 
         void OnGotoEnd(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
-            readDirection = ReadDirection.Forward;
+            lastReadDirection = ReadDirection.Forward;
 
             Record? record;
 
             do
-            { record = story.ReadRecord();
+            {
+                lastReadDirection = ReadDirection.Forward;
+                record = story.ReadRecord();
+
             } while (record != null);
 
             BlockProgress.Value = story.RecordIndex;
+
+            if (lastReadedIsQuestion) { questionWindow.Show(); }
+            else { questionWindow.Hide(); }
+
         }
 
         private void OnNextStep(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
-            readDirection = ReadDirection.Forward;
+            lastReadDirection = ReadDirection.Forward;
 
             Step();
 
             BlockProgress.Value = story.RecordIndex;
+
+            if (lastReadedIsQuestion) { questionWindow.Show(); }
+            else { questionWindow.Hide(); }
         }
 
         private void OnPreviousStep(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
-            readDirection = ReadDirection.Backwards;
+            lastReadDirection = ReadDirection.Backwards;
 
             Step(Story.ReadDirection.Backwards);
 
             BlockProgress.Value = story.RecordIndex;
+
+            if (lastReadedIsQuestion) { questionWindow.Show(); }
+            else { questionWindow.Hide(); }
         }
 
         void Step(Story.ReadDirection direction = Story.ReadDirection.Forward)
         {
-            bool commandStop = ConsoleCommandsStopCheckBox.IsChecked.GetValueOrDefault();
-            bool questionStop = QuestionsStopCheckBox.IsChecked.GetValueOrDefault();
-            bool fileOperationStop = FileSaveOrLoadStopCheckBox.IsChecked.GetValueOrDefault();
+            Debug.Assert(story != null);
 
-            Record? record = null;
-            bool stop = false;
+            bool consoleEvents = ConsoleEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool questionEvents = QuestionEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool fileEvents = FileEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool activityEvents = ActivityEventsCheckbox.IsChecked.GetValueOrDefault();
+            bool contentEvents = ContentEventsCheckBox.IsChecked.GetValueOrDefault();
+
+            bool stepDone = false;
+
+            Record? record;
 
             do
             {
-                record = story.ReadRecord(direction);
 
-                if (record.HasValue)
+                lastReadDirection = direction;
+
+                if (contentEvents && lastReadedIsFileSave)
                 {
-                    if (fileOperationStop && (record.Value.type == RecordType.CreateFile ||
-                                              record.Value.type == RecordType.DeleteFile ||
-                                              record.Value.type == RecordType.LoadFile ||
-                                              record.Value.type == RecordType.SaveFile))
-                    { stop = true; }
-                    else if (commandStop && record.Value.type == RecordType.ExecuteCommand)
-                    { stop = true; }
-                    else if (questionStop && record.Value.type == RecordType.Question)
-                    { stop = true; }
+                    Debug.Assert(lastReadedSaveFileData != null);
+                    if (lastReadedChangeIndex < lastReadedSaveFileData.Value.changes.Length)
+                    {
+                        string text = FileEditorTextBox.Text;
+                        FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
+                        if (lastReadDirection == ReadDirection.Forward)
+                        {
+                            Console.WriteLine("Offset: " + change.Offset + " Added: " + change.Added + " Removed: " +  change.Removed + " AddedText: " + change.AddedText);
+
+                            if (change.Offset <= text.Length)
+                            {
+                                if (change.Removed > 0 && change.Offset + change.Removed <= text.Length) { text = text.Remove(change.Offset, change.Removed); }
+                                if (change.Added > 0) { text = text.Insert(change.Offset, change.AddedText); }
+
+                                FileEditorTextBox.Text = text;
+                            }
+
+
+                            lastReadedChangeIndex++;
+                            stepDone = true;
+                        }
+                    }
+                    else
+                    {
+                        lastReadedIsFileSave = false;
+                        lastReadedSaveFileData = null;
+                        lastReadedChangeIndex = 0;
+                    }
 
                 }
-                else
+                
+                if(!stepDone)
                 {
-                    stop = true;
+
+                    record = story.ReadRecord(direction);
+
+                    if (record.HasValue)
+                    {
+
+                        if (fileEvents && (record.Value.type == RecordType.CreateFile ||
+                                                  record.Value.type == RecordType.DeleteFile ||
+                                                  record.Value.type == RecordType.LoadFile ||
+                                                  record.Value.type == RecordType.SaveFile))
+                        { stepDone = true; }
+                        else if (consoleEvents && record.Value.type == RecordType.ExecuteCommand)
+                        { stepDone = true; }
+                        else if (questionEvents && record.Value.type == RecordType.Question)
+                        { stepDone = true; }
+                        else if (consoleEvents && record.Value.type == RecordType.ExecuteCommand)
+                        { stepDone = true; }
+                        else if (activityEvents && (record.Value.type == RecordType.OpenStory ||
+                                                    record.Value.type == RecordType.CloseStory ||
+                                                    record.Value.type == RecordType.Header))
+                        { stepDone = true; }
+
+                    }
+                    else
+                    {
+                        stepDone = true;
+                    }
                 }
 
-            } while (!stop);
+            } while (!stepDone);
 
         }
 
@@ -389,5 +530,13 @@ namespace StoryPlayer
             { FolderViewList.SelectedIndex = folders.Count + pos; }
             
         }
+
+        string GetCursorText()
+        {
+            Debug.Assert(story != null);
+
+            return String.Format("<{0:0}/{1:0}>", story.RecordIndex, story.TotalRecords);
+        }
+
     }
 }
