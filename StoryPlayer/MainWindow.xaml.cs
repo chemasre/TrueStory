@@ -43,6 +43,8 @@ namespace StoryPlayer
         SaveFileData? lastReadedSaveFileData;
         int lastReadedChangeIndex;
 
+        bool ignoreReadEvent;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -128,6 +130,7 @@ namespace StoryPlayer
                     lastReadedIsFileSave = false;
                     lastReadedSaveFileData = null;
                     lastReadedChangeIndex = 0;
+                    ignoreReadEvent = false;
 
                 }
                 else
@@ -149,6 +152,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
             lastReadedSaveFileData = null;
             lastReadedChangeIndex = 0;
+            ignoreReadEvent = false;
 
 
             FileEditorTextBox.Clear();
@@ -163,6 +167,8 @@ namespace StoryPlayer
 
         private void OnHeaderReaded(Story.HeaderData data)
         {
+            if (ignoreReadEvent) { return;  }
+
             BlockInfoLabel.Content = GetCursorText() + " Creada actividad por " + data.author + " con código " + data.publicKey;
 
             FileEditorTextBox.Text = "";
@@ -173,6 +179,8 @@ namespace StoryPlayer
 
         private void OnQuestionReaded(Story.QuestionData q)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Contestada pregunta en " + q.usedTime + " segundos de " + q.timeLimit;
 
             questionWindow.Question = q;
@@ -182,6 +190,8 @@ namespace StoryPlayer
 
         private void OnSaveFileReaded(SaveFileData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Guardado fichero " + data.fileName + " con " + data.text.Length + " carácteres y " + data.changes.Length + " cambios";
 
             files.Add(data.fileName);
@@ -213,6 +223,8 @@ namespace StoryPlayer
 
         private void OnLoadFileReaded(LoadFileData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Abierto fichero " + data.fileName + " con " + data.text.Length + " carácteres";
 
             files.Add(data.fileName);
@@ -229,6 +241,8 @@ namespace StoryPlayer
 
         private void OnExecuteCommandReaded(ExecuteCommandData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Ejecutado comando " + data.name;
 
             CommandConsoleTextBox.Text = "> " + data.name + "\n" + data.result + "\n";
@@ -239,6 +253,8 @@ namespace StoryPlayer
 
         private void OnDeleteFileReaded(DeleteFileData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Eliminado fichero " + data.fileName;
 
             if (lastReadDirection == ReadDirection.Forward)
@@ -264,6 +280,8 @@ namespace StoryPlayer
 
         private void OnCreateFolderReaded(CreateFolderData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Creada carpeta " + data.folderName;
 
             if (lastReadDirection == ReadDirection.Forward)
@@ -287,6 +305,8 @@ namespace StoryPlayer
 
         private void OnCreateFileReaded(CreateFileData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Creado fichero " + data.fileName;
 
             if (lastReadDirection == ReadDirection.Forward)
@@ -310,6 +330,8 @@ namespace StoryPlayer
 
         void OnDeleteFolderReaded(DeleteFolderData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Eliminada carpeta " + data.folderName;
 
             if (lastReadDirection == ReadDirection.Forward)
@@ -335,6 +357,8 @@ namespace StoryPlayer
 
         private void OnCloseStoryReaded(Story.CloseStoryData data)
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Actividad cerrada";
 
             FileEditorTextBox.Text = "";
@@ -346,6 +370,8 @@ namespace StoryPlayer
 
         private void OnOpenStoryReaded()
         {
+            if (ignoreReadEvent) { return; }
+
             BlockInfoLabel.Content = GetCursorText() + " Actividad abierta";
 
             FileEditorTextBox.Text = "";
@@ -404,39 +430,27 @@ namespace StoryPlayer
         {
             Debug.Assert(story != null);
 
-            lastReadDirection = ReadDirection.Forward;
-
             Step();
-
-            BlockProgress.Value = story.RecordIndex;
-
-            if (lastReadedIsQuestion) { questionWindow.Show(); }
-            else { questionWindow.Hide(); }
         }
 
         private void OnPreviousStep(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
-
-            lastReadDirection = ReadDirection.Backwards;
-
             Step(Story.ReadDirection.Backwards);
-
-            BlockProgress.Value = story.RecordIndex;
-
-            if (lastReadedIsQuestion) { questionWindow.Show(); }
-            else { questionWindow.Hide(); }
         }
+
 
         void Step(Story.ReadDirection direction = Story.ReadDirection.Forward)
         {
             Debug.Assert(story != null);
 
-            bool consoleEvents = ConsoleEventsCheckBox.IsChecked.GetValueOrDefault();
-            bool questionEvents = QuestionEventsCheckBox.IsChecked.GetValueOrDefault();
-            bool fileEvents = FileEventsCheckBox.IsChecked.GetValueOrDefault();
-            bool activityEvents = ActivityEventsCheckbox.IsChecked.GetValueOrDefault();
-            bool contentEvents = ContentEventsCheckBox.IsChecked.GetValueOrDefault();
+            lastReadDirection = direction;
+
+            bool consoleReadStop = ConsoleEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool questionReadStop = QuestionEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool fileReadStop = FileEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool activityReadStop = ActivityEventsCheckbox.IsChecked.GetValueOrDefault();
+            bool contentReadStop = ContentEventsCheckBox.IsChecked.GetValueOrDefault();
 
             bool stepDone = false;
 
@@ -447,7 +461,7 @@ namespace StoryPlayer
 
                 lastReadDirection = direction;
 
-                if (contentEvents && lastReadedIsFileSave)
+                if (contentReadStop && lastReadedIsFileSave)
                 {
                     Debug.Assert(lastReadedSaveFileData != null);
                     if (lastReadDirection == ReadDirection.Forward && lastReadedChangeIndex < lastReadedSaveFileData.Value.changes.Length)
@@ -462,7 +476,7 @@ namespace StoryPlayer
 
                         lastReadedChangeIndex++;
 
-                        
+
 
                         stepDone = true;
 
@@ -484,7 +498,17 @@ namespace StoryPlayer
                         stepDone = true;
 
                     }
-                    else
+                    else if (lastReadDirection == ReadDirection.Backwards && lastReadedChangeIndex == 0)
+                    {
+                        ignoreReadEvent = true;
+                        story.ReadRecord(ReadDirection.Backwards);
+                        ignoreReadEvent = false;
+
+                        lastReadedIsFileSave = false;
+                        lastReadedSaveFileData = null;
+                        lastReadedChangeIndex = 0;
+                    }
+                    else if (lastReadDirection == ReadDirection.Forward && lastReadedChangeIndex == lastReadedSaveFileData.Value.changes.Length)
                     {
                         lastReadedIsFileSave = false;
                         lastReadedSaveFileData = null;
@@ -492,6 +516,8 @@ namespace StoryPlayer
                     }
 
                 }
+
+                // Read a block
                 
                 if(!stepDone)
                 {
@@ -501,18 +527,18 @@ namespace StoryPlayer
                     if (record.HasValue)
                     {
 
-                        if (fileEvents && (record.Value.type == RecordType.CreateFile ||
+                        if (fileReadStop && (record.Value.type == RecordType.CreateFile ||
                                                   record.Value.type == RecordType.DeleteFile ||
                                                   record.Value.type == RecordType.LoadFile ||
                                                   record.Value.type == RecordType.SaveFile))
                         { stepDone = true; }
-                        else if (consoleEvents && record.Value.type == RecordType.ExecuteCommand)
+                        else if (consoleReadStop && record.Value.type == RecordType.ExecuteCommand)
                         { stepDone = true; }
-                        else if (questionEvents && record.Value.type == RecordType.Question)
+                        else if (questionReadStop && record.Value.type == RecordType.Question)
                         { stepDone = true; }
-                        else if (consoleEvents && record.Value.type == RecordType.ExecuteCommand)
+                        else if (consoleReadStop && record.Value.type == RecordType.ExecuteCommand)
                         { stepDone = true; }
-                        else if (activityEvents && (record.Value.type == RecordType.OpenStory ||
+                        else if (activityReadStop && (record.Value.type == RecordType.OpenStory ||
                                                     record.Value.type == RecordType.CloseStory ||
                                                     record.Value.type == RecordType.Header))
                         { stepDone = true; }
@@ -525,6 +551,11 @@ namespace StoryPlayer
                 }
 
             } while (!stepDone);
+
+            BlockProgress.Value = story.RecordIndex;
+
+            if (lastReadedIsQuestion) { questionWindow.Show(); }
+            else { questionWindow.Hide(); }
 
         }
 
@@ -611,5 +642,22 @@ namespace StoryPlayer
             return builder.ToString();
         }
 
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (story == null) { return; }
+
+            if (e.Key == Key.Right)
+            {
+                Step();
+
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Left)
+            {
+                Step(ReadDirection.Backwards);
+
+                e.Handled = true;
+            }
+        }
     }
 }
