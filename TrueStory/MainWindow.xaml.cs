@@ -1,11 +1,8 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.ComponentModel;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using TrueStory.Source;
 
