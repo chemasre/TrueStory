@@ -25,5 +25,9 @@ namespace TrueStory
 
         public const char unknowCharacter = '?';
 
+        // Play
+
+        public const int playTimerInterval = 100; //ms
+
     }
 }

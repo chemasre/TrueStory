@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using TrueStory;
 using static System.Net.Mime.MediaTypeNames;
@@ -24,13 +25,14 @@ namespace StoryPlayer
     {
         Story? story;
 
-        enum UIState
+        enum State
         {
             NoStory,
-            StoryRecords
+            StoryManualPlay,
+            StoryAutoPlay
         }
 
-        UIState uiState;
+        State state;
 
         QuestionWindow questionWindow;
 
@@ -45,6 +47,8 @@ namespace StoryPlayer
 
         bool ignoreReadEvent;
 
+        DispatcherTimer playTimer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -54,16 +58,20 @@ namespace StoryPlayer
             files = new();
             folders = new();
 
+            playTimer = new();
+            playTimer.Interval = TimeSpan.FromMilliseconds(Constants.playTimerInterval);
+            playTimer.Tick += OnPlayTimerTick;
+
             Title = Version.GetFullName();
 
-            SetUIState(UIState.NoStory);
+            SetState(State.NoStory);
 
 
         }
 
-        void SetUIState(UIState _uiState)
+        void SetState(State _uiState)
         {
-            if (_uiState == UIState.NoStory)
+            if (_uiState == State.NoStory)
             {
                 OpenActivityMenuAction.IsEnabled = true;
                 CloseActivityMenuAction.IsEnabled = false;
@@ -75,7 +83,7 @@ namespace StoryPlayer
 
                 ClearFolderView();
             }
-            else // _uiState == UIState.Story
+            else if (_uiState == State.StoryManualPlay)
             {
                 OpenActivityMenuAction.IsEnabled = false;
                 CloseActivityMenuAction.IsEnabled = true;
@@ -84,14 +92,37 @@ namespace StoryPlayer
                 CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
                 questionWindow.Visibility = Visibility.Hidden;
+                GotoStartButton.IsEnabled = true;
+                PreviousChangeButton.IsEnabled = true;
+                PlayButton.IsEnabled = true;
+                StopButton.IsEnabled = false;
+                NextChangeButton.IsEnabled = true;
+                GotoEndButton.IsEnabled = true;
 
                 ClearFolderView();
             }
+            else // _uiState == UIState.StoryAutoPlay
+            {
+                OpenActivityMenuAction.IsEnabled = false;
+                CloseActivityMenuAction.IsEnabled = false;
+                StoryControls.Visibility = Visibility.Visible;
+                FileEditorTextBox.Visibility = Visibility.Visible;
+                CommandConsoleTextBox.Visibility = Visibility.Visible;
+                FolderViewList.Visibility = Visibility.Visible;
+                questionWindow.Visibility = Visibility.Hidden;
+                GotoStartButton.IsEnabled = false;
+                PreviousChangeButton.IsEnabled = false;
+                PlayButton.IsEnabled = false;
+                StopButton.IsEnabled = true;
+                NextChangeButton.IsEnabled = false;
+                GotoEndButton.IsEnabled = false;
 
-            uiState = _uiState;
+            }
+
+            state = _uiState;
         }
 
-        private void OnMenuOpenActivity(object sender, RoutedEventArgs e)
+        void OnMenuOpenActivity(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog dialog = new();
 
@@ -117,7 +148,7 @@ namespace StoryPlayer
                     story.OnReadedLoadFile += OnLoadFileReaded;
                     story.OnReadedSaveFile += OnSaveFileReaded;
 
-                    SetUIState(UIState.StoryRecords);
+                    SetState(State.StoryManualPlay);
 
                     BlockProgress.Maximum = story.TotalRecords;
                     BlockProgress.Minimum = 0;
@@ -141,7 +172,7 @@ namespace StoryPlayer
 
         }
 
-        private void OnMenuCloseActivity(object sender, RoutedEventArgs e)
+        void OnMenuCloseActivity(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
@@ -162,10 +193,10 @@ namespace StoryPlayer
             story.Dispose();
             story = null;
 
-            SetUIState(UIState.NoStory);
+            SetState(State.NoStory);
         }
 
-        private void OnHeaderReaded(Story.HeaderData data)
+        void OnHeaderReaded(Story.HeaderData data)
         {
             if (ignoreReadEvent) { return;  }
 
@@ -177,7 +208,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        private void OnQuestionReaded(Story.QuestionData q)
+        void OnQuestionReaded(Story.QuestionData q)
         {
             if (ignoreReadEvent) { return; }
 
@@ -188,7 +219,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        private void OnSaveFileReaded(SaveFileData data)
+        void OnSaveFileReaded(SaveFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -221,7 +252,7 @@ namespace StoryPlayer
             lastReadedSaveFileData = data;
         }
 
-        private void OnLoadFileReaded(LoadFileData data)
+        void OnLoadFileReaded(LoadFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -239,7 +270,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        private void OnExecuteCommandReaded(ExecuteCommandData data)
+        void OnExecuteCommandReaded(ExecuteCommandData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -251,7 +282,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        private void OnDeleteFileReaded(DeleteFileData data)
+        void OnDeleteFileReaded(DeleteFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -278,7 +309,7 @@ namespace StoryPlayer
 
         }
 
-        private void OnCreateFolderReaded(CreateFolderData data)
+        void OnCreateFolderReaded(CreateFolderData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -303,7 +334,7 @@ namespace StoryPlayer
 
         }
 
-        private void OnCreateFileReaded(CreateFileData data)
+        void OnCreateFileReaded(CreateFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -355,7 +386,7 @@ namespace StoryPlayer
 
         }
 
-        private void OnCloseStoryReaded(Story.CloseStoryData data)
+        void OnCloseStoryReaded(Story.CloseStoryData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -368,7 +399,7 @@ namespace StoryPlayer
 
         }
 
-        private void OnOpenStoryReaded()
+        void OnOpenStoryReaded()
         {
             if (ignoreReadEvent) { return; }
 
@@ -426,14 +457,14 @@ namespace StoryPlayer
 
         }
 
-        private void OnNextStep(object sender, RoutedEventArgs e)
+        void OnNextStep(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
             Step();
         }
 
-        private void OnPreviousStep(object sender, RoutedEventArgs e)
+        void OnPreviousStep(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
             Step(Story.ReadDirection.Backwards);
@@ -642,7 +673,7 @@ namespace StoryPlayer
             return builder.ToString();
         }
 
-        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (story == null) { return; }
 
@@ -658,6 +689,44 @@ namespace StoryPlayer
 
                 e.Handled = true;
             }
+            else if (e.Key == Key.Space)
+            {
+                if (state == State.StoryManualPlay)
+                {
+                    SetState(State.StoryAutoPlay);
+                    playTimer.Start();
+                }
+                else
+                {
+                    playTimer.Stop();
+                    SetState(State.StoryManualPlay);
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        void OnPlayTimerTick(object? sender, EventArgs e)
+        {
+            if (story == null) { return; }
+
+            Step();
+        }
+
+        void OnPlay(object sender, RoutedEventArgs e)
+        {
+            if (story == null) { return; }
+
+            SetState(State.StoryAutoPlay);
+            playTimer.Start();
+        }
+
+        private void OnStop(object sender, RoutedEventArgs e)
+        {
+            if (story == null) { return; }
+
+            playTimer.Stop();
+            SetState(State.StoryManualPlay);
         }
     }
 }
