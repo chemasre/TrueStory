@@ -21,5 +21,9 @@ namespace TrueStory
 
         public const string logFileName = "log.txt";
 
+        // TextEditor
+
+        public const char unknowCharacter = '?';
+
     }
 }

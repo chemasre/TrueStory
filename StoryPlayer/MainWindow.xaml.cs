@@ -27,7 +27,7 @@ namespace StoryPlayer
         enum UIState
         {
             NoStory,
-            Story
+            StoryRecords
         }
 
         UIState uiState;
@@ -115,7 +115,7 @@ namespace StoryPlayer
                     story.OnReadedLoadFile += OnLoadFileReaded;
                     story.OnReadedSaveFile += OnSaveFileReaded;
 
-                    SetUIState(UIState.Story);
+                    SetUIState(UIState.StoryRecords);
 
                     BlockProgress.Maximum = story.TotalRecords;
                     BlockProgress.Minimum = 0;
@@ -165,6 +165,8 @@ namespace StoryPlayer
         {
             BlockInfoLabel.Content = GetCursorText() + " Creada actividad por " + data.author + " con código " + data.publicKey;
 
+            FileEditorTextBox.Text = "";
+
             lastReadedIsQuestion = false;
             lastReadedIsFileSave = false;
         }
@@ -185,9 +187,22 @@ namespace StoryPlayer
             files.Add(data.fileName);
             SelectFileInFolderView(data.fileName);
 
-            if(lastReadDirection == ReadDirection.Backwards)
+            if (!ContentEventsCheckBox.IsChecked.GetValueOrDefault())
             {
                 FileEditorTextBox.Text = data.text;
+            }
+            else
+            {
+                if (lastReadDirection == ReadDirection.Backwards)
+                {
+                    FileEditorTextBox.Text = data.text;
+                    lastReadedChangeIndex = data.changes.Length;
+                }
+                else // lastReadDirection == ReadDirection.Forward
+                {
+                    lastReadedChangeIndex = 0;
+                }
+
             }
 
             lastReadedIsQuestion = false;
@@ -322,6 +337,8 @@ namespace StoryPlayer
         {
             BlockInfoLabel.Content = GetCursorText() + " Actividad cerrada";
 
+            FileEditorTextBox.Text = "";
+
             lastReadedIsQuestion = false;
             lastReadedIsFileSave = false;
 
@@ -330,6 +347,8 @@ namespace StoryPlayer
         private void OnOpenStoryReaded()
         {
             BlockInfoLabel.Content = GetCursorText() + " Actividad abierta";
+
+            FileEditorTextBox.Text = "";
 
             lastReadedIsQuestion = false;
             lastReadedIsFileSave = false;
@@ -431,26 +450,39 @@ namespace StoryPlayer
                 if (contentEvents && lastReadedIsFileSave)
                 {
                     Debug.Assert(lastReadedSaveFileData != null);
-                    if (lastReadedChangeIndex < lastReadedSaveFileData.Value.changes.Length)
+                    if (lastReadDirection == ReadDirection.Forward && lastReadedChangeIndex < lastReadedSaveFileData.Value.changes.Length)
                     {
                         string text = FileEditorTextBox.Text;
                         FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
-                        if (lastReadDirection == ReadDirection.Forward)
-                        {
-                            Console.WriteLine("Offset: " + change.Offset + " Added: " + change.Added + " Removed: " +  change.Removed + " AddedText: " + change.AddedText);
 
-                            if (change.Offset <= text.Length)
-                            {
-                                if (change.Removed > 0 && change.Offset + change.Removed <= text.Length) { text = text.Remove(change.Offset, change.Removed); }
-                                if (change.Added > 0) { text = text.Insert(change.Offset, change.AddedText); }
+                        // Console.WriteLine("Do change " + lastReadedChangeIndex + "Offset: " + change.Offset + " Added: " + change.Added + " Removed: " + change.Removed + " AddedText: " + change.AddedText);
+                        FileEditorTextBox.Text = ApplyFileChange(text, change, ReadDirection.Forward);
 
-                                FileEditorTextBox.Text = text;
-                            }
+                        BlockInfoLabel.Content = GetCursorText() + ":" + GetChangeText() + " Aplicado cambio";
+
+                        lastReadedChangeIndex++;
+
+                        
+
+                        stepDone = true;
 
 
-                            lastReadedChangeIndex++;
-                            stepDone = true;
-                        }
+
+                    }
+                    else if (lastReadDirection == ReadDirection.Backwards && lastReadedChangeIndex > 0)
+                    {
+                        lastReadedChangeIndex--;
+
+                        string text = FileEditorTextBox.Text;
+                        FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
+
+                        //Console.WriteLine("Undo change " + lastReadedChangeIndex + "Backwards " + "Offset: " + change.Offset + " Added: " + change.Added + " Removed: " + change.Removed + " AddedText: " + change.AddedText);
+                        FileEditorTextBox.Text = ApplyFileChange(text, change, ReadDirection.Backwards);
+
+                        BlockInfoLabel.Content = GetCursorText() + ":" + GetChangeText() + " Revertido cambio";
+
+                        stepDone = true;
+
                     }
                     else
                     {
@@ -531,11 +563,52 @@ namespace StoryPlayer
             
         }
 
+        string ApplyFileChange(string text, FileChangeData change, ReadDirection direction)
+        {
+            string result = text;
+
+            if (change.Offset <= result.Length)
+            {
+                if (direction == ReadDirection.Forward)
+                {
+                    if (change.Removed > 0 && change.Offset + change.Removed <= result.Length) { result = result.Remove(change.Offset, change.Removed); }
+                    if (change.Added > 0) { result = result.Insert(change.Offset, change.AddedText); }
+                }
+                else
+                {
+                    if (change.Added > 0 && change.Offset + change.Added <= result.Length) { result = result.Remove(change.Offset, change.Added); }
+                    if (change.Removed > 0) { result = result.Insert(change.Offset, GenerateUnknownText(change.Removed)); }
+                }
+            }
+
+            return result;
+        }
+            
+
         string GetCursorText()
         {
             Debug.Assert(story != null);
 
             return String.Format("<{0:0}/{1:0}>", story.RecordIndex, story.TotalRecords);
+        }
+
+        string GetChangeText()
+        {
+            Debug.Assert(lastReadedSaveFileData != null);
+
+            return String.Format("<{0:0}/{1:0}>", lastReadedChangeIndex, lastReadedSaveFileData.Value.changes.Length);
+        }
+
+        string GenerateUnknownText(int length)
+        {
+            StringBuilder builder = new();
+
+            for (int i = 0; i < length; i++)
+            {
+                builder.Append(Constants.unknowCharacter);
+            }
+
+            return builder.ToString();
         }
 
     }
