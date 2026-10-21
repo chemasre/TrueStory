@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoryPlayer"
         mc:Ignorable="d"
-        Title="StoryPlayer Player" Height="636" Width="960" Background="{DynamicResource StoryPlayerNonEditableTextBackground}" PreviewKeyDown="OnPreviewKeyDown">
+        Title="StoryPlayer Player" Height="636" Width="960" Background="{DynamicResource StoryPlayerNonEditableTextBackground}" PreviewKeyDown="OnPreviewKeyDown" Closed="OnClosed">
     <DockPanel>
         <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource StoryPlayerMenu}" FontFamily="{DynamicResource StoryPlayerFont}" FontSize="{DynamicResource StoryPlayerFontSize}" Foreground="{DynamicResource StoryPlayerMenuText}">
             <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">

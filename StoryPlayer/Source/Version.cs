@@ -12,9 +12,9 @@ namespace StoryPlayer
 
         public const int Major = 0;
         public const int Minor = 1;
-        public const int Patch = 0;
+        public const int Patch = 1;
 
-        public const string Alias = "Initial version";
+        public const string Alias = "Fixed question lines";
 
         public static string GetFullName()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -53,8 +55,11 @@ namespace StoryPlayer
                     }
 
                     table.BorderBrush = new SolidColorBrush(Colors.LightGray);
+                    table.Foreground= (Brush)App.Current.Resources["StoryPlayerEditableText"];;
+                    table.Background= (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"];;
                     table.BorderThickness = new Thickness(1);
                     table.Padding = new Thickness(5);
+
 
                     row.Cells.Add(cell);
                     rowGroup.Rows.Add(row);
@@ -68,6 +73,9 @@ namespace StoryPlayer
                     p.TextAlignment = TextAlignment.Center;
                     p.FontSize *= 1.2f;
                     p.Margin = new Thickness(0);
+                    p.Foreground= (Brush)App.Current.Resources["StoryPlayerEditableText"];;
+                    p.Background= (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"];;
+
                     doc.Blocks.Add(p);
                 }
 
@@ -86,11 +94,26 @@ namespace StoryPlayer
             }
         }
 
-
+        // This hides the close button
+        const int GWL_STYLE = -16;
+        const int WS_SYSMENU = 0x80000;
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         public QuestionWindow()
         {
             InitializeComponent();
+
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            nint hwnd = new WindowInteropHelper(this).Handle;
+            SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)

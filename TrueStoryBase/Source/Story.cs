@@ -577,6 +577,8 @@ namespace TrueStory
 
                 lineData.number = reader.ReadInt();
                 lineData.text = reader.ReadString();
+
+                lines.Add(lineData);
             }
 
             contextData.lines = lines.ToArray();

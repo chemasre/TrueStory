@@ -13,7 +13,6 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using TrueStory;
-using static System.Net.Mime.MediaTypeNames;
 using static TrueStory.Story;
 
 namespace StoryPlayer
@@ -727,6 +726,17 @@ namespace StoryPlayer
 
             playTimer.Stop();
             SetState(State.StoryManualPlay);
+        }
+
+        private void OnClosed(object sender, EventArgs e)
+        {
+            if(story != null)
+            {
+                story.Dispose();
+                story = null;
+            }
+
+            Application.Current.Shutdown();
         }
     }
 }
