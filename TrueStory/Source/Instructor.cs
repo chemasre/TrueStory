@@ -26,7 +26,7 @@ namespace TrueStory
             public int savesWait;
         }
 
-        QuestionTemplate[] questionTemplates =
+        InstructorQuestionTemplate[] questionTemplates =
         {
             new() { type = Story.QuestionType.input, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
             new() { type = Story.QuestionType.input, question = "¿Qué es la palabra '[lineWord]' de la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
@@ -54,11 +54,11 @@ namespace TrueStory
 
         State state;
 
-        List<QuestionTemplate> templateCandidatesTime;
-        List<QuestionTemplate> templateCandidatesInput;
-        List<QuestionTemplate> templateCandidatesCommand;
-        List<QuestionTemplate> templateCandidatesOpen;
-        List<QuestionTemplate> templateCandidatesSave;
+        List<InstructorQuestionTemplate> templateCandidatesTime;
+        List<InstructorQuestionTemplate> templateCandidatesInput;
+        List<InstructorQuestionTemplate> templateCandidatesCommand;
+        List<InstructorQuestionTemplate> templateCandidatesOpen;
+        List<InstructorQuestionTemplate> templateCandidatesSave;
 
         List<Story.QuestionData> questionCandidates;
         List<Story.QuestionData> questionShortList;
@@ -178,7 +178,7 @@ namespace TrueStory
             separators.AddRange(Constants.wordSeparators);
             ignoreCharacters = separators.ToArray();
 
-            List<QuestionTemplate> templatesList = new(questionTemplates);
+            List<InstructorQuestionTemplate> templatesList = new(questionTemplates);
             templateCandidatesTime = templatesList.FindAll((q) => q.type == Story.QuestionType.time);
             templateCandidatesInput = templatesList.FindAll((q) => q.type == Story.QuestionType.input);
             templateCandidatesCommand = templatesList.FindAll((q) => q.type == Story.QuestionType.command);
@@ -494,7 +494,7 @@ namespace TrueStory
             {
                 int index = random.Next(templateCandidatesInput.Count);
 
-                QuestionTemplate template = templateCandidatesInput[index];
+                InstructorQuestionTemplate template = templateCandidatesInput[index];
 
                 //Utils.Log("Trying to fetch input question");
 
@@ -581,7 +581,7 @@ namespace TrueStory
             {
                 int index = random.Next(templateCandidatesTime.Count);
 
-                QuestionTemplate template = templateCandidatesTime[index];
+                InstructorQuestionTemplate template = templateCandidatesTime[index];
 
                 Story.QuestionData q = new();
 
@@ -600,7 +600,7 @@ namespace TrueStory
             {
                 int index = random.Next(templateCandidatesCommand.Count);
 
-                QuestionTemplate template = templateCandidatesCommand[index];
+                InstructorQuestionTemplate template = templateCandidatesCommand[index];
 
                 Story.QuestionData q = new();
 
