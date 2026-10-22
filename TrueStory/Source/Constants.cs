@@ -34,23 +34,30 @@
 
         // Instructor
 
+        public struct Range
+        {
+            public int min;
+            public int max;
+        };
+
+
         public const int minQuestionOpensWait = 1;
-        public const int maxQuestionOpensWait = 3;
+        public const int maxQuestionOpensWait = 2;
 
         public const int minQuestionSavesWait = 1;
-        public const int maxQuestionSavesWait = 3;
+        public const int maxQuestionSavesWait = 2;
 
-        public const int minQuestionCharactersWait = 300 * 4;
-        public const int maxQuestionCharactersWait = 400 * 4;
+        public const int minQuestionCharactersWait = 30 * 4;
+        public const int maxQuestionCharactersWait = 60 * 4;
 
-        public const int minQuestionCommandsWait = 3;
-        public const int maxQuestionCommandsWait = 6;
+        public const int minQuestionCommandsWait = 2;
+        public const int maxQuestionCommandsWait = 5;
 
-        public const int minQuestionsTimeWait = 60 * 10;
-        public const int maxQuestionsTimeWait = 60 * 12;
+        public const int minQuestionsTimeWait = 60 * 2;
+        public const int maxQuestionsTimeWait = 60 * 5;
 
-        public const int minQuestionsFetchWait = 60 * 1;
-        public const int maxQuestionsFetchWait = 60 * 2;
+        public const int minQuestionsFetchWait = (int)(60 * 0.5f);
+        public const int maxQuestionsFetchWait = (int)(60 * 1.5f);
 
         public const int questionsTimeWeight = 5;
         public const int questionsInputWeight = 75;

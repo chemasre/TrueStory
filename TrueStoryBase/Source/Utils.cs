@@ -93,5 +93,10 @@ namespace TrueStory
         {
             Console.WriteLine(message);
         }
+
+        public static void ClearLog()
+        {
+            Console.Clear();
+        }
     }
 }

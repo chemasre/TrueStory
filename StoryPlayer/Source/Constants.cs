@@ -21,7 +21,7 @@
 
         // Play
 
-        public const int playTimerInterval = 100; //ms
+        public const int playTimerInterval = 30; //ms
 
     }
 }

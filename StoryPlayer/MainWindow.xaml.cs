@@ -642,14 +642,14 @@ namespace StoryPlayer
         {
             Debug.Assert(story != null);
 
-            return String.Format("<{0:0}/{1:0}>", story.RecordIndex, story.TotalRecords);
+            return String.Format("<{0:0}/{1:0}>", story.RecordIndex + 1, story.TotalRecords);
         }
 
         string GetChangeText()
         {
             Debug.Assert(lastReadedSaveFileData != null);
 
-            return String.Format("<{0:0}/{1:0}>", lastReadedChangeIndex, lastReadedSaveFileData.Value.changes.Length);
+            return String.Format("<{0:0}/{1:0}>", lastReadedChangeIndex + 1, lastReadedSaveFileData.Value.changes.Length);
         }
 
         string GenerateUnknownText(int length)
@@ -670,15 +670,19 @@ namespace StoryPlayer
 
             if (e.Key == Key.Right)
             {
-                Step();
-
-                e.Handled = true;
+                if (state == State.StoryManualPlay)
+                {
+                    Step();
+                    e.Handled = true;
+                }
             }
             else if (e.Key == Key.Left)
             {
-                Step(ReadDirection.Backwards);
-
-                e.Handled = true;
+                if (state == State.StoryManualPlay)
+                {
+                    Step(ReadDirection.Backwards);
+                    e.Handled = true;
+                }
             }
             else if (e.Key == Key.Space)
             {

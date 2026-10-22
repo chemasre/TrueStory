@@ -138,7 +138,28 @@ namespace TrueStory
         void DoCopyOrCut(bool isCut)
         {
             SharedClipboard.Content = textBox.SelectedText;
-            if (isCut) { if (textBox.SelectionLength > 0) { textBox.SelectedText = ""; }  }
+            if (isCut)
+            {
+                if (textBox.SelectionLength > 0)
+                {
+                    ContentChange c = new();
+                    c.Offset = textBox.SelectionStart;
+                    c.Added = 0;
+                    c.AddedText = "";
+                    c.Removed = textBox.SelectionLength;
+                    long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    c.DeltaTime = time - lastChangeTime;
+                    lastChangeTime = time;
+
+                    Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
+                    
+                    ignoreChanges = true;
+                    textBox.SelectedText = "";
+                    ignoreChanges = false;
+
+                    OnContentsChanged?.Invoke(c);
+                }
+            }
         }
 
         void DoPaste()
@@ -147,13 +168,40 @@ namespace TrueStory
             {
                 if (textBox.SelectionLength > 0)
                 {
+                    ContentChange c = new();
+                    c.Offset = textBox.SelectionStart;
+                    c.Added = SharedClipboard.Content.Length;
+                    c.AddedText = SharedClipboard.Content;
+                    c.Removed = textBox.SelectionLength;
+                    long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    c.DeltaTime = time - lastChangeTime;
+                    lastChangeTime = time;
+
+                    Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
+
+                    ignoreChanges = true;
                     textBox.SelectedText = SharedClipboard.Content;
+                    ignoreChanges = false;
+
+                    OnContentsChanged?.Invoke(c);
                 }
                 else
                 {
+                    ContentChange c = new();
+                    c.Offset = textBox.CaretIndex;
+                    c.Added = SharedClipboard.Content.Length;
+                    c.AddedText = SharedClipboard.Content;
+                    c.Removed = 0;
+                    long time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    c.DeltaTime = time - lastChangeTime;
+                    lastChangeTime = time;
+
+                    ignoreChanges = true;
                     int p = textBox.CaretIndex;
                     textBox.Text = textBox.Text.Insert(textBox.CaretIndex, SharedClipboard.Content);
                     textBox.CaretIndex = p + SharedClipboard.Content.Length;
+
+                    OnContentsChanged?.Invoke(c);
                 }
             }
         }

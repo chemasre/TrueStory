@@ -14,7 +14,6 @@ namespace TrueStory
         public delegate void OnQuestionStartsHandler();
         public delegate void OnQuestionEndsHandler();
 
-
         public struct CountersState
         {
             public int charactersCounter;
@@ -25,15 +24,6 @@ namespace TrueStory
             public int opensWait;
             public int savesCounter;
             public int savesWait;
-        }
-
-        struct QuestionTemplate
-        {
-            public Story.QuestionType type;
-            public string question;
-            public int contextLines;
-            public int contextWords;
-            public int timeLimit;
         }
 
         QuestionTemplate[] questionTemplates =
@@ -209,11 +199,13 @@ namespace TrueStory
         {
             if (!fileEditor.IsFileLoaded) { return;  }
 
-            //Utils.Log("Instructor: " + state + ": IDLE " + idleTimer + "/" + idleWait +
-                                                    //", FETC" + fetchTimer + "/" + fetchWait +
-                                                    //", WARN " + warningTimer + "/" + Constants.questionWarningTime +
-                                                    //" IC " + inputCharactersCounter + "/" + questionCharactersWait + 
-                                                    //" CC " + commandsCounter + "/" + questionCommandsWait);
+            Utils.ClearLog();
+            Utils.Log("Instructor      : " + state);
+            Utils.Log("Idle timer      : " + idleTimer + "/" + idleWait );
+            Utils.Log("Fetch timer     : " + fetchTimer + "/" + fetchWait );
+            Utils.Log("Warning timer   : " + warningTimer + "/" + Constants.questionWarningTime);
+            Utils.Log("Characters wait : " + inputCharactersCounter + "/" + questionCharactersWait);
+            Utils.Log("Commands wait   : " + commandsCounter + "/" + questionCommandsWait);
 
             inactiveTimer++;
 
