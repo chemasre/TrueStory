@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using TrueStory;
 using static TrueStory.Story;
@@ -107,7 +108,6 @@ namespace StoryPlayer
                 StopButton.IsEnabled = true;
                 NextChangeButton.IsEnabled = false;
                 GotoEndButton.IsEnabled = false;
-
             }
 
             state = _uiState;
@@ -144,6 +144,8 @@ namespace StoryPlayer
                     BlockProgress.Maximum = story.TotalRecords;
                     BlockProgress.Minimum = 0;
                     BlockProgress.Value = story.RecordIndex;
+
+                    ChangesProgress.Visibility = Visibility.Hidden;
 
                     files.Clear();
                     folders.Clear();
@@ -241,6 +243,11 @@ namespace StoryPlayer
             lastReadedIsFileSave = true;
 
             lastReadedSaveFileData = data;
+
+            ChangesProgress.Visibility = Visibility.Visible;
+            ChangesProgress.Value = lastReadedChangeIndex;
+            ChangesProgress.Maximum = data.changes.Length;
+
         }
 
         void OnLoadFileReaded(RecordData.LoadFileData data)
@@ -259,6 +266,7 @@ namespace StoryPlayer
 
             lastReadedIsQuestion = false;
             lastReadedIsFileSave = false;
+
         }
 
         void OnExecuteCommandReaded(RecordData.ExecuteCommandData data)
@@ -271,6 +279,7 @@ namespace StoryPlayer
 
             lastReadedIsQuestion = false;
             lastReadedIsFileSave = false;
+
         }
 
         void OnDeleteFileReaded(RecordData.DeleteFileData data)
@@ -575,6 +584,15 @@ namespace StoryPlayer
             } while (!stepDone);
 
             BlockProgress.Value = story.RecordIndex;
+
+            if (lastReadedIsFileSave)
+            {
+                ChangesProgress.Value = lastReadedChangeIndex;
+            }
+            else
+            {
+                ChangesProgress.Visibility = Visibility.Hidden;
+            }
 
             if (lastReadedIsQuestion) { questionWindow.Show(); }
             else { questionWindow.Hide(); }

@@ -27,5 +27,6 @@
         <Thickness x:Key="StoryPlayerPanelPadding">5,5,5,5</Thickness>
         <SolidColorBrush x:Key="StoryPlayerProgressBarBackground" Color="#FFD6FEFF"/>
         <SolidColorBrush x:Key="StoryPlayerProgressBarForeground" Color="#FF1C8B9A"/>
+        <SolidColorBrush x:Key="StoryPlayerProgressBarChangesForeground" Color="#FFE4B73A"/>
     </Application.Resources>
 </Application>

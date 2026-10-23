@@ -45,7 +45,7 @@ namespace StoryPlayer
                     }
 
                     table.BorderBrush = new SolidColorBrush(Colors.LightGray);
-                    table.Foreground= (Brush)App.Current.Resources["StoryPlayerEditableText"];;
+                    table.Foreground= (Brush)App.Current.Resources["StoryPlayerEditableText"];
                     table.Background= (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"];;
                     table.BorderThickness = new Thickness(1);
                     table.Padding = new Thickness(5);
