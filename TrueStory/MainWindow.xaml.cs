@@ -27,7 +27,7 @@ namespace TrueStory
         StoryActions? storyActions;
 
         string? loadedFile;
-        List<Story.FileChangeData> loadedFileChanges;
+        List<RecordData.FileChangeData> loadedFileChanges;
         bool loadedFileNeedsSave;
 
         string? selectedFolder;
@@ -309,7 +309,7 @@ namespace TrueStory
                 UpdateFileTitle();
             }
 
-            Story.FileChangeData fc = new();
+            RecordData.FileChangeData fc = new();
             fc.Offset = c.Offset;
             fc.Added = c.Added;
             fc.AddedText = c.AddedText;

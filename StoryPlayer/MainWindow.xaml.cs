@@ -33,7 +33,7 @@ namespace StoryPlayer
         ReadDirection? lastReadDirection;
         bool lastReadedIsQuestion;
         bool lastReadedIsFileSave;
-        SaveFileData? lastReadedSaveFileData;
+        RecordData.SaveFileData? lastReadedSaveFileData;
         int lastReadedChangeIndex;
 
         bool ignoreReadEvent;
@@ -187,7 +187,7 @@ namespace StoryPlayer
             SetState(State.NoStory);
         }
 
-        void OnHeaderReaded(Story.HeaderData data)
+        void OnHeaderReaded(RecordData.HeaderData data)
         {
             if (ignoreReadEvent) { return;  }
 
@@ -199,7 +199,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        void OnQuestionReaded(Story.QuestionData q)
+        void OnQuestionReaded(RecordData.QuestionData q)
         {
             if (ignoreReadEvent) { return; }
 
@@ -210,7 +210,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        void OnSaveFileReaded(SaveFileData data)
+        void OnSaveFileReaded(RecordData.SaveFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -243,7 +243,7 @@ namespace StoryPlayer
             lastReadedSaveFileData = data;
         }
 
-        void OnLoadFileReaded(LoadFileData data)
+        void OnLoadFileReaded(RecordData.LoadFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -261,7 +261,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        void OnExecuteCommandReaded(ExecuteCommandData data)
+        void OnExecuteCommandReaded(RecordData.ExecuteCommandData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -273,7 +273,7 @@ namespace StoryPlayer
             lastReadedIsFileSave = false;
         }
 
-        void OnDeleteFileReaded(DeleteFileData data)
+        void OnDeleteFileReaded(RecordData.DeleteFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -300,7 +300,7 @@ namespace StoryPlayer
 
         }
 
-        void OnCreateFolderReaded(CreateFolderData data)
+        void OnCreateFolderReaded(RecordData.CreateFolderData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -325,7 +325,7 @@ namespace StoryPlayer
 
         }
 
-        void OnCreateFileReaded(CreateFileData data)
+        void OnCreateFileReaded(RecordData.CreateFileData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -350,7 +350,7 @@ namespace StoryPlayer
 
         }
 
-        void OnDeleteFolderReaded(DeleteFolderData data)
+        void OnDeleteFolderReaded(RecordData.DeleteFolderData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -377,7 +377,7 @@ namespace StoryPlayer
 
         }
 
-        void OnCloseStoryReaded(Story.CloseStoryData data)
+        void OnCloseStoryReaded(RecordData.CloseStoryData data)
         {
             if (ignoreReadEvent) { return; }
 
@@ -489,7 +489,7 @@ namespace StoryPlayer
                     if (lastReadDirection == ReadDirection.Forward && lastReadedChangeIndex < lastReadedSaveFileData.Value.changes.Length)
                     {
                         string text = FileEditorTextBox.Text;
-                        FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
+                        RecordData.FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
 
                         // Console.WriteLine("Do change " + lastReadedChangeIndex + "Offset: " + change.Offset + " Added: " + change.Added + " Removed: " + change.Removed + " AddedText: " + change.AddedText);
                         FileEditorTextBox.Text = ApplyFileChange(text, change, ReadDirection.Forward);
@@ -510,7 +510,7 @@ namespace StoryPlayer
                         lastReadedChangeIndex--;
 
                         string text = FileEditorTextBox.Text;
-                        FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
+                        RecordData.FileChangeData change = lastReadedSaveFileData.Value.changes[lastReadedChangeIndex];
 
                         //Console.WriteLine("Undo change " + lastReadedChangeIndex + "Backwards " + "Offset: " + change.Offset + " Added: " + change.Added + " Removed: " + change.Removed + " AddedText: " + change.AddedText);
                         FileEditorTextBox.Text = ApplyFileChange(text, change, ReadDirection.Backwards);
@@ -616,7 +616,7 @@ namespace StoryPlayer
             
         }
 
-        string ApplyFileChange(string text, FileChangeData change, ReadDirection direction)
+        string ApplyFileChange(string text, RecordData.FileChangeData change, ReadDirection direction)
         {
             string result = text;
 

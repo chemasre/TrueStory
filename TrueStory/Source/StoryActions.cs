@@ -31,7 +31,7 @@ namespace TrueStory
             encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
 
-        void OnOpenStory(Story.CloseStoryData data)
+        void OnOpenStory(RecordData.CloseStoryData data)
         {
             Instructor.CountersState p;
 
@@ -81,7 +81,7 @@ namespace TrueStory
             return text;
         }
 
-        Story.QuestionData OnQuestion(Story.QuestionData question)
+        RecordData.QuestionData OnQuestion(RecordData.QuestionData question)
         {
             DialogQuestion d = new();
             d.Question = question;
@@ -91,10 +91,10 @@ namespace TrueStory
 
         }
 
-        Story.CloseStoryData OnCloseStory()
+        RecordData.CloseStoryData OnCloseStory()
         {
             Instructor.CountersState p = window.Instructor.Counters;
-            Story.CloseStoryData d = new();
+            RecordData.CloseStoryData d = new();
 
             d.instructorCharactersCounter = p.charactersCounter;
             d.instructorCharactersWait = p.charactersWait;

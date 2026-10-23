@@ -21,7 +21,7 @@ namespace TrueStory
 
     public struct InstructorQuestionChance
     {
-        public Story.QuestionType type = Story.QuestionType.time;
+        public RecordData.QuestionType type = RecordData.QuestionType.time;
         public int weight = 0;
 
         public InstructorQuestionChance() { }
@@ -57,7 +57,7 @@ namespace TrueStory
 
     public struct InstructorQuestionTemplate
     {
-        public Story.QuestionType type = Story.QuestionType.time;
+        public RecordData.QuestionType type = RecordData.QuestionType.time;
         public string question = "";
         public int contextLines = 0;
         public int contextWords = 0;

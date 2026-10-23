@@ -9,9 +9,9 @@ namespace TrueStory
     /// </summary>
     public partial class DialogActivityProperties : Window
     {
-        public Story.HeaderData Header { get { return header;  }  }
+        public RecordData.HeaderData Header { get { return header;  }  }
 
-        Story.HeaderData header;
+        RecordData.HeaderData header;
 
         public DialogActivityProperties()
         {
@@ -66,7 +66,7 @@ namespace TrueStory
 
             if (passes)
             {
-                header = new Story.HeaderData() { author = StudentNameText.Text.Trim() , publicKey = ActivityCodeText.Text.Trim() };
+                header = new RecordData.HeaderData() { author = StudentNameText.Text.Trim() , publicKey = ActivityCodeText.Text.Trim() };
 
 
                 DialogResult = true;

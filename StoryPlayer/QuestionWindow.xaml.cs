@@ -12,7 +12,7 @@ namespace StoryPlayer
     /// </summary>
     public partial class QuestionWindow : Window
     {
-        public Story.QuestionData Question
+        public RecordData.QuestionData Question
         {
             set
             {
@@ -22,7 +22,7 @@ namespace StoryPlayer
 
                 Paragraph? p = null;
 
-                if (value.type == Story.QuestionType.input)
+                if (value.type == RecordData.QuestionType.input)
                 {
 
                     Table table = new();
@@ -36,7 +36,7 @@ namespace StoryPlayer
                     p.FontSize *= 1.2f;
                     doc.Blocks.Add(p);
 
-                    foreach (Story.QuestionContextLineData l in value.context.lines)
+                    foreach (RecordData.QuestionContextLineData l in value.context.lines)
                     {
                         p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
 
@@ -57,7 +57,7 @@ namespace StoryPlayer
 
                     doc.Blocks.Add(table);
                 }
-                else if (value.type == Story.QuestionType.command)
+                else if (value.type == RecordData.QuestionType.command)
                 {
                     p = new Paragraph(new Run(Constants.consolePrompt + value.context.command));
                     p.TextAlignment = TextAlignment.Center;
