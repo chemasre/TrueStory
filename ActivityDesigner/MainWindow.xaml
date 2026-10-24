@@ -35,17 +35,19 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Label x:Name="GeneralLabel" Content="Configuración general de la actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
                     <Label x:Name="TitleLabel" Content="Título de la actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1"/>
                     <TextBox x:Name="TitleText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="1"/>
-                    <Label x:Name="FileExtensionsLabel" Content="Extensiones de fichero editables (separar con comas)" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2"/>
-                    <TextBox x:Name="FileExtensionText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="2"/>
+                    <Label x:Name="EditableExtensionsLabel" Content="Extensiones de fichero editables (separar con comas)" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2"/>
+                    <TextBox x:Name="EditableExtensionsText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="2"/>
                     <Label x:Name="QuestionsEnabledLabel" Content="Hacer preguntas durante la actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="3" HorizontalAlignment="Left"/>
-                    <CheckBox x:Name="QuestionsEnabledCheckbox" Content="" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"/>
-                    <Label x:Name="QuestionsTimeMinLabel" Content="Esperar a que pase un tiempo mínimo (minutos) entre" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="4" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                    <TextBox x:Name="QuestionsTimeMinText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="4" Margin="0,0,5,0"/>
-                    <TextBox x:Name="QuestionsTimeMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="4"/>
+                    <CheckBox x:Name="QuestionsEnabledCheckbox" Content="" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Checked="OnQuestionsChecked" Unchecked="OnQuestionsUnchecked"/>
+                    <Label x:Name="QuestionsTimeMinLabel" Content="Esperar a que pase un tiempo mínimo (segundos) entre" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="4" HorizontalAlignment="Left" Margin="20,10,0,0"/>
+                    <TextBox x:Name="QuestionsTimeMinText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="4" Margin="0,10,5,0"/>
+                    <TextBox x:Name="QuestionsTimeMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="4" Margin="0,10,0,0"/>
                     <Label x:Name="QuestionsTextMinLabel" Content="Esperar a que se introduzcan un mínimo de carácteres entre" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="5" HorizontalAlignment="Left" Margin="20,0,0,0"/>
                     <TextBox x:Name="QuestionsTextMinText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="5" Margin="0,0,5,0"/>
                     <TextBox x:Name="QuestionsTextMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="5"/>
@@ -55,6 +57,12 @@
                     <Label x:Name="QuestionsOpensMinLabel" Content="Esperar a que se abran ficheros un mínimo de veces entre" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="7" HorizontalAlignment="Left" Margin="20,0,0,0"/>
                     <TextBox x:Name="QuestionsOpensMinText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="7" Margin="0,0,5,0"/>
                     <TextBox x:Name="QuestionsOpensMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="7"/>
+                    <Label x:Name="QuestionsCommandsMinLabel" Content="Esperar a que se ejecuten un mínimo de comandos entre" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="8" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+                    <TextBox x:Name="QuestionsCommandsMinText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="8" Margin="0,0,5,0"/>
+                    <TextBox x:Name="QuestionsCommandsMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="8"/>
+                    <Label x:Name="QuestionsObserveLabel" Content="Tiempo de observación antes de preguntar (segundos) entre" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" Grid.Row="9" HorizontalAlignment="Left" Margin="20,10,0,0"/>
+                    <TextBox x:Name="QuestionsObserveMinText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="9" Margin="0,10,5,0"/>
+                    <TextBox x:Name="QuestionsObserveMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="9" Margin="0,10,5,0"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="QuestionsTab" Header="Configuración de preguntas" Margin="0,0,0,0" Padding="8,5,8,5">
@@ -86,7 +94,7 @@
                         <DockPanel Grid.Row="1" Grid.ColumnSpan="3">
                             <Button x:Name="TemplatesDelete" DockPanel.Dock="Right"  Content="Eliminar" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="0,0,0,0" Width="100"/>
                             <Button x:Name="TemplatesCreate" DockPanel.Dock="Right" Content="Crear" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="0,0,0,0" MinWidth="100" Width="100"/>
-                            <ComboBox x:Name="TemplatesList" DockPanel.Dock="Left"/>
+                            <ComboBox x:Name="TemplatesList" DockPanel.Dock="Left" SelectionChanged="OnSelectedTemplateChanged"/>
                         </DockPanel>
                         <Label x:Name="QuestionTypeLabel" Content="Tema de la pregunta" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2" Margin="20,10,0,0"/>
                         <ComboBox x:Name="QuestionTypeList" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" VerticalContentAlignment="Center" SelectedIndex="0">
@@ -150,11 +158,11 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Label x:Name="WordSeparatorsLabel" Content="Separadores de palabras por extensiones" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
-                        <Label x:Name="ExtensionTextLabel" Content="Extensión de fichero" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Margin="20,0,0,0"/>
-                        <TextBox x:Name="SeparatorsText" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="0,10,0,0"/>
-                        <ComboBox x:Name="ExtensionList" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" SelectedIndex="0"/>
-                        <Label x:Name="SeparatorsLabel" Content="Separadores" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2" Margin="40,10,0,0"/>
+                        <Label x:Name="WordSeparatorsTitleLabel" Content="Separadores de palabras por extensiones" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
+                        <Label x:Name="WordSeparatorsExtensionTextLabel" Content="Extensión de fichero" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Margin="20,0,0,0"/>
+                        <TextBox x:Name="WordSeparatorsText" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="0,10,0,0"/>
+                        <ComboBox x:Name="WordSeparatorsExtensionList" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" SelectedIndex="0"/>
+                        <Label x:Name="WordSeparatorsLabel" Content="Separadores" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2" Margin="40,10,0,0"/>
                     </Grid>
                 </DockPanel>
             </TabItem>
