@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ActivityDesigner"
         mc:Ignorable="d"
-        Title="MainWindow" Width="836">
+        Title="MainWindow" Width="836" Background="{DynamicResource StoryPlayerBackground}">
     <DockPanel>
         <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource StoryPlayerMenu}" FontFamily="{DynamicResource StoryPlayerFont}" FontSize="{DynamicResource StoryPlayerFontSize}" Foreground="{DynamicResource StoryPlayerMenuText}">
             <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
@@ -19,7 +19,7 @@
             </MenuItem>
         </Menu>
         <TabControl DockPanel.Dock="Top" Background="{DynamicResource StoryPlayerNonEditableTextBackground}">
-            <TabItem x:Name="GeneralTab" Header="Configuración básica">
+            <TabItem x:Name="GeneralTab" Header="Configuración básica" Padding="8,5,8,5" Margin="0,0,0,0">
                 <Grid Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Margin="20,20,20,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
@@ -57,7 +57,7 @@
                     <TextBox x:Name="QuestionsOpensMaxText" TextWrapping="Wrap" Grid.Column="2" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.Row="7"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="QuestionsTab" Header="Configuración de preguntas">
+            <TabItem x:Name="QuestionsTab" Header="Configuración de preguntas" Margin="0,0,0,0" Padding="8,5,8,5">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top" Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Margin="20,20,20,0">
                         <Grid.ColumnDefinitions>

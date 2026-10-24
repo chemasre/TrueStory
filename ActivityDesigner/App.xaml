@@ -7,7 +7,7 @@
         <SolidColorBrush x:Key="StoryPlayerButtonNeutral" Color="#FF7CE1FB"/>
         <SolidColorBrush x:Key="StoryPlayerButtonAccept" Color="#FFEFDE24"/>
         <SolidColorBrush x:Key="StoryPlayerButtonCancel" Color="#FFF1CF70"/>
-        <SolidColorBrush x:Key="StoryPlayerBackground" Color="#FF4945D4"/>
+        <SolidColorBrush x:Key="StoryPlayerBackground" Color="#FFB0BAF5"/>
         <SolidColorBrush x:Key="StoryPlayerEditableTextBackground" Color="#FFE2E6FF"/>
         <SolidColorBrush x:Key="StoryPlayerNonEditableTextBackground" Color="#FFA6AAEC"/>
         <SolidColorBrush x:Key="StoryPlayerMenuText" Color="#FF06135B"/>
