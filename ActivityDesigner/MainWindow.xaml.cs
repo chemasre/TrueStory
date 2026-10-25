@@ -42,13 +42,18 @@ namespace ActivityDesigner
         int selectedTemplate;
         int selectedExtension;
 
+        string? savePath;
+        bool needsSave;
+
+        //////////////////////
+        /// INITIALIZATION ///
+        //////////////////////
+
         public MainWindow()
         {
             disableUIEvents = true;
             InitializeComponent();
             disableUIEvents = false;
-
-            Title = Version.GetFullName();
 
             data = new();
 
@@ -117,6 +122,11 @@ namespace ActivityDesigner
             selectedTemplate = -1;
             selectedExtension = -1;
 
+            savePath = null;
+            needsSave = false;
+
+            UpdateTitle();
+
 
             Loaded += OnLoaded;
 
@@ -125,6 +135,24 @@ namespace ActivityDesigner
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             UpdateView();
+        }
+
+        /////////////////////////////////
+        /// NEW, SAVE, SAVE AS, CLOSE ///
+        /////////////////////////////////
+
+        private void OnMenuNewActivity(object sender, RoutedEventArgs e)
+        {
+            bool cancel = CheckNeedsSave();
+
+            if (cancel) { return; }
+
+            data = new();
+            savePath = null;
+            needsSave = false;
+
+            UpdateView();
+
         }
 
         void OnMenuOpenActivity(object sender, RoutedEventArgs e)
@@ -140,35 +168,104 @@ namespace ActivityDesigner
             {
                 string path = dialog.FileName;
 
-                MessageBox.Show("Carpeta " + path , "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                savePath = path;
+                needsSave = false;
+                UpdateTitle();
+
+
             }
 
         }
 
-        void OnMenuCloseActivity(object sender, RoutedEventArgs e)
+        private void OnMenuSaveActivityAs(object sender, RoutedEventArgs e)
         {
-
+            SaveActivityAs();
         }
 
+        private void OnMenuSaveActivity(object sender, RoutedEventArgs e)
+        {
+            SaveActivity();
+        }
+
+        private void OnExitMenuAction(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            bool cancel = CheckNeedsSave();
+
+            e.Cancel = cancel;
+        }
 
         private void OnClosed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
         }
 
-        private void OnMenuNewActivity(object sender, RoutedEventArgs e)
+        bool CheckNeedsSave()
         {
-            data = new();
+            bool cancelled = false;
+
+            if (needsSave)
+            {
+                MessageBoxResult result = MessageBox.Show("¿Quieres guardar la actividad?", "Pregunta", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    SaveActivity();
+                }
+                else if (result == MessageBoxResult.No)
+                {
+                    // Nothing
+                }
+                else
+                {
+                    cancelled = true;
+                }
+
+            }
+
+            return cancelled;
+
         }
 
-        private void OnMenuSaveActivityAs(object sender, RoutedEventArgs e)
+        void SaveActivity()
         {
-
+            if (savePath == null)
+            {
+                SaveActivityAs();
+            }
         }
 
-        private void OnMenuSaveActivity(object sender, RoutedEventArgs e)
+        void SaveActivityAs()
         {
+            SaveFileDialog dialog = new();
 
+            dialog.Filter = "activity files (*.activity)|*.activity";
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                savePath = path;
+                needsSave = false;
+                UpdateTitle();
+
+            }
+        }
+
+        ///////////////////////
+        /// MODIFY ACTIVITY ///
+        ///////////////////////
+
+        private void UpdateTitle()
+        {
+            Title = (needsSave ? "[*] " : "") + (savePath == null ? "Nueva actividad" : savePath) + " - " + Version.GetFullName();
         }
 
         private void UpdateView(DataChangeType changeType = DataChangeType.All)
@@ -178,6 +275,8 @@ namespace ActivityDesigner
             if (changeType == DataChangeType.All)
             {
                 TitleText.Text = data.title;
+
+                UpdateTitle();
             }
 
             EditableExtensionsText.Text = String.Join(Constants.extensionSeparator, data.editableExtensions);
@@ -361,6 +460,10 @@ namespace ActivityDesigner
 
             data.instructor.enabled = true;
             UpdateView(DataChangeType.QuestionsEnabled);
+
+            needsSave = true;
+            UpdateTitle();
+
         }
 
         private void OnQuestionsUnchecked(object sender, RoutedEventArgs e)
@@ -369,6 +472,9 @@ namespace ActivityDesigner
 
             data.instructor.enabled = false;
             UpdateView(DataChangeType.QuestionsEnabled);
+
+            needsSave = true;
+            UpdateTitle();
         }
 
 
@@ -397,6 +503,8 @@ namespace ActivityDesigner
 
             data.title = TitleText.Text;
 
+            needsSave = true;
+            UpdateTitle();
         }
 
         private void OnQuestionParamChanged(object sender, TextChangedEventArgs e)
@@ -430,6 +538,8 @@ namespace ActivityDesigner
             data.instructor.observe.time.min = Int32.Parse(QuestionsObserveMinText.Text);
             data.instructor.observe.time.max = Int32.Parse(QuestionsObserveMaxText.Text);
 
+            needsSave = true;
+            UpdateTitle();
 
         }
 
@@ -441,6 +551,9 @@ namespace ActivityDesigner
 
             OnTemplateParamChanged();
 
+            needsSave = true;
+            UpdateTitle();
+
         }
 
         private void OnTemplateParamChanged(object sender, SelectionChangedEventArgs e)
@@ -448,6 +561,9 @@ namespace ActivityDesigner
             if (disableUIEvents) { return; }
 
             OnTemplateParamChanged();
+
+            needsSave = true;
+            UpdateTitle();
         }
 
         private void OnTemplateParamChanged()
@@ -477,6 +593,9 @@ namespace ActivityDesigner
                 foreach (Control c in templateTypeTextControls) { c.Visibility = Visibility.Hidden; }
             }
 
+            needsSave = true;
+            UpdateTitle();
+
         }
 
         private void OnProbabilityParamsChanged(object sender, TextChangedEventArgs e)
@@ -498,6 +617,10 @@ namespace ActivityDesigner
                 new() { type = RecordData.QuestionType.command, weight = Int32.Parse(ProbabilityCommandsText.Text) }
 
             };
+
+            needsSave = true;
+            UpdateTitle();
+
         }
 
         private void OnSeparatorParamsChanged(object sender, TextChangedEventArgs e)
@@ -510,6 +633,9 @@ namespace ActivityDesigner
 
             data.instructor.observe.wordSeparators[selectedExtension].separators = WordSeparatorsText.Text.ToCharArray();
 
+            needsSave = true;
+            UpdateTitle();
+
         }
 
         private void OnCreateTemplate(object sender, RoutedEventArgs e)
@@ -521,6 +647,9 @@ namespace ActivityDesigner
             selectedTemplate = data.instructor.ask.templates.Length - 1;
 
             UpdateView(DataChangeType.TemplateListModified);
+
+            needsSave = true;
+            UpdateTitle();
         }
 
         private void OnDeleteTemplate(object sender, RoutedEventArgs e)
@@ -536,6 +665,8 @@ namespace ActivityDesigner
                 UpdateView(DataChangeType.TemplateListModified);
             }
 
+            needsSave = true;
+            UpdateTitle();
         }
 
         private void OnEditableExtensionsChanged(object sender, TextChangedEventArgs e)
@@ -589,6 +720,10 @@ namespace ActivityDesigner
             {
                 UpdateView(DataChangeType.ExtensionSeparatorsListModified);
             }
+
+            needsSave = true;
+            UpdateTitle();
+
         }
 
         void SanitizeInt(TextBox textBox)
@@ -648,6 +783,7 @@ namespace ActivityDesigner
                 textBox.CaretIndex = previousCaretIndex - removed;
             }
         }
+
 
     }
 }

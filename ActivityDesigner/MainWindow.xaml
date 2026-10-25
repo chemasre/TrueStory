@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ActivityDesigner"
         mc:Ignorable="d"
-        Title="MainWindow" Width="836" Background="{DynamicResource StoryPlayerBackground}">
+        Title="MainWindow" Width="836" Background="{DynamicResource StoryPlayerBackground}" Closing="OnClosing">
     <DockPanel>
         <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource StoryPlayerMenu}" FontFamily="{DynamicResource StoryPlayerFont}" FontSize="{DynamicResource StoryPlayerFontSize}" Foreground="{DynamicResource StoryPlayerMenuText}">
-            <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
+            <MenuItem x:Name="FileMenu" Header="Fichero" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
                 <MenuItem x:Name="NewActivityMenuAction" Header="Nueva actividad" Click="OnMenuNewActivity"/>
                 <MenuItem x:Name="OpenActivityMenuAction" Header="Abrir actividad..." Click="OnMenuOpenActivity"/>
                 <MenuItem x:Name="SaveActivityMenuAction" Header="Guardar actividad" Click="OnMenuSaveActivity"/>
                 <MenuItem x:Name="SaveActivityAsMenuAction" Header="Guardar actividad como..." Click="OnMenuSaveActivityAs"/>
+                <MenuItem x:Name="ExitMenuAction" Header="Salir" Click="OnExitMenuAction"/>
             </MenuItem>
             <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de StoryPlayer"/>
