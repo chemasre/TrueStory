@@ -111,10 +111,10 @@
         public struct QuestionTemplateData
         {
             public RecordData.QuestionType type = RecordData.QuestionType.time;
-            public string question = "";
-            public int contextLines = 0;
-            public int contextWords = 0;
-            public int timeLimit = 0;
+            public string question = "Texto de la pregunta";
+            public int contextLines = 10;
+            public int contextWords = 3;
+            public int timeLimit = 10;
 
             public QuestionTemplateData() { }
         }

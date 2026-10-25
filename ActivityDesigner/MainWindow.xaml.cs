@@ -24,7 +24,8 @@ namespace ActivityDesigner
         enum DataChangeType
         {
             All,
-            QuestionsEnabled
+            QuestionsEnabled,
+            TemplateListModified
         }
 
         RecordData.NewHeaderData data;
@@ -206,57 +207,62 @@ namespace ActivityDesigner
                     QuestionsObserveMaxText.Text = data.instructor.observe.time.max.ToString();
                 }
 
-                TemplatesList.Items.Clear();
-
-                int index = 0;
-                foreach (RecordData.QuestionTemplateData template in data.instructor.ask.templates)
+                if (changeType == DataChangeType.All || changeType == DataChangeType.TemplateListModified || changeType == DataChangeType.QuestionsEnabled)
                 {
-                    string label = Constants.questionTypeNames[(int)template.type];
+                    TemplatesList.Items.Clear();
 
-                    TemplatesList.Items.Add((index + 1) + ": [" + label + "] " + template.question);
-                    index++;
-                }
-
-                if (selectedTemplate < 0 && data.instructor.ask.templates.Length > 0)
-                {
-                    selectedTemplate = 0;
-                }
-                else if (selectedTemplate >= data.instructor.ask.templates.Length)
-                {
-                    selectedTemplate = data.instructor.ask.templates.Length - 1;
-                }
-
-                if (selectedTemplate < 0)
-                {
-                    foreach (Control c in templateControls)
-                    { c.Visibility = Visibility.Hidden; }
-                }
-                else
-                {
-                    foreach (Control c in templateControls)
-                    { c.Visibility = Visibility.Visible; }
-
-                    RecordData.QuestionTemplateData template = data.instructor.ask.templates[selectedTemplate];
-
-                    QuestionTypeList.SelectedIndex = (int)template.type;
-                    QuestionTextText.Text = template.question;
-                    QuestionTimeText.Text = template.timeLimit.ToString();
-
-                    if (template.type == RecordData.QuestionType.input)
+                    int index = 0;
+                    foreach (RecordData.QuestionTemplateData template in data.instructor.ask.templates)
                     {
-                        foreach (Control c in templateTypeTextControls)
-                        { c.Visibility = Visibility.Visible; }
+                        string label = Constants.questionTypeNames[(int)template.type];
 
-                        QuestionWordsText.Text = template.contextWords.ToString();
-                        QuestionLinesText.Text = template.contextLines.ToString();
+                        string title = template.question.Trim().Length > 0 ? template.question : Constants.templateDefaultTitle;
+
+                        TemplatesList.Items.Add((index + 1) + ": [" + label + "] " + title);
+                        index++;
+                    }
+
+                    if (selectedTemplate < 0 && data.instructor.ask.templates.Length > 0)
+                    {
+                        selectedTemplate = 0;
+                    }
+                    else if (selectedTemplate >= data.instructor.ask.templates.Length)
+                    {
+                        selectedTemplate = data.instructor.ask.templates.Length - 1;
+                    }
+
+                    if (selectedTemplate < 0)
+                    {
+                        foreach (Control c in templateControls)
+                        { c.Visibility = Visibility.Hidden; }
                     }
                     else
                     {
-                        foreach (Control c in templateTypeTextControls)
-                        { c.Visibility = Visibility.Hidden; }
-                    }
+                        foreach (Control c in templateControls)
+                        { c.Visibility = Visibility.Visible; }
 
-                    TemplatesList.SelectedIndex = selectedTemplate;
+                        RecordData.QuestionTemplateData template = data.instructor.ask.templates[selectedTemplate];
+
+                        QuestionTypeList.SelectedIndex = (int)template.type;
+                        QuestionTextText.Text = template.question;
+                        QuestionTimeText.Text = template.timeLimit.ToString();
+
+                        if (template.type == RecordData.QuestionType.input)
+                        {
+                            foreach (Control c in templateTypeTextControls)
+                            { c.Visibility = Visibility.Visible; }
+
+                            QuestionWordsText.Text = template.contextWords.ToString();
+                            QuestionLinesText.Text = template.contextLines.ToString();
+                        }
+                        else
+                        {
+                            foreach (Control c in templateTypeTextControls)
+                            { c.Visibility = Visibility.Hidden; }
+                        }
+
+                        TemplatesList.SelectedIndex = selectedTemplate;
+                    }
                 }
 
                 foreach (RecordData.QuestionChanceData chance in data.instructor.ask.chances)
@@ -536,5 +542,30 @@ namespace ActivityDesigner
             }
         }
 
+        private void OnCreateTemplate(object sender, RoutedEventArgs e)
+        {
+            List<RecordData.QuestionTemplateData> templates = data.instructor.ask.templates.ToList();
+            templates.Add(new RecordData.QuestionTemplateData());
+            data.instructor.ask.templates = templates.ToArray();
+
+            selectedTemplate = data.instructor.ask.templates.Length - 1;
+
+            UpdateView(DataChangeType.TemplateListModified);
+        }
+
+        private void OnDeleteTemplate(object sender, RoutedEventArgs e)
+        {
+            if(selectedTemplate >= 0)
+            {
+                List<RecordData.QuestionTemplateData> templates = data.instructor.ask.templates.ToList();
+                templates.RemoveAt(selectedTemplate);
+                data.instructor.ask.templates = templates.ToArray();
+
+                selectedTemplate = selectedTemplate - 1;
+
+                UpdateView(DataChangeType.TemplateListModified);
+            }
+
+        }
     }
 }

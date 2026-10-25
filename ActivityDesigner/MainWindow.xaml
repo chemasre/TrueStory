@@ -92,8 +92,8 @@
                         </Grid.RowDefinitions>
                         <Label x:Name="TemplatesLabel" Content="Plantilla de pregunta" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
                         <DockPanel Grid.Row="1" Grid.ColumnSpan="3">
-                            <Button x:Name="TemplatesDelete" DockPanel.Dock="Right"  Content="Eliminar" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="0,0,0,0" Width="100"/>
-                            <Button x:Name="TemplatesCreate" DockPanel.Dock="Right" Content="Crear" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="0,0,0,0" MinWidth="100" Width="100"/>
+                            <Button x:Name="TemplatesDelete" DockPanel.Dock="Right"  Content="Eliminar" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="0,0,0,0" Width="100" Click="OnDeleteTemplate"/>
+                            <Button x:Name="TemplatesCreate" DockPanel.Dock="Right" Content="Crear" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="0,0,0,0" MinWidth="100" Width="100" Click="OnCreateTemplate"/>
                             <ComboBox x:Name="TemplatesList" DockPanel.Dock="Left" SelectionChanged="OnSelectedTemplateChanged"/>
                         </DockPanel>
                         <Label x:Name="QuestionTypeLabel" Content="Tema de la pregunta" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2" Margin="20,10,0,0"/>
