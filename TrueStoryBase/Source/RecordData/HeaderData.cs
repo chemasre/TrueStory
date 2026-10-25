@@ -86,23 +86,49 @@
                 new ()
                 {
                     extension = "h",
-                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' }
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '{', '}', ':', '=' }
                 },
                 new ()
                 {
                     extension = "c",
-                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' }
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '{', '}', ':', '=' }
                 },
                 new ()
                 {
                     extension = "hpp",
-                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' }
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '{', '}', ':', '=' }
                 },
                 new ()
                 {
                     extension = "cpp",
-                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' }
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '{', '}', ':', '=' }
+                },
+                new ()
+                {
+                    extension = "htm",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/' }
+                },
+                new ()
+                {
+                    extension = "html",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/' }
+                },
+                new ()
+                {
+                    extension = "css",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':' }
+                },
+                new ()
+                {
+                    extension = "js",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':', '=' }
+                },
+                new ()
+                {
+                    extension = "java",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':','=' }
                 }
+
             };
 
             public InstructorObserveData() { }
@@ -188,13 +214,13 @@
             public string title = "Actividad sin título";
             public string[] editableExtensions = new string[]
             {
-                "txt", "csv", "md",
+                "txt", // "csv", "md",
                 "htm", "html", "css", "js",
-                "php",
-                "tsx",
+                //"php",
+                //"tsx",
                 "c", "h",
                 "hpp", "cpp",
-                "cs",
+                //"cs",
                 "java"
             };
             

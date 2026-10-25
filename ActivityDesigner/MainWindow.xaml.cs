@@ -25,7 +25,8 @@ namespace ActivityDesigner
         {
             All,
             QuestionsEnabled,
-            TemplateListModified
+            TemplateListModified,
+            ExtensionSeparatorsListModified
         }
 
         RecordData.NewHeaderData data;
@@ -180,6 +181,7 @@ namespace ActivityDesigner
             }
 
             EditableExtensionsText.Text = String.Join(Constants.extensionSeparator, data.editableExtensions);
+            SanitizeExtensions(EditableExtensionsText);
 
             if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled)
             {
@@ -303,45 +305,49 @@ namespace ActivityDesigner
                         c.Visibility = Visibility.Visible;
                     }
 
-                    WordSeparatorsExtensionList.Items.Clear();
+                    if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled || changeType == DataChangeType.ExtensionSeparatorsListModified)
+                    {
 
-                    int extIndex = 0;
-                    foreach (RecordData.InstructorObserveWordSeparators wordSeparators in data.instructor.observe.wordSeparators)
-                    {
-                        WordSeparatorsExtensionList.Items.Add((extIndex + 1) + ": " + wordSeparators.extension);
-                        extIndex++;
-                    }
+                        WordSeparatorsExtensionList.Items.Clear();
 
-                    if (selectedExtension < 0 && data.instructor.observe.wordSeparators.Length > 0)
-                    {
-                        selectedExtension = 0;
-                    }
-                    else if (selectedExtension >= data.instructor.observe.wordSeparators.Length)
-                    {
-                        selectedExtension = data.instructor.observe.wordSeparators.Length - 1;
-                    }
-
-                    if (selectedExtension < 0)
-                    {
-                        foreach (Control c in wordSeparatorsExtensionControls)
+                        int extIndex = 0;
+                        foreach (RecordData.InstructorObserveWordSeparators wordSeparators in data.instructor.observe.wordSeparators)
                         {
-                            c.Visibility = Visibility.Hidden;
-                        }
-                    }
-                    else
-                    {
-                        foreach (Control c in wordSeparatorsExtensionControls)
-                        {
-                            c.Visibility = Visibility.Visible;
+                            WordSeparatorsExtensionList.Items.Add((extIndex + 1) + ": " + wordSeparators.extension);
+                            extIndex++;
                         }
 
-                        RecordData.InstructorObserveWordSeparators wordSeparators = data.instructor.observe.wordSeparators[selectedExtension];
+                        if (selectedExtension < 0 && data.instructor.observe.wordSeparators.Length > 0)
+                        {
+                            selectedExtension = 0;
+                        }
+                        else if (selectedExtension >= data.instructor.observe.wordSeparators.Length)
+                        {
+                            selectedExtension = data.instructor.observe.wordSeparators.Length - 1;
+                        }
 
-                        WordSeparatorsText.Text = new String(wordSeparators.separators);
-                        SanitizeWordSeparators(WordSeparatorsText);
+                        if (selectedExtension < 0)
+                        {
+                            foreach (Control c in wordSeparatorsExtensionControls)
+                            {
+                                c.Visibility = Visibility.Hidden;
+                            }
+                        }
+                        else
+                        {
+                            foreach (Control c in wordSeparatorsExtensionControls)
+                            {
+                                c.Visibility = Visibility.Visible;
+                            }
+
+                            RecordData.InstructorObserveWordSeparators wordSeparators = data.instructor.observe.wordSeparators[selectedExtension];
+
+                            WordSeparatorsText.Text = new String(wordSeparators.separators);
+                            SanitizeWordSeparators(WordSeparatorsText);
+                        }
+
+                        WordSeparatorsExtensionList.SelectedIndex = selectedExtension;
                     }
-
-                    WordSeparatorsExtensionList.SelectedIndex = selectedExtension;
                 }
             }
 
@@ -506,6 +512,85 @@ namespace ActivityDesigner
 
         }
 
+        private void OnCreateTemplate(object sender, RoutedEventArgs e)
+        {
+            List<RecordData.QuestionTemplateData> templates = data.instructor.ask.templates.ToList();
+            templates.Add(new RecordData.QuestionTemplateData());
+            data.instructor.ask.templates = templates.ToArray();
+
+            selectedTemplate = data.instructor.ask.templates.Length - 1;
+
+            UpdateView(DataChangeType.TemplateListModified);
+        }
+
+        private void OnDeleteTemplate(object sender, RoutedEventArgs e)
+        {
+            if (selectedTemplate >= 0)
+            {
+                List<RecordData.QuestionTemplateData> templates = data.instructor.ask.templates.ToList();
+                templates.RemoveAt(selectedTemplate);
+                data.instructor.ask.templates = templates.ToArray();
+
+                selectedTemplate = selectedTemplate - 1;
+
+                UpdateView(DataChangeType.TemplateListModified);
+            }
+
+        }
+
+        private void OnEditableExtensionsChanged(object sender, TextChangedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            SanitizeExtensions(EditableExtensionsText);
+
+            data.editableExtensions = EditableExtensionsText.Text.Split(Constants.extensionSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            // Remove orphan extension separators
+            List<string> editableExtensions = data.editableExtensions.ToList();
+            List<RecordData.InstructorObserveWordSeparators> newExtensionSeparators = new();
+            List<RecordData.InstructorObserveWordSeparators> extensionSeparators = data.instructor.observe.wordSeparators.ToList();
+            List<string> removedExtensions = new();
+            foreach (RecordData.InstructorObserveWordSeparators extensionSeparator in extensionSeparators)
+            {
+                if (editableExtensions.Contains(extensionSeparator.extension)) { newExtensionSeparators.Add(extensionSeparator); }
+                else { removedExtensions.Add(extensionSeparator.extension);  }
+            }
+
+            // Create new extension separators
+
+            List<string> addedExtensions = new();
+            foreach (string extension in editableExtensions)
+            {
+                if (!newExtensionSeparators.Exists(e => e.extension == extension))
+                {
+                    RecordData.InstructorObserveWordSeparators extensionSeparator = new();
+                    extensionSeparator.extension = extension;
+                    newExtensionSeparators.Add(extensionSeparator);
+                    addedExtensions.Add(extension);
+                }
+            }
+
+            data.instructor.observe.wordSeparators = newExtensionSeparators.ToArray();
+
+            //if (removedExtensions.Count > 0)
+            //{
+            //    MessageBox.Show("Se han eliminado los separadores para " + (removedExtensions.Count == 1 ? "la extensión " : "las extensiones ") +
+            //        String.Join(Constants.extensionSeparator, removedExtensions), "Advertencia", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+
+            //if (addedExtensions.Count > 0)
+            //{
+            //    MessageBox.Show("Se han añadido separadores por defecto para " + (addedExtensions.Count == 1 ? "la extensión " : "las extensiones ") +
+            //        String.Join(Constants.extensionSeparator, addedExtensions), "Advertencia", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+
+            if (removedExtensions.Count > 0 || addedExtensions.Count > 0)
+            {
+                UpdateView(DataChangeType.ExtensionSeparatorsListModified);
+            }
+        }
+
         void SanitizeInt(TextBox textBox)
         {
             string text = textBox.Text.Trim();
@@ -542,30 +627,27 @@ namespace ActivityDesigner
             }
         }
 
-        private void OnCreateTemplate(object sender, RoutedEventArgs e)
+        void SanitizeExtensions(TextBox textBox)
         {
-            List<RecordData.QuestionTemplateData> templates = data.instructor.ask.templates.ToList();
-            templates.Add(new RecordData.QuestionTemplateData());
-            data.instructor.ask.templates = templates.ToArray();
+            int previousCaretIndex = textBox.CaretIndex;
 
-            selectedTemplate = data.instructor.ask.templates.Length - 1;
+            List<string> newExtensions = new();
+            List<string> previousExtensions = textBox.Text.Split(Constants.extensionSeparator).ToList();
+            int removed = 0;
 
-            UpdateView(DataChangeType.TemplateListModified);
-        }
-
-        private void OnDeleteTemplate(object sender, RoutedEventArgs e)
-        {
-            if(selectedTemplate >= 0)
+            foreach (string extension in previousExtensions)
             {
-                List<RecordData.QuestionTemplateData> templates = data.instructor.ask.templates.ToList();
-                templates.RemoveAt(selectedTemplate);
-                data.instructor.ask.templates = templates.ToArray();
-
-                selectedTemplate = selectedTemplate - 1;
-
-                UpdateView(DataChangeType.TemplateListModified);
+                if (!newExtensions.Contains(extension.ToLower())) { newExtensions.Add(extension.ToLower()); }
+                else { removed += extension.Length; }
             }
 
+            textBox.Text = new string(String.Join(Constants.extensionSeparator, newExtensions.ToArray()));
+
+            if (previousCaretIndex - removed >= 0 && previousCaretIndex - removed <= textBox.Text.Length)
+            {
+                textBox.CaretIndex = previousCaretIndex - removed;
+            }
         }
+
     }
 }
