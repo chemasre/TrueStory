@@ -161,7 +161,7 @@
                         <Label x:Name="WordSeparatorsTitleLabel" Content="Separadores de palabras por extensiones" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
                         <Label x:Name="WordSeparatorsExtensionTextLabel" Content="Extensión de fichero" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Margin="20,0,0,0"/>
                         <TextBox x:Name="WordSeparatorsText" TextWrapping="Wrap" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="0,10,0,0" TextChanged="OnSeparatorParamsChanged"/>
-                        <ComboBox x:Name="WordSeparatorsExtensionList" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" SelectedIndex="0"/>
+                        <ComboBox x:Name="WordSeparatorsExtensionList" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" SelectedIndex="0" SelectionChanged="OnSelectedExtensionChanged"/>
                         <Label x:Name="WordSeparatorsLabel" Content="Separadores (carácteres)" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="2" Margin="40,10,0,0"/>
                     </Grid>
                 </DockPanel>

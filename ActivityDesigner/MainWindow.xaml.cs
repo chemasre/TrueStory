@@ -334,6 +334,8 @@ namespace ActivityDesigner
                         WordSeparatorsText.Text = new String(wordSeparators.separators);
                         SanitizeWordSeparators(WordSeparatorsText);
                     }
+
+                    WordSeparatorsExtensionList.SelectedIndex = selectedExtension;
                 }
             }
 
@@ -367,6 +369,15 @@ namespace ActivityDesigner
 
         }
 
+        private void OnSelectedExtensionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            selectedExtension = WordSeparatorsExtensionList.SelectedIndex;
+
+            UpdateView();
+
+        }
 
         private void OnTitleChanged(object sender, TextChangedEventArgs e)
         {
@@ -479,13 +490,14 @@ namespace ActivityDesigner
 
         private void OnSeparatorParamsChanged(object sender, TextChangedEventArgs e)
         {
-            Debug.Assert(selectedExtension >= 0 && selectedExtension < data.instructor.observe.wordSeparators.Length, "Selected template out of bounds");
-
             if (disableUIEvents) { return; }
+
+            Debug.Assert(selectedExtension >= 0 && selectedExtension < data.instructor.observe.wordSeparators.Length, "Selected template out of bounds");
 
             SanitizeWordSeparators(WordSeparatorsText);
 
             data.instructor.observe.wordSeparators[selectedExtension].separators = WordSeparatorsText.Text.ToCharArray();
+
         }
 
         void SanitizeInt(TextBox textBox)
