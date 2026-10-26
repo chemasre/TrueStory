@@ -6,10 +6,74 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TrueStoryBase\TrueStoryBase.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Fonts\IBMPlexMono-Bold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-BoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-ExtraLight.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-ExtraLightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-Italic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-Light.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-LightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-Medium.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-MediumItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-Regular.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-SemiBold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-SemiBoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-Thin.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexMono-ThinItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-Bold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-BoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-ExtraLight.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-ExtraLightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-Italic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-Light.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-LightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-Medium.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-MediumItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-Regular.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-SemiBold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-SemiBoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-Thin.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans-ThinItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-Bold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-BoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-ExtraLight.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-ExtraLightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-Italic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-Light.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-LightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-Medium.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-MediumItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-Regular.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-SemiBold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-SemiBoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-Thin.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_Condensed-ThinItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-Bold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-BoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-ExtraLight.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-ExtraLightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-Italic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-Light.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-LightItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-Medium.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-MediumItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-Regular.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-SemiBold.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-SemiBoldItalic.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-Thin.ttf" />
+    <Resource Include="Resources\Fonts\IBMPlexSans_SemiCondensed-ThinItalic.ttf" />
   </ItemGroup>
 
 </Project>
