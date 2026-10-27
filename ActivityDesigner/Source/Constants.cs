@@ -2,7 +2,7 @@
 {
     public class Constants
     {
-        public const string activityExtension = "activity";
+        public const string activitySettingsExtension = ".activitysettings";
 
         public const char extensionSeparator = ',';
 

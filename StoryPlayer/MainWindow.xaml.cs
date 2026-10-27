@@ -189,11 +189,11 @@ namespace StoryPlayer
             SetState(State.NoStory);
         }
 
-        void OnHeaderReaded(RecordData.HeaderData data)
+        void OnHeaderReaded(RecordData.NewHeaderData data)
         {
             if (ignoreReadEvent) { return;  }
 
-            BlockInfoLabel.Content = GetCursorText() + " Creada actividad por " + data.author + " con código " + data.publicKey;
+            BlockInfoLabel.Content = GetCursorText() + " Creada actividad por " + data.student + " con título " + data.title;
 
             FileEditorTextBox.Text = "";
 

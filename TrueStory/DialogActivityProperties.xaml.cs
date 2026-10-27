@@ -1,6 +1,9 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.IO;
+using System.Reflection.PortableExecutable;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace TrueStory
 {
@@ -9,20 +12,58 @@ namespace TrueStory
     /// </summary>
     public partial class DialogActivityProperties : Window
     {
-        public RecordData.HeaderData Header { get { return header;  }  }
+        public RecordData.NewHeaderData NewHeader { get { return newHeader; } }
 
-        RecordData.HeaderData header;
+        RecordData.NewHeaderData newHeader;
+
+        HashSet<Control> activityFileControls;
+        HashSet<Control> noActivityFileControls;
+
+        bool disableUIEvents;
+
 
         public DialogActivityProperties()
         {
+            disableUIEvents = true;
             InitializeComponent();
+            disableUIEvents = false;
 
-            ActivityCodeText.Text = "B1-ACT1";
+            ActivityTitleText.Text = "Título de la actividad";
+            ActivityExtensionsText.Text = "h,c,hpp,cpp,txt,html,html,css,js,php,cs,tsx,json";
             StudentNameText.Text = "Nombre Apellido";
             ActivityFolderText.Text = "";
 
-            header = new();
+            activityFileControls = new();
+            noActivityFileControls = new();
 
+            activityFileControls.Add(ActivityFileText);
+            activityFileControls.Add(ActivityFileLabel);
+            activityFileControls.Add(PickActivityFileButton);
+
+            noActivityFileControls.Add(ActivityTitleText);
+            noActivityFileControls.Add(ActivityTitleLabel);
+            noActivityFileControls.Add(ActivityExtensionsLabel);
+            noActivityFileControls.Add(ActivityExtensionsText);
+
+            newHeader = new();
+
+            UpdateUI();
+
+
+        }
+
+        private void UpdateUI()
+        {
+            if (UseActivityFileRadio.IsChecked.GetValueOrDefault())
+            {
+                foreach (Control c in activityFileControls) { c.IsEnabled = true; }
+                foreach (Control c in noActivityFileControls) { c.IsEnabled = false; }
+            }
+            else
+            {
+                foreach (Control c in activityFileControls) { c.IsEnabled = false; }
+                foreach (Control c in noActivityFileControls) { c.IsEnabled = true; }
+            }
         }
 
         private void PickActivityFolderButton_Click(object sender, RoutedEventArgs e)
@@ -50,9 +91,26 @@ namespace TrueStory
         {
             bool passes = true;
 
+            if (UseActivityFileRadio.IsChecked.GetValueOrDefault())
+            {
+                if (ActivityFileText.Text.Trim().Length <= 0)
+                { MessageBox.Show("Debes elegir un fichero de configuración para la actividad.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
+
+                if (passes && !File.Exists(ActivityFileText.Text.Trim()))
+                { MessageBox.Show("El fichero de configuración para la actividad no existe.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
+            }
+            else
+            {
+                if (ActivityTitleText.Text.Trim().Length <= 0)
+                { MessageBox.Show("Debes escribir un título para la actividad.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
+
+                string[] extensions = ActivityExtensionsText.Text.Split(Constants.extensionSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                if (extensions.Length <= 0)
+                { MessageBox.Show("Debes incluir al menos una extensión editable.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
+            }
 
             if (ActivityFolderText.Text.Trim().Length <= 0)
-            { MessageBox.Show("Debes elegir una etiqueta para la actividad.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
+            { MessageBox.Show("Debes elegir una carpeta para la actividad.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
 
             if (passes && !Directory.Exists(ActivityFolderText.Text))
             { MessageBox.Show("La carpeta de actividad no existe.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
@@ -66,8 +124,27 @@ namespace TrueStory
 
             if (passes)
             {
-                header = new RecordData.HeaderData() { author = StudentNameText.Text.Trim() , publicKey = ActivityCodeText.Text.Trim() };
+                if (DontUseActivityFileRadio.IsChecked.GetValueOrDefault())
+                {
+                    newHeader = new RecordData.NewHeaderData()
+                    {
+                        title = ActivityTitleText.Text.Trim(),
+                        student = StudentNameText.Text.Trim(),
+                        editableExtensions = ActivityExtensionsText.Text.Split(Constants.extensionSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    };
 
+                    newHeader.instructor.enabled = false;
+                }
+                else
+                {
+                    Story.Record record = new Story.Record();
+                    record.type = Story.RecordType.Header;
+                    record.data = File.ReadAllBytes(ActivityFileText.Text.Trim());
+
+                    newHeader = RecordData.DecodeNewHeaderRecord(record);
+                }
+
+                newHeader.guid = Guid.NewGuid().ToString();
 
                 DialogResult = true;
 
@@ -85,6 +162,70 @@ namespace TrueStory
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!DialogResult.HasValue) { DialogResult = false; }
+        }
+
+        private void PickActivityFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new();
+
+            dialog.Filter = "activity files (*.activity)|*.activity";
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                ActivityFileText.Text = dialog.FileName;
+            }
+        }
+
+        private void DontUseActivityFileRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return;  }
+
+            UpdateUI();
+        }
+
+        private void DontUseActivityFileRadio_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            UpdateUI();
+        }
+
+        private void UseActivityFileRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            UpdateUI();
+        }
+
+        private void UseActivityFileRadio_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            UpdateUI();
+        }
+
+        private void OnExtensionsChanged(object sender, TextChangedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            int previousCaret = ActivityExtensionsText.CaretIndex;
+            int removed = ActivityExtensionsText.Text.Count(c => c == ' ');
+            ActivityExtensionsText.Text = ActivityExtensionsText.Text.Replace(' '.ToString(), "");
+            foreach (char c in Constants.forbiddenExtensionChars)
+            {
+                removed += ActivityExtensionsText.Text.Count(cc => cc == c);
+                ActivityExtensionsText.Text = ActivityExtensionsText.Text.Replace(c.ToString(), "");
+            }
+
+            if (previousCaret - removed >= 0 && previousCaret - removed <= ActivityExtensionsText.Text.Length)
+            {
+                ActivityExtensionsText.CaretIndex = previousCaret - removed;
+            }
+
+
         }
     }
 }

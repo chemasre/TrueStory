@@ -214,6 +214,8 @@ namespace TrueStory
         public struct NewHeaderData
         {
             public string title = "Actividad sin título";
+            public string student = "Nombre estudiante";
+            public string guid = "";
             public string[] editableExtensions = new string[]
             {
                 "txt", // "csv", "md",
@@ -239,6 +241,8 @@ namespace TrueStory
             BinaryBufferWriter buffer = new();
 
             buffer.WriteString(r.title);
+            buffer.WriteString(r.student);
+            buffer.WriteString(r.guid);
             buffer.WriteInt(r.editableExtensions.Length);
             foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
             
@@ -296,7 +300,9 @@ namespace TrueStory
 
             BinaryBufferReader buffer = new(r.data);
 
-            result.title = buffer.ReadString();            
+            result.title = buffer.ReadString();
+            result.student = buffer.ReadString();
+            result.guid = buffer.ReadString();
             int extensionsCount = buffer.ReadInt();
             result.editableExtensions = new string[extensionsCount];
             for(int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
@@ -363,29 +369,6 @@ namespace TrueStory
 
             return result;
         }
-
-        // Old structures
-
-        public struct HeaderData
-        {
-            public string guid;
-            public string publicKey;
-            public string author;
-        }
-
-        public static HeaderData DecodeHeaderRecord(Story.Record r)
-        {
-            HeaderData data = new();
-
-            BinaryBufferReader buffer = new(r.data);
-
-            data.guid = buffer.ReadString();
-            data.publicKey = buffer.ReadString();
-            data.author = buffer.ReadString();
-
-            return data;
-        }
-
 
     }
 }

@@ -328,7 +328,7 @@ namespace TrueStory
 
             if(result.GetValueOrDefault())
             {
-                story = new Story(dialog.ActivityFolderText.Text.Trim(), Story.Mode.Create, dialog.Header);
+                story = new Story(dialog.ActivityFolderText.Text.Trim(), Story.Mode.Create, dialog.NewHeader);
                 storyActions = new StoryActions(story, this);
 
                 SetUIState(UIState.StoryNoSelection);

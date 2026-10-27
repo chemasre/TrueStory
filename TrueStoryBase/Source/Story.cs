@@ -78,7 +78,7 @@ namespace TrueStory
         public event QuestionReadedHandler? OnReadedQuestion;
         public event CloseStoryReadedHandler? OnReadedCloseStory;
 
-        public delegate void HeaderReadedHandler(RecordData.HeaderData data);
+        public delegate void HeaderReadedHandler(RecordData.NewHeaderData data);
         public delegate void OpenStoryReadedHandler();
         public delegate void CreateFileReadedHandler(RecordData.CreateFileData data);
         public delegate void CreateFolderReadedHandler(RecordData.CreateFolderData data);
@@ -126,9 +126,11 @@ namespace TrueStory
         long readRecordIndex;
         long readTotalRecords;
 
+        RecordData.NewHeaderData header;
+
         bool disposed;
 
-        public Story(string _rootPath, Mode _mode, RecordData.HeaderData? header = null)
+        public Story(string _rootPath, Mode _mode, RecordData.NewHeaderData? _header = null)
         {
             rootPath = _rootPath;
             mode = _mode;
@@ -140,35 +142,21 @@ namespace TrueStory
 
             internalCall = false;
 
-            Debug.Assert(!(_mode == Mode.Create && header == null), "Story: No header provided");
+            Debug.Assert(!(_mode == Mode.Create && _header == null), "Story: No header provided");
 
             if (_mode == Mode.Create)
             {
-                Debug.Assert(header.HasValue);
-
-                if (header.Value.guid == null)
-                {
-                    RecordData.HeaderData h = header.Value;
-                    h.guid = Guid.NewGuid().ToString();
-                    header = h;
-                }
-
                 file = new FileStream(filePath, FileMode.CreateNew, FileAccess.ReadWrite);
 
                 AddSignature();
 
-                Record r = new();
-                r.type = RecordType.Header;
+                Debug.Assert(_header != null);
 
-                BinaryBufferWriter buffer = new();
-
-                buffer.WriteString(header.Value.guid);
-                buffer.WriteString(header.Value.publicKey);
-                buffer.WriteString(header.Value.author);                
-
-                r.data = buffer.GetBytes();
+                Record r = RecordData.EncodeNewHeaderRecord(_header.Value);
 
                 AddRecord(r);
+
+                header = _header.Value;
 
             }
             else if (_mode == Mode.Append)
@@ -177,6 +165,12 @@ namespace TrueStory
 
                 string foundSignature = ReadSignature();
                 if (signature != foundSignature) { throw new InvalidDataException(); }
+
+                Record? r = ReadRecord();
+
+                if (r == null) { throw new InvalidDataException(); }
+
+                header = RecordData.DecodeNewHeaderRecord(r.Value);
 
                 file.Seek(0, SeekOrigin.End);
 
@@ -187,6 +181,14 @@ namespace TrueStory
 
                 string foundSignature = ReadSignature();
                 if (signature != foundSignature) { throw new InvalidDataException(); }
+
+                Record? r = ReadRecord();
+
+                if (r == null) { throw new InvalidDataException(); }
+
+                header = RecordData.DecodeNewHeaderRecord(r.Value);
+
+                file.Seek(signatureBytes.Length, SeekOrigin.Begin);
 
                 readRecordIndex = 0;
                 readTotalRecords = CountRecords();
@@ -409,7 +411,7 @@ namespace TrueStory
             {
                 if (result.Value.type == RecordType.Header)
                 {
-                    RecordData.HeaderData d = RecordData.DecodeHeaderRecord(result.Value);
+                    RecordData.NewHeaderData d = RecordData.DecodeNewHeaderRecord(result.Value);
                     OnReadedHeader?.Invoke(d);
                 }
                 else if (result.Value.type == RecordType.LoadFile)

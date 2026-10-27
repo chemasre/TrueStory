@@ -2,6 +2,11 @@
 {
     public class Constants
     {
+        // New activity
+
+        public static readonly char[] forbiddenExtensionChars = new char[] { '.', '<', '>', ':', '"', '/', '\\', '|', '?', '*' };
+        public const char extensionSeparator = ',';
+
         // Console
 
         public const string consolePrompt = "> ";

@@ -5,10 +5,10 @@
         public const string AppName = "TrueStory Activity Designer";
 
         public const int Major = 0;
-        public const int Minor = 1;
+        public const int Minor = 2;
         public const int Patch = 0;
 
-        public const string Alias = "Initial version";
+        public const string Alias = "Operative version";
 
         public static string GetFullName()
         {
