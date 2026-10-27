@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -168,9 +169,17 @@ namespace ActivityDesigner
             {
                 string path = dialog.FileName;
 
+                Story.Record record;
+                record.type = Story.RecordType.Header;
+                record.data = File.ReadAllBytes(path);
+
+                data = RecordData.DecodeNewHeaderRecord(record);
+
                 savePath = path;
                 needsSave = false;
                 UpdateTitle();
+
+                UpdateView();
 
 
             }
@@ -237,6 +246,14 @@ namespace ActivityDesigner
             {
                 SaveActivityAs();
             }
+            else
+            {
+                Story.Record record = RecordData.EncodeNewHeaderRecord(data);
+                File.WriteAllBytes(savePath, record.data);
+
+                needsSave = false;
+                UpdateTitle();
+            }
         }
 
         void SaveActivityAs()
@@ -251,6 +268,9 @@ namespace ActivityDesigner
             if (result.GetValueOrDefault())
             {
                 string path = dialog.FileName;
+
+                Story.Record record = RecordData.EncodeNewHeaderRecord(data);
+                File.WriteAllBytes(path, record.data);
 
                 savePath = path;
                 needsSave = false;
@@ -288,6 +308,8 @@ namespace ActivityDesigner
 
                 foreach (Control c in questionControls)
                 { c.Visibility = data.instructor.enabled ? Visibility.Visible : Visibility.Hidden; }
+
+                if (!data.instructor.enabled) { Tabs.SelectedIndex = 0; }
             }
 
             if (data.instructor.enabled)

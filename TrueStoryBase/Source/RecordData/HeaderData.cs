@@ -1,4 +1,6 @@
-﻿namespace TrueStory
+﻿using System.Reflection.PortableExecutable;
+
+namespace TrueStory
 {
     public partial class  RecordData
     {
@@ -229,6 +231,138 @@
             public NewHeaderData() { }
         }
 
+        public static Story.Record EncodeNewHeaderRecord(NewHeaderData r)
+        {
+            Story.Record result = new();
+            result.type = Story.RecordType.Header;
+
+            BinaryBufferWriter buffer = new();
+
+            buffer.WriteString(r.title);
+            buffer.WriteInt(r.editableExtensions.Length);
+            foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
+            
+            buffer.WriteInt(r.instructor.enabled ? 1 : 0);
+            
+            buffer.WriteInt(r.instructor.wait.time.min);
+            buffer.WriteInt(r.instructor.wait.time.max);
+            buffer.WriteInt(r.instructor.wait.characters.min);
+            buffer.WriteInt(r.instructor.wait.characters.max);
+            buffer.WriteInt(r.instructor.wait.fileSaves.min);
+            buffer.WriteInt(r.instructor.wait.fileSaves.max);
+            buffer.WriteInt(r.instructor.wait.fileOpens.min);
+            buffer.WriteInt(r.instructor.wait.fileOpens.max);
+            buffer.WriteInt(r.instructor.wait.commands.min);
+            buffer.WriteInt(r.instructor.wait.commands.max);
+
+            buffer.WriteInt(r.instructor.observe.time.min);
+            buffer.WriteInt(r.instructor.observe.time.max);
+            buffer.WriteInt(r.instructor.observe.wordSeparators.Length);
+            foreach (InstructorObserveWordSeparators wordSeparators in r.instructor.observe.wordSeparators)
+            {
+                buffer.WriteString(wordSeparators.extension);
+                buffer.WriteInt(wordSeparators.separators.Length);
+                foreach (char c in wordSeparators.separators)
+                {
+                    buffer.WriteString(c.ToString());
+                }
+            }
+
+            buffer.WriteInt(r.instructor.ask.templates.Length);
+            foreach (QuestionTemplateData template in r.instructor.ask.templates)
+            {
+                buffer.WriteInt((int)template.type);
+                buffer.WriteString(template.question);
+                buffer.WriteInt(template.contextLines);
+                buffer.WriteInt(template.contextWords);
+                buffer.WriteInt(template.timeLimit);
+            }
+
+            buffer.WriteInt(r.instructor.ask.chances.Length);
+            foreach (QuestionChanceData chance in r.instructor.ask.chances)
+            {
+                buffer.WriteInt((int)chance.type);
+                buffer.WriteInt(chance.weight);
+            }
+
+            result.data = buffer.GetBytes();
+
+            return result;
+        }
+
+        public static NewHeaderData DecodeNewHeaderRecord(Story.Record r)
+        {
+            NewHeaderData result = new();
+
+            BinaryBufferReader buffer = new(r.data);
+
+            result.title = buffer.ReadString();            
+            int extensionsCount = buffer.ReadInt();
+            result.editableExtensions = new string[extensionsCount];
+            for(int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
+
+            result.instructor.enabled = (buffer.ReadInt() != 0);
+
+            result.instructor.wait.time.min = buffer.ReadInt();
+            result.instructor.wait.time.max = buffer.ReadInt();
+            result.instructor.wait.characters.min = buffer.ReadInt();
+            result.instructor.wait.characters.max = buffer.ReadInt();
+            result.instructor.wait.fileSaves.min = buffer.ReadInt();
+            result.instructor.wait.fileSaves.max = buffer.ReadInt();
+            result.instructor.wait.fileOpens.min = buffer.ReadInt();
+            result.instructor.wait.fileOpens.max = buffer.ReadInt();
+            result.instructor.wait.commands.min = buffer.ReadInt();
+            result.instructor.wait.commands.max = buffer.ReadInt();
+
+            result.instructor.observe.time.min = buffer.ReadInt();
+            result.instructor.observe.time.max = buffer.ReadInt();
+            int wordSeparatorsCount = buffer.ReadInt();
+            result.instructor.observe.wordSeparators = new InstructorObserveWordSeparators[wordSeparatorsCount];
+            for(int i = 0; i < wordSeparatorsCount; i++)
+            {
+                InstructorObserveWordSeparators wordSeparator = new();
+                wordSeparator.extension = buffer.ReadString();
+
+                int separatorsCount = buffer.ReadInt();
+                wordSeparator.separators = new char[separatorsCount];
+                for(int j = 0; j < separatorsCount; j++)
+                {
+                    wordSeparator.separators[j] = buffer.ReadString()[0];
+                }
+
+                result.instructor.observe.wordSeparators[i] = wordSeparator;
+            }
+
+            int templatesCount = buffer.ReadInt();
+            result.instructor.ask.templates = new QuestionTemplateData[templatesCount];
+
+            for(int i = 0; i < templatesCount; i++)
+            {
+                QuestionTemplateData template = new();
+
+                template.type = (QuestionType)buffer.ReadInt();
+                template.question = buffer.ReadString();
+                template.contextLines = buffer.ReadInt();
+                template.contextWords = buffer.ReadInt();
+                template.timeLimit = buffer.ReadInt();
+
+                result.instructor.ask.templates[i] = template;
+            }
+
+            int chancesCount = buffer.ReadInt();
+            result.instructor.ask.chances = new QuestionChanceData[chancesCount];
+            for(int i = 0; i < chancesCount; i++)
+            {
+                QuestionChanceData chance;
+
+                chance.type = (QuestionType)buffer.ReadInt();
+                chance.weight = buffer.ReadInt();
+
+                result.instructor.ask.chances[i] = chance;
+            }
+
+            return result;
+        }
 
         // Old structures
 
