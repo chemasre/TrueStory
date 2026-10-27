@@ -114,6 +114,7 @@ namespace TrueStory
             }
         }
 
+        public ref readonly RecordData.NewHeaderData Header { get { return ref header;  } }
 
         FileStream file;
         string rootPath;

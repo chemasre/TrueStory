@@ -14,9 +14,9 @@ namespace TrueStory.Source
         public delegate void OnFileSelectedHandler(string file);
         public delegate void OnDeselectedHandler();
 
-        public string? RootPath { get { return rootPath; } set { rootPath = value; Update(); }  }
+        public Story? Story { get { return story; } set { story = value; Update(); } }
 
-        string? rootPath;
+        Story? story;
 
         ListBox listBox;
 
@@ -29,23 +29,23 @@ namespace TrueStory.Source
 
         public void Update()
         {
-            Debug.Assert(rootPath != null);
+            Debug.Assert(story != null);
 
             listBox.Items.Clear();
 
             if (!Switches.NoFolders)
             {
-                string[] directories = Directory.GetDirectories(rootPath);
+                string[] directories = Directory.GetDirectories(story.RootPath);
                 foreach (string d in directories)
                 { listBox.Items.Add(Constants.folderPrefix + Path.GetFileName(d)); }
             }
 
-            string[] files = Directory.GetFiles(rootPath);
+            string[] files = Directory.GetFiles(story.RootPath);
             foreach (string f in files)
             {
                 string n = Path.GetFileName(f);
 
-                if (Utils.HasAllowedExtension(n, Constants.allowedExtensions) && n != Story.StoryFilename)
+                if (Utils.HasAllowedExtension(n, story.Header.editableExtensions) && n != Story.StoryFilename)
                 {
                     listBox.Items.Add(n);
                 }

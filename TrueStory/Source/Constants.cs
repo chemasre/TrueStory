@@ -22,16 +22,16 @@
         public const string tabAsSpaces = "    ";
         public static readonly char[] tabEquivalents = new char[] { ' ', '\t' };
 
-        public static readonly string[] allowedExtensions = new string[]
-        {
-            "txt", "csv", "md",
-            "htm", "html", "css", "js",
-            "php",
-            "c", "h",
-            "hpp", "cpp",
-            "cs",
-            "java"
-        };
+        //public static readonly string[] allowedExtensions = new string[]
+        //{
+        //    "txt", "csv", "md",
+        //    "htm", "html", "css", "js",
+        //    "php",
+        //    "c", "h",
+        //    "hpp", "cpp",
+        //    "cs",
+        //    "java"
+        //};
 
         public static readonly char[] wordSeparators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',' };
 
@@ -64,11 +64,11 @@
         public const int minQuestionsFetchWait = (int)(60 * 0.5f);
         public const int maxQuestionsFetchWait = (int)(60 * 1.5f);
 
-        public const int questionsTimeWeight = 5;
-        public const int questionsInputWeight = 75;
-        public const int questionsOpensWeight = 1;
-        public const int questionsSavesWeight = 1;
-        public const int questionsCommandsWeight = 20;
+        // public const int questionsTimeWeight = 5;
+        // public const int questionsInputWeight = 75;
+        // public const int questionsOpensWeight = 1;
+        // public const int questionsSavesWeight = 1;
+        // public const int questionsCommandsWeight = 20;
 
         // Testing values
 

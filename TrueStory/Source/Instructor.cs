@@ -26,6 +26,10 @@ namespace TrueStory
             public int savesWait;
         }
 
+        public Story? Story { get { return story; } set { story = value; OnStoryChanged(); } }
+
+        Story? story;
+
         RecordData.QuestionTemplateData[] questionTemplates =
         {
             new() { type = RecordData.QuestionType.input, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
@@ -97,6 +101,8 @@ namespace TrueStory
         int savesCounter;
         int commandsCounter;
 
+        Dictionary<RecordData.QuestionType, int> chancesWeight;
+
         public CountersState Counters
         {
             get
@@ -147,57 +153,86 @@ namespace TrueStory
 
             random = new Random((int)(DateTimeOffset.Now.ToUnixTimeSeconds() % Int32.MaxValue));
 
-            instructorTextBox.Text = "";
-            instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
-
-            questionCharactersWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
-            questionOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
-            questionSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
-            questionCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
-
-            idleWait = random.Next(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait + 1);
-
-            questionCandidates = new();
-            questionShortList = new();
-            questionShortListTypes = new();
-
-            idleTimer = 0;
-            fetchTimer = 0;
-
-            inputCharactersCounter = 0;
-            opensCounter = 0;
-            savesCounter = 0;
-            commandsCounter = 0;
-
-            inactiveTimer = 0;
-
-            state = State.idle;
-
-            List<char> separators = new();
-            separators.AddRange(Constants.tabEquivalents);
-            separators.AddRange(Constants.wordSeparators);
-            ignoreCharacters = separators.ToArray();
-
-            List<RecordData.QuestionTemplateData> templatesList = new(questionTemplates);
-            templateCandidatesTime = templatesList.FindAll((q) => q.type == RecordData.QuestionType.time);
-            templateCandidatesInput = templatesList.FindAll((q) => q.type == RecordData.QuestionType.input);
-            templateCandidatesCommand = templatesList.FindAll((q) => q.type == RecordData.QuestionType.command);
-            templateCandidatesOpen = templatesList.FindAll((q) => q.type == RecordData.QuestionType.fileOpen);
-            templateCandidatesSave = templatesList.FindAll((q) => q.type == RecordData.QuestionType.fileSave);
-
+            chancesWeight = new();
 
             timer = new();
             timer.Tick += OnTimerTick;
             timer.Interval = new TimeSpan(0, 0, 1);
 
+        }
 
-            timer.Start();
+        void OnStoryChanged()
+        {
+            bool startInstructor;
+
+            if (story == null) { startInstructor = false; }
+            else if (story.Header.instructor.enabled) { startInstructor = true; }
+            else { startInstructor = false; }
+
+            if (startInstructor)
+            {
+                questionCharactersWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
+                questionOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
+                questionSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
+                questionCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+
+                idleWait = random.Next(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait + 1);
+
+                questionCandidates = new();
+                questionShortList = new();
+                questionShortListTypes = new();
+
+                idleTimer = 0;
+                fetchTimer = 0;
+
+                inputCharactersCounter = 0;
+                opensCounter = 0;
+                savesCounter = 0;
+                commandsCounter = 0;
+
+                inactiveTimer = 0;
+
+                List<char> separators = new();
+                separators.AddRange(Constants.tabEquivalents);
+                separators.AddRange(Constants.wordSeparators);
+                ignoreCharacters = separators.ToArray();
+
+                List<RecordData.QuestionTemplateData> templatesList = new(questionTemplates);
+                templateCandidatesTime = templatesList.FindAll((q) => q.type == RecordData.QuestionType.time);
+                templateCandidatesInput = templatesList.FindAll((q) => q.type == RecordData.QuestionType.input);
+                templateCandidatesCommand = templatesList.FindAll((q) => q.type == RecordData.QuestionType.command);
+                templateCandidatesOpen = templatesList.FindAll((q) => q.type == RecordData.QuestionType.fileOpen);
+                templateCandidatesSave = templatesList.FindAll((q) => q.type == RecordData.QuestionType.fileSave);
+
+                Debug.Assert(story != null);
+
+                chancesWeight.Clear();
+                foreach (RecordData.QuestionChanceData c in story.Header.instructor.ask.chances)
+                {
+                    chancesWeight.Add(c.type, c.weight);
+                }
+
+                timer.Start();
+
+                Console.WriteLine("Instructor started");
+            }
+            else
+            {
+                timer.Stop();
+
+                Console.WriteLine("Instructor stopped");
+            }
+
+            instructorTextBox.Text = "";
+            instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
+            state = State.idle;
 
         }
 
         void OnTimerTick(object? sender, EventArgs e)
         {
             if (!fileEditor.IsFileLoaded) { return;  }
+            if (story == null) { return;  }
 
             Utils.ClearLog();
             Utils.Log("Instructor      : " + state);
@@ -309,11 +344,18 @@ namespace TrueStory
                         bool hasOpen = questionShortListTypes.Contains(RecordData.QuestionType.fileOpen);
                         bool hasSave = questionShortListTypes.Contains(RecordData.QuestionType.fileSave);
 
-                        if (hasTime) { totalWeight += Constants.questionsTimeWeight; }
-                        if (hasInput) { totalWeight += Constants.questionsInputWeight; }
-                        if (hasCommand) { totalWeight += Constants.questionsCommandsWeight; }
-                        if (hasOpen) { totalWeight += Constants.questionsOpensWeight; }
-                        if (hasSave) { totalWeight += Constants.questionsSavesWeight; }
+                        Debug.Assert(chancesWeight.ContainsKey(RecordData.QuestionType.time));
+                        Debug.Assert(chancesWeight.ContainsKey(RecordData.QuestionType.input));
+                        Debug.Assert(chancesWeight.ContainsKey(RecordData.QuestionType.command));
+                        Debug.Assert(chancesWeight.ContainsKey(RecordData.QuestionType.fileOpen));
+                        Debug.Assert(chancesWeight.ContainsKey(RecordData.QuestionType.fileSave));
+
+
+                        if (hasTime) { totalWeight += chancesWeight[RecordData.QuestionType.time]; }
+                        if (hasInput) { totalWeight += chancesWeight[RecordData.QuestionType.input]; }
+                        if (hasCommand) { totalWeight += chancesWeight[RecordData.QuestionType.command]; }
+                        if (hasOpen) { totalWeight += chancesWeight[RecordData.QuestionType.fileOpen]; }
+                        if (hasSave) { totalWeight += chancesWeight[RecordData.QuestionType.fileSave]; }
 
                         int randomWeight = random.Next(0, totalWeight);
 
@@ -321,49 +363,49 @@ namespace TrueStory
 
                         if (hasTime)
                         {
-                            if (randomWeight < Constants.questionsTimeWeight)
+                            if (randomWeight < chancesWeight[RecordData.QuestionType.time])
                             {
                                 criteria = (q => q.type == RecordData.QuestionType.time);
                                 question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
                             }
 
-                            randomWeight -= Constants.questionsTimeWeight;
+                            randomWeight -= chancesWeight[RecordData.QuestionType.time];
 
                         }
 
 
                         if (question == null && hasInput)
                         {
-                            if (randomWeight < Constants.questionsInputWeight)
+                            if (randomWeight < chancesWeight[RecordData.QuestionType.input])
                             {
                                 criteria = (q => q.type == RecordData.QuestionType.input);
                                 question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
                             }
 
-                            randomWeight -= Constants.questionsInputWeight;
+                            randomWeight -= chancesWeight[RecordData.QuestionType.input];
                         }
 
 
                         if (question == null && hasCommand)
                         {
-                            if (randomWeight < Constants.questionsCommandsWeight)
+                            if (randomWeight < chancesWeight[RecordData.QuestionType.command])
                             {
                                 criteria = (q => q.type == RecordData.QuestionType.command);
                                 question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
                             }
 
-                            randomWeight -= Constants.questionsCommandsWeight;
+                            randomWeight -= chancesWeight[RecordData.QuestionType.command];
                         }
 
                         if (question == null && hasOpen)
                         {
-                            if (randomWeight < Constants.questionsOpensWeight)
+                            if (randomWeight < chancesWeight[RecordData.QuestionType.fileOpen])
                             {
                                 criteria = (q => q.type == RecordData.QuestionType.fileOpen);
                                 question = questionShortList.FindLastIndex(criteria) >= 0 ? questionShortList.FindLast(criteria) : null;
                             }
 
-                            randomWeight -= Constants.questionsOpensWeight;
+                            randomWeight -= chancesWeight[RecordData.QuestionType.fileOpen];
                         }
 
 

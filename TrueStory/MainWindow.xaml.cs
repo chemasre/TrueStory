@@ -335,7 +335,8 @@ namespace TrueStory
 
                 UpdateFileTitle();
 
-                folderView.RootPath = story.RootPath;
+                folderView.Story = story;
+                instructor.Story = story;
             }
         }
 
@@ -358,7 +359,8 @@ namespace TrueStory
 
                     UpdateFileTitle();
 
-                    folderView.RootPath = story.RootPath;
+                    folderView.Story = story;
+                    instructor.Story = story;
 
                     story.AddOpenStory();
 
@@ -445,7 +447,7 @@ namespace TrueStory
             DialogAskName dialog = new();
 
             dialog.Title = "Crear nuevo fichero";
-            dialog.Message.Text = "Introduce un nombre para el fichero.";
+            dialog.Message.Text = "Introduce un nombre de fichero con alguna de estas extensiones:\n\n" + String.Join(Constants.extensionSeparator, story.Header.editableExtensions);
             dialog.Input.Text = "NuevoFichero.txt";
 
             bool? result = dialog.ShowDialog();
@@ -459,9 +461,9 @@ namespace TrueStory
                 {
                     MessageBox.Show("El nombre del fichero no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
-                else if (!Utils.HasAllowedExtension(name, Constants.allowedExtensions))
+                else if (!Utils.HasAllowedExtension(name, story.Header.editableExtensions))
                 {
-                    string extensions = string.Join(';', Constants.allowedExtensions);
+                    string extensions = string.Join(';', story.Header.editableExtensions);
                     MessageBox.Show("Sólo se permite crear ficheros que tengan alguna de estas extensiones: " + extensions, "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
                 else if (File.Exists(story.RootPath + Path.DirectorySeparatorChar + name))
