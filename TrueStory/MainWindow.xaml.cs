@@ -392,6 +392,8 @@ namespace TrueStory
             storyActions.Dispose();
             storyActions = null;
 
+            folderView.Story = null;
+            instructor.Story = null;
             story.Dispose();
             story = null;
 

@@ -29,7 +29,7 @@ namespace TrueStory.Source
 
         public void Update()
         {
-            Debug.Assert(story != null);
+            if (story == null) { listBox.Items.Clear(); return; }
 
             listBox.Items.Clear();
 

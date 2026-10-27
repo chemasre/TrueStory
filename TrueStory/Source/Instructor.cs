@@ -153,11 +153,28 @@ namespace TrueStory
 
             random = new Random((int)(DateTimeOffset.Now.ToUnixTimeSeconds() % Int32.MaxValue));
 
+            templateCandidatesTime = new();
+            templateCandidatesInput = new();
+            templateCandidatesCommand = new();
+            templateCandidatesOpen = new();
+            templateCandidatesSave = new();
+
+            questionCandidates = new();
+            questionShortList = new();
+            questionShortListTypes = new();
+
+            ignoreCharacters = new char[0];
+
             chancesWeight = new();
+
+            instructorTextBox.Text = "";
+            instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
 
             timer = new();
             timer.Tick += OnTimerTick;
             timer.Interval = new TimeSpan(0, 0, 1);
+
+            state = State.idle;
 
         }
 
