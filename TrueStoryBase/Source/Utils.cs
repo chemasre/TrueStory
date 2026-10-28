@@ -38,6 +38,21 @@ namespace TrueStory
             return valid;
         }
 
+        public static string? GetExtension(string fileName)
+        {
+            string? result = Path.GetExtension(fileName);
+
+            if (result != null)
+            {
+                if (result.Length > 0)
+                {
+                    result = result.Substring(1);
+                }
+            }
+
+            return result;
+        }
+
         public static bool HasAllowedExtension(string fileName, string[] allowedExtensions)
         {
             string ext = Path.GetExtension(fileName);

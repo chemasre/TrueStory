@@ -9,8 +9,9 @@ namespace TrueStory
     {
         public event OnContentsChangedHandler? OnContentsChanged;
 
-        public TextBox TextBox { get { return textBox;  } }
+        public TextBox TextBox { get { return textBox; } }
         public bool IsFileLoaded { get { return loaded; } }
+        public string LoadedFilePath { get { return loadedFilePath;  } }
 
         public struct ContentChange
         {
@@ -33,6 +34,7 @@ namespace TrueStory
         long lastChangeTime;
 
         bool loaded;
+        string loadedFilePath;
 
         public FileEditor(MainWindow _window)
         {
@@ -94,14 +96,16 @@ namespace TrueStory
             DoCopyOrCut(true);
         }
 
-        public void Load(string text)
+        public void Load(string _filePath, string _text)
         {
             ignoreChanges = true;
-            textBox.Text = text;
+            textBox.Text = _text;
             ignoreChanges = false;
+
 
             lastChangeTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
+            loadedFilePath = _filePath;
             loaded = true;
 
             UpdateInfoBar();

@@ -5,10 +5,10 @@
         public const string AppName = "TrueStory Editor";
 
         public const int Major = 0;
-        public const int Minor = 6;
-        public const int Patch = 2;
+        public const int Minor = 7;
+        public const int Patch = 0;
 
-        public const string Alias = "Fixed question lines display"; 
+        public const string Alias = "New header integrated"; 
 
         public static string GetFullName()
         {

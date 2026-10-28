@@ -150,7 +150,7 @@ namespace TrueStory
 
             SetUIState(UIState.StoryFileLoadedNoNeedsSave);
 
-            fileEditor.Load(story.AddLoadFile(file));
+            fileEditor.Load(file, story.AddLoadFile(file));
             loadedFile = file;
             loadedFileNeedsSave = false;
             UpdateFileTitle();

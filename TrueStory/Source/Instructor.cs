@@ -30,24 +30,24 @@ namespace TrueStory
 
         Story? story;
 
-        RecordData.QuestionTemplateData[] questionTemplates =
-        {
-            new() { type = RecordData.QuestionType.input, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
-            new() { type = RecordData.QuestionType.input, question = "¿Qué es la palabra '[lineWord]' de la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
-            new() { type = RecordData.QuestionType.input, question = "¿Para qué sirve la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
-            new() { type = RecordData.QuestionType.input, question = "¿Por qué cambiaste la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
-            new() { type = RecordData.QuestionType.fileSave, question = "¿Qué has cambiado en el fichero [fileName] que has guardado recientemente?", contextLines = -1, timeLimit = 15  },
-            new() { type = RecordData.QuestionType.fileOpen, question = "¿Por qué has abierto recientemente el fichero [fileName]?", contextLines = -1, timeLimit = 15  },
-            new() { type = RecordData.QuestionType.fileOpen, question = "¿Para qué sirve el fichero [fileName] que has abierto recientemente?", contextLines = 0, timeLimit = 10  },
-            new() { type = RecordData.QuestionType.command, question = "¿Qué querías probar la última vez que ejecutaste este comando?", contextLines = 0, timeLimit = 10  },
-            new() { type = RecordData.QuestionType.command, question = "¿Tuviste algún problema la última vez que ejecutaste el comando '[commandName]'?", contextLines = 0, timeLimit = 10  },
-            new() { type = RecordData.QuestionType.time, question = "¿Qué estás haciendo ahora mismo en la actividad?", contextLines = 0, timeLimit = 20  },
-            new() { type = RecordData.QuestionType.time, question = "¿Qué has hecho antes que lo que estás haciendo ahora en la actividad?", contextLines = 0, timeLimit = 20  },
-            new() { type = RecordData.QuestionType.time, question = "¿Cuál es el último problema que has tenido en esta actividad?", contextLines = 0, timeLimit = 20  },
-            new() { type = RecordData.QuestionType.time, question = "¿Cuál es el problema más importante que has tenido hasta ahora en la actividad?", contextLines = 0, timeLimit = 20  },
-            new() { type = RecordData.QuestionType.time, question = "¿Qué te preocupa ahora mismo que crees que no sabrás resolver en la actividad?", contextLines = 0, timeLimit = 20  },
-            new() { type = RecordData.QuestionType.time, question = "Explica algo que estés particularmente feliz de haber solucionado en la actividad", contextLines = 0, timeLimit = 20  },
-        };
+        //RecordData.QuestionTemplateData[] questionTemplates =
+        //{
+        //    new() { type = RecordData.QuestionType.input, question = "¿Para qué sirve '[lineWord]' en la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+        //    new() { type = RecordData.QuestionType.input, question = "¿Qué es la palabra '[lineWord]' de la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+        //    new() { type = RecordData.QuestionType.input, question = "¿Para qué sirve la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+        //    new() { type = RecordData.QuestionType.input, question = "¿Por qué cambiaste la línea [lineIndex]?", contextLines = 10, contextWords = 3, timeLimit = 20 },
+        //    new() { type = RecordData.QuestionType.fileSave, question = "¿Qué has cambiado en el fichero [fileName] que has guardado recientemente?", contextLines = -1, timeLimit = 15  },
+        //    new() { type = RecordData.QuestionType.fileOpen, question = "¿Por qué has abierto recientemente el fichero [fileName]?", contextLines = -1, timeLimit = 15  },
+        //    new() { type = RecordData.QuestionType.fileOpen, question = "¿Para qué sirve el fichero [fileName] que has abierto recientemente?", contextLines = 0, timeLimit = 10  },
+        //    new() { type = RecordData.QuestionType.command, question = "¿Qué querías probar la última vez que ejecutaste este comando?", contextLines = 0, timeLimit = 10  },
+        //    new() { type = RecordData.QuestionType.command, question = "¿Tuviste algún problema la última vez que ejecutaste el comando '[commandName]'?", contextLines = 0, timeLimit = 10  },
+        //    new() { type = RecordData.QuestionType.time, question = "¿Qué estás haciendo ahora mismo en la actividad?", contextLines = 0, timeLimit = 20  },
+        //    new() { type = RecordData.QuestionType.time, question = "¿Qué has hecho antes que lo que estás haciendo ahora en la actividad?", contextLines = 0, timeLimit = 20  },
+        //    new() { type = RecordData.QuestionType.time, question = "¿Cuál es el último problema que has tenido en esta actividad?", contextLines = 0, timeLimit = 20  },
+        //    new() { type = RecordData.QuestionType.time, question = "¿Cuál es el problema más importante que has tenido hasta ahora en la actividad?", contextLines = 0, timeLimit = 20  },
+        //    new() { type = RecordData.QuestionType.time, question = "¿Qué te preocupa ahora mismo que crees que no sabrás resolver en la actividad?", contextLines = 0, timeLimit = 20  },
+        //    new() { type = RecordData.QuestionType.time, question = "Explica algo que estés particularmente feliz de haber solucionado en la actividad", contextLines = 0, timeLimit = 20  },
+        //};
 
         enum State
         {
@@ -68,9 +68,6 @@ namespace TrueStory
         List<RecordData.QuestionData> questionShortList;
         List<RecordData.QuestionType> questionShortListTypes;
         RecordData.QuestionData? question;
-
-        char[] ignoreCharacters;
-
 
         int questionCharactersWait;
         int questionCommandsWait;
@@ -102,6 +99,7 @@ namespace TrueStory
         int commandsCounter;
 
         Dictionary<RecordData.QuestionType, int> chancesWeight;
+        Dictionary<string, char[]> separators;
 
         public CountersState Counters
         {
@@ -123,20 +121,24 @@ namespace TrueStory
 
             set
             {
-                int randCharsWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
-                int randOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
-                int randSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
-                int randCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+                Debug.Assert(story != null);
+
+                ref readonly RecordData.InstructorWaitData wait = ref story.Header.instructor.wait;
+
+                int randCharsWait = random.Next(wait.characters.min, wait.characters.max + 1);
+                int randOpensWait = random.Next(wait.fileOpens.min, wait.fileOpens.max + 1);
+                int randSavesWait = random.Next(wait.fileSaves.min, wait.fileSaves.max + 1);
+                int randCommandsWait = random.Next(wait.commands.min, wait.commands.max + 1);
 
 
                 inputCharactersCounter = value.charactersCounter;
                 questionCharactersWait = value.charactersWait > 0 ? value.charactersWait : randCharsWait;
                 commandsCounter = value.commandsCounter;
-                questionCommandsWait = value.commandsWait > 0 ? value.commandsWait : randCommandsWait; ;
+                questionCommandsWait = value.commandsWait > 0 ? value.commandsWait : randCommandsWait;
                 opensCounter = value.opensCounter;
-                questionOpensWait = value.opensWait > 0 ? value.opensWait: randOpensWait; ;
+                questionOpensWait = value.opensWait > 0 ? value.opensWait: randOpensWait;
                 savesCounter = value.savesCounter;
-                questionSavesWait = value.savesWait > 0 ? value.savesWait: randSavesWait; ;
+                questionSavesWait = value.savesWait > 0 ? value.savesWait: randSavesWait;
             }
         }
         
@@ -163,9 +165,8 @@ namespace TrueStory
             questionShortList = new();
             questionShortListTypes = new();
 
-            ignoreCharacters = new char[0];
-
             chancesWeight = new();
+            separators = new();
 
             instructorTextBox.Text = "";
             instructorTextBox.Background = new SolidColorBrush(Colors.Transparent);
@@ -188,12 +189,16 @@ namespace TrueStory
 
             if (startInstructor)
             {
-                questionCharactersWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
-                questionOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
-                questionSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
-                questionCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+                Debug.Assert(story != null);
 
-                idleWait = random.Next(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait + 1);
+                ref readonly RecordData.InstructorWaitData wait = ref story.Header.instructor.wait;
+
+                questionCharactersWait = random.Next(wait.characters.min, wait.characters.max + 1);
+                questionOpensWait = random.Next(wait.fileOpens.min, wait.fileOpens.max + 1);
+                questionSavesWait = random.Next(wait.fileSaves.min, wait.fileSaves.max + 1);
+                questionCommandsWait = random.Next(wait.commands.min, wait.commands.max + 1);
+
+                idleWait = random.Next(wait.time.min, wait.time.max + 1); ;
 
                 questionCandidates = new();
                 questionShortList = new();
@@ -209,12 +214,7 @@ namespace TrueStory
 
                 inactiveTimer = 0;
 
-                List<char> separators = new();
-                separators.AddRange(Constants.tabEquivalents);
-                separators.AddRange(Constants.wordSeparators);
-                ignoreCharacters = separators.ToArray();
-
-                List<RecordData.QuestionTemplateData> templatesList = new(questionTemplates);
+                List<RecordData.QuestionTemplateData> templatesList = new(story.Header.instructor.ask.templates);
                 templateCandidatesTime = templatesList.FindAll((q) => q.type == RecordData.QuestionType.time);
                 templateCandidatesInput = templatesList.FindAll((q) => q.type == RecordData.QuestionType.input);
                 templateCandidatesCommand = templatesList.FindAll((q) => q.type == RecordData.QuestionType.command);
@@ -227,6 +227,15 @@ namespace TrueStory
                 foreach (RecordData.QuestionChanceData c in story.Header.instructor.ask.chances)
                 {
                     chancesWeight.Add(c.type, c.weight);
+                }
+
+                separators.Clear();
+                foreach (RecordData.InstructorObserveWordSeparators s in story.Header.instructor.observe.wordSeparators)
+                {
+                    char[] all = new char[Constants.tabEquivalents.Length + s.separators.Length];
+                    Constants.tabEquivalents.CopyTo(all, 0);
+                    s.separators.CopyTo(all, Constants.tabEquivalents.Length);
+                    separators.Add(s.extension, all);
                 }
 
                 timer.Start();
@@ -250,6 +259,10 @@ namespace TrueStory
         {
             if (!fileEditor.IsFileLoaded) { return;  }
             if (story == null) { return;  }
+
+            ref readonly RecordData.InstructorWaitData wait = ref story.Header.instructor.wait;
+            ref readonly RecordData.InstructorObserveData observe = ref story.Header.instructor.observe;
+            ref readonly RecordData.InstructorAskQuestionData ask = ref story.Header.instructor.ask;
 
             Utils.ClearLog();
             Utils.Log("Instructor      : " + state);
@@ -283,9 +296,11 @@ namespace TrueStory
                 }
 
 
+
+
                 if (idleTimer > idleWait)
                 {
-                    fetchWait = random.Next(Constants.minQuestionsFetchWait, Constants.maxQuestionsFetchWait + 1);
+                    fetchWait = random.Next(observe.time.min, observe.time.max + 1);
                     fetchTimer = 0;
 
                     questionCandidates.Clear();
@@ -479,12 +494,12 @@ namespace TrueStory
                     opensCounter = 0;
                     savesCounter = 0;
 
-                    questionCharactersWait = random.Next(Constants.minQuestionCharactersWait, Constants.maxQuestionCharactersWait + 1);
-                    questionOpensWait = random.Next(Constants.minQuestionOpensWait, Constants.maxQuestionOpensWait + 1);
-                    questionSavesWait = random.Next(Constants.minQuestionSavesWait, Constants.maxQuestionSavesWait + 1);
-                    questionCommandsWait = random.Next(Constants.minQuestionCommandsWait, Constants.maxQuestionCommandsWait + 1);
+                    questionCharactersWait = random.Next(wait.characters.min, wait.characters.max + 1);
+                    questionOpensWait = random.Next(wait.fileOpens.min, wait.fileOpens.max + 1);
+                    questionSavesWait = random.Next(wait.fileSaves.min, wait.fileSaves.max + 1);
+                    questionCommandsWait = random.Next(wait.commands.min, wait.commands.max + 1);
 
-                    idleWait = random.Next(Constants.minQuestionsTimeWait, Constants.maxQuestionsTimeWait + 1);
+                    idleWait = random.Next(wait.time.min, wait.time.max + 1);
                     idleTimer = 0;
 
                     state = State.idle;
@@ -496,8 +511,15 @@ namespace TrueStory
 
         void OnFileEditorContentsChanged(FileEditor.ContentChange c)
         {
+
             if(c.Added > 0)
             {
+                string? extension = Utils.GetExtension(fileEditor.LoadedFilePath)?.ToLower();
+                Debug.Assert(extension != null);
+                Debug.Assert(separators.ContainsKey(extension));
+
+                char[] ignoreCharacters = separators[extension];
+
                 inputCharactersCounter += c.AddedText.Count(c => !ignoreCharacters.Contains(c));
 
                 if (CanFetchQuestion(RecordData.QuestionType.input))
@@ -570,6 +592,13 @@ namespace TrueStory
                     string lineText = fileEditor.TextBox.GetLineText(currentLine).Replace("\r\n", "");
 
                     //int lineSize = lineText.Count((c) => !(Constants.wordSeparators.Contains(c) || Constants.tabEquivalents.Contains(c)));
+
+                    string? extension = Utils.GetExtension(fileEditor.LoadedFilePath)?.ToLower();
+                    Debug.Assert(extension != null);
+                    Debug.Assert(separators.ContainsKey(extension));
+
+                    char[] ignoreCharacters = separators[extension];
+
                     int lineWords = lineText.Split(ignoreCharacters, StringSplitOptions.RemoveEmptyEntries).Length;
 
                     if (contextStart >= 0 && contextEnd < numLines &&

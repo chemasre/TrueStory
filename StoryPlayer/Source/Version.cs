@@ -8,7 +8,7 @@
         public const int Minor = 1;
         public const int Patch = 1;
 
-        public const string Alias = "Fixed question lines";
+        public const string Alias = "Operative version";
 
         public static string GetFullName()
         {
