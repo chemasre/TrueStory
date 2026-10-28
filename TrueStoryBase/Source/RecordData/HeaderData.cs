@@ -29,31 +29,31 @@ namespace TrueStory
         {
             public IntRangeData time = new()
             {
-                min = 60,
-                max = 180
+                min = 20,
+                max = 40
             };
 
             public IntRangeData characters = new()
             {
-                min = 120,
-                max = 240
+                min = 50,
+                max = 80
             };
 
             public IntRangeData fileOpens = new()
             {
-                min = 0,
+                min = 1,
                 max = 2
             };
 
             public IntRangeData fileSaves = new()
             {
-                min = 0,
+                min = 1,
                 max = 2
             };
 
             public IntRangeData commands = new()
             {
-                min = 0,
+                min = 1,
                 max = 2
             };
 
@@ -73,8 +73,8 @@ namespace TrueStory
         {
             public IntRangeData time = new()
             {
-                min = (int)(60 * 0.5f),
-                max = (int)(60 * 1.5f)
+                min = 10,
+                max = 20
             };
 
             public InstructorObserveWordSeparators[] wordSeparators = new InstructorObserveWordSeparators[]

@@ -168,7 +168,7 @@ namespace TrueStory
         {
             OpenFileDialog dialog = new();
 
-            dialog.Filter = "activity files (*.activity)|*.activity";
+            dialog.Filter = "activity files (*."+ Constants.activitySettingsExtension + ")|*." + Constants.activitySettingsExtension;
             dialog.FilterIndex = 1;
 
             bool? result = dialog.ShowDialog();
