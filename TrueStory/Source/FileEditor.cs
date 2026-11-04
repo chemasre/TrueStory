@@ -73,7 +73,7 @@ namespace TrueStory
 
         private void OnResetTextSize(object sender, RoutedEventArgs e)
         {
-            textBox.FontSize = Constants.editorDefaultTextSize;
+            ResetText();
         }
 
         private void OnReduceTextSize(object sender, RoutedEventArgs e)
@@ -145,6 +145,13 @@ namespace TrueStory
             UpdateEditMenu();
         }
 
+
+        public void ResetText()
+        {
+            textBox.FontSize = Constants.editorDefaultTextSize;
+            window.Settings.SetInt("FontSize", Constants.editorDefaultTextSize);
+
+        }
 
         public void EnlargeText()
         {
