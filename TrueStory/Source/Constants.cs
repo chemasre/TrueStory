@@ -2,6 +2,10 @@
 {
     public class Constants
     {
+        // Settings
+
+        public const string settingsFile = "editor.settings";
+
         // New activity
 
         public static readonly char[] forbiddenExtensionChars = new char[] { '.', '<', '>', ':', '"', '/', '\\', '|', '?', '*' };

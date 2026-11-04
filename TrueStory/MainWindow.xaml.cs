@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using TrueStory.Source;
+using System.Windows.Media;
 
 
 namespace TrueStory
@@ -20,6 +20,7 @@ namespace TrueStory
         public CommandConsole CommandConsole { get { return commandConsole; } }
         public Instructor Instructor { get { return instructor; } }
         public Story? Story { get { return story; } }
+        public Settings Settings { get { return settings;  } }
 
         public static Log Log { get { return log;  } }
 
@@ -49,12 +50,18 @@ namespace TrueStory
         CommandConsole commandConsole;
         Instructor instructor;
 
+        Themes themes;
+
+        Settings settings;
+
         public static RoutedCommand ShortcutNewFile = new RoutedCommand();
         public static RoutedCommand ShortcutSaveFile = new RoutedCommand();
         public static RoutedCommand ShortcutEnlargeText = new RoutedCommand();
         public static RoutedCommand ShortcutReduceText = new RoutedCommand();
 
         UIState questionPreviousUIState;
+
+        bool ignoreUIevents;
 
         static Log log;
 
@@ -63,6 +70,7 @@ namespace TrueStory
             InitializeComponent();
 
             log = new Log(Constants.logFileName);
+            settings = new(Constants.settingsFile);
 
             Closing += OnClosing;
 
@@ -82,6 +90,13 @@ namespace TrueStory
             instructor.OnQuestionStarts += OnInstructorQuestionStarts;
             instructor.OnQuestionEnds += OnInstructorQuestionEnds;
 
+            ignoreUIevents = true;
+            DarkModeCheckableAction.IsChecked = (settings.GetInt("DarkMode") != 0);
+            ignoreUIevents = false;
+
+            themes = new(this);
+
+
             ShortcutSaveFile.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
             ShortcutNewFile.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
             ShortcutEnlargeText.InputGestures.Add(new KeyGesture(Key.OemPlus, ModifierKeys.Control));
@@ -99,8 +114,7 @@ namespace TrueStory
             SetUIState(UIState.NoStory);
 
             UpdateFileTitle();
-
-            Title = Version.GetFullName();
+            UpdateWindowTitle();
 
         }
 
@@ -212,7 +226,7 @@ namespace TrueStory
                 FolderViewList.IsEnabled = false;
                 CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
-                ViewMenu.IsEnabled = false;
+                ViewMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
@@ -230,7 +244,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
-                ViewMenu.IsEnabled = false;
+                ViewMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -285,7 +299,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
-                ViewMenu.IsEnabled = false;
+                ViewMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -349,6 +363,8 @@ namespace TrueStory
                 SetUIState(UIState.StoryNoSelection);
 
                 UpdateFileTitle();
+                UpdateWindowTitle();
+
 
                 commandConsole.Story = story;
                 folderView.Story = story;
@@ -374,7 +390,9 @@ namespace TrueStory
                     SetUIState(UIState.StoryNoSelection);
 
                     UpdateFileTitle();
-                    
+                    UpdateWindowTitle();
+
+
                     commandConsole.Story = story;
                     folderView.Story = story;
                     instructor.Story = story;
@@ -417,13 +435,20 @@ namespace TrueStory
 
             SetUIState(UIState.NoStory);
             UpdateFileTitle();
-
+            UpdateWindowTitle();
         }
 
         void UpdateFileTitle()
         {
             if (story != null && loadedFile != null) { FileEditorTitleLabel.Content = (loadedFileNeedsSave ? "[*]":"") + loadedFile + ""; }
             else { FileEditorTitleLabel.Content = "Editor de ficheros"; }
+
+        }
+
+        void UpdateWindowTitle()
+        {
+            if (story != null) { Title = story.Header.title + " - " + story.Header.student;  }
+            else { Title = Version.GetFullName(); }
 
         }
 
@@ -600,5 +625,23 @@ namespace TrueStory
             d.ShowDialog();
         }
 
+        private void OnMenuDarkModeChecked(object sender, RoutedEventArgs e)
+        {
+            if (ignoreUIevents) { return;  }
+
+            themes.DarkMode = true;
+        }
+
+        private void OnMenuDarkModeUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (ignoreUIevents) { return; }
+
+            themes.DarkMode = false;
+        }
+
+        private void OnWindowClosed(object sender, EventArgs e)
+        {
+            Settings.Save();
+        }
     }
 }

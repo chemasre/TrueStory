@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TrueStory"
         xmlns:System="clr-namespace:System;assembly=System.Runtime" x:Class="TrueStory.MainWindow"
         mc:Ignorable="d"
-        Title="TrueStory 0.1.0" Height="640" Width="960" MinWidth="400" MinHeight="300" Background="{DynamicResource TrueEditorBackground}">
+        Title="TrueStory 0.1.0" Height="640" Width="960" MinWidth="400" MinHeight="300" Background="{DynamicResource TrueEditorBackground}" Closed="OnWindowClosed">
     <DockPanel>
         <Menu x:Name="MainMenu" DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Stretch" Background="{DynamicResource TrueEditorMenu}" FontFamily="{DynamicResource TrueStoryFont}" FontSize="{DynamicResource TrueStoryFontSize}" Foreground="{DynamicResource TrueStoryMenuText}">
             <MenuItem x:Name="ActivityMenu" Header="Actividad" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
@@ -33,6 +33,8 @@
                 <MenuItem x:Name="EnlargeTextAction" Header="Agrandar texto"/>
                 <MenuItem x:Name="ReduceTextAction" Header="Reducir texto"/>
                 <MenuItem x:Name="ResetTextAction" Header="Restablecer tamaño de texto"/>
+                <Separator/>
+                <MenuItem x:Name="DarkModeCheckableAction" Header="Tema oscuro" IsCheckable="True" Checked="OnMenuDarkModeChecked" Unchecked="OnMenuDarkModeUnchecked"/>
             </MenuItem>
             <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de TrueStory" Click="OnMenuAboutApp"/>

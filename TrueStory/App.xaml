@@ -5,6 +5,42 @@
              StartupUri="MainWindow.xaml"
     xmlns:System="clr-namespace:System;assembly=System.Runtime">
     <Application.Resources>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorButtonNeutral" Color="#FF203B42"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorButtonAccept" Color="#FF3E3A09"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorButtonCancel" Color="#FF372F19"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorBackground" Color="#FF463019"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorEditableTextBackground" Color="#FF23221E"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorNonEditableTextBackground" Color="#FF272117"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryMenuText" Color="#FFCC6130"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorPanelTitle" Color="#FF462E0F"/>
+        <SolidColorBrush x:Key="DarkMode_TrueEditorMenu" Color="#FF353023"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryPanelTitleText" Color="#FFCC761E"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryInfobarText" Color="#FFFB854E"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryNonEditableText" Color="#FFF57337"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryButtonsText" Color="#FFED7239"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryTabItem" Color="#FF312D21"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryTabItemText" Color="#FFE26C36"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryTabControlBackground" Color="#FF3A352B"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryEditableText" Color="#FFF7BFA3"/>
+
+        <SolidColorBrush x:Key="LightMode_TrueEditorButtonNeutral" Color="#FF7CE1FB"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorButtonAccept" Color="#FFEFDE24"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorButtonCancel" Color="#FFF1CF70"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorBackground" Color="#FFF7A756"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorEditableTextBackground" Color="#FFFBF4DB"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorNonEditableTextBackground" Color="#FFF7CE91"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryMenuText" Color="#FF7B3A1C"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorPanelTitle" Color="#FFED9B35"/>
+        <SolidColorBrush x:Key="LightMode_TrueEditorMenu" Color="#FFF9E3A5"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryPanelTitleText" Color="#FF884D11"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryInfobarText" Color="#FFAB5933"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryNonEditableText" Color="#FF964621"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryButtonsText" Color="#FF964621"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryTabItem" Color="#FFF9E3A5"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryTabItemText" Color="#FF7B3A1C"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryTabControlBackground" Color="#FFF5E1BC"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryEditableText" Color="#FF080605"/>
+
         <SolidColorBrush x:Key="TrueEditorButtonNeutral" Color="#FF7CE1FB"/>
         <SolidColorBrush x:Key="TrueEditorButtonAccept" Color="#FFEFDE24"/>
         <SolidColorBrush x:Key="TrueEditorButtonCancel" Color="#FFF1CF70"/>

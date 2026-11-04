@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Controls;
 
-namespace TrueStory.Source
+namespace TrueStory
 {
     public class FolderView
     {

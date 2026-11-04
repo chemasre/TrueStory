@@ -58,7 +58,7 @@ namespace TrueStory
             _window.ReduceTextAction.Click += OnReduceTextSize;
             _window.ResetTextAction.Click += OnResetTextSize;
 
-            _window.FileEditorTextBox.FontSize = Constants.editorDefaultTextSize;
+            _window.FileEditorTextBox.FontSize = _window.Settings.GetInt("FontSize", Constants.editorDefaultTextSize);
 
             window = _window;
 
@@ -151,6 +151,8 @@ namespace TrueStory
             if(textBox.FontSize + Constants.editorTextSizeStep <= Constants.editorMaxTextSize)
             {
                 textBox.FontSize += Constants.editorTextSizeStep;
+
+                window.Settings.SetInt("FontSize", (int)textBox.FontSize);
             }
         }
 
@@ -159,6 +161,8 @@ namespace TrueStory
             if(textBox.FontSize - Constants.editorTextSizeStep >= Constants.editorMinTextSize)
             {
                 textBox.FontSize -= Constants.editorTextSizeStep;
+
+                window.Settings.SetInt("FontSize", (int)textBox.FontSize);
             }
 
         }
