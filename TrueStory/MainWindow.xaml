@@ -23,11 +23,16 @@
                 <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile" InputGestureText="Ctrl+S"/>
             </MenuItem>
             <MenuItem x:Name="EditMenu" Header="Edición" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
-                <MenuItem x:Name="CutMenuAction" Header="Cortar"/>
+                <MenuItem x:Name="CutMenuAction" Header="Cortar" ToolTip=""/>
                 <MenuItem x:Name="CopyMenuAction" Header="Copiar"/>
                 <MenuItem x:Name="PasteMenuAction" Header="Pegar"/>
                 <Separator/>
                 <MenuItem x:Name="GotoLineMenuAction" Header="Ir a línea..."/>
+            </MenuItem>
+            <MenuItem x:Name="ViewMenu" Header="Ver" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
+                <MenuItem x:Name="EnlargeTextAction" Header="Agrandar texto"/>
+                <MenuItem x:Name="ReduceTextAction" Header="Reducir texto"/>
+                <MenuItem x:Name="ResetTextAction" Header="Restablecer tamaño de texto"/>
             </MenuItem>
             <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}">
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de TrueStory" Click="OnMenuAboutApp"/>
@@ -47,5 +52,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutSaveFile}" Executed="OnShortcutSaveFile"/>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutNewFile}" Executed="OnShortcutNewFile"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutEnlargeText}" Executed="OnShortcutEnlargeText"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutReduceText}" Executed="OnShortcutReduceText"/>
     </Window.CommandBindings>
 </Window>

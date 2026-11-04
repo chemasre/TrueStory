@@ -32,6 +32,12 @@
         public const float questionDialogHurryUp2 = 0.8f;
         public const float questionDialogHurryUp1 = 0.5f;
 
+        public const int editorDefaultTextSize = 12;
+        public const int editorTextSizeStep = 4;
+        public const int editorMinTextSize = 12;
+        public const int editorMaxTextSize = 32;
+
+
         // Log
 
         public const string logFileName = "log.txt";

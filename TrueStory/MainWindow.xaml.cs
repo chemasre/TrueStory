@@ -51,6 +51,8 @@ namespace TrueStory
 
         public static RoutedCommand ShortcutNewFile = new RoutedCommand();
         public static RoutedCommand ShortcutSaveFile = new RoutedCommand();
+        public static RoutedCommand ShortcutEnlargeText = new RoutedCommand();
+        public static RoutedCommand ShortcutReduceText = new RoutedCommand();
 
         UIState questionPreviousUIState;
 
@@ -82,6 +84,10 @@ namespace TrueStory
 
             ShortcutSaveFile.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
             ShortcutNewFile.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
+            ShortcutEnlargeText.InputGestures.Add(new KeyGesture(Key.OemPlus, ModifierKeys.Control));
+            ShortcutEnlargeText.InputGestures.Add(new KeyGesture(Key.Add, ModifierKeys.Control));
+            ShortcutReduceText.InputGestures.Add(new KeyGesture(Key.OemMinus, ModifierKeys.Control));
+            ShortcutReduceText.InputGestures.Add(new KeyGesture(Key.Subtract, ModifierKeys.Control));
 
             loadedFileChanges = new();
 
@@ -185,6 +191,16 @@ namespace TrueStory
             }
         }
 
+        private void OnShortcutEnlargeText(object sender, ExecutedRoutedEventArgs e)
+        {
+            fileEditor.EnlargeText();
+        }
+
+        private void OnShortcutReduceText(object sender, ExecutedRoutedEventArgs e)
+        {
+            fileEditor.ReduceText();
+        }
+
         void SetUIState(UIState _uiState)
         {
             if (_uiState == UIState.NoStory)
@@ -196,6 +212,7 @@ namespace TrueStory
                 FolderViewList.IsEnabled = false;
                 CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
+                ViewMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
@@ -213,6 +230,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
+                ViewMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -230,6 +248,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                ViewMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -247,6 +266,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = true;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                ViewMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -265,6 +285,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
+                ViewMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -283,6 +304,7 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
                 EditMenu.IsEnabled = false;
+                ViewMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = true;
                 FolderViewList.Visibility = Visibility.Hidden;
             }

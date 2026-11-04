@@ -54,15 +54,36 @@ namespace TrueStory
             _window.CopyMenuAction.Click += OnMenuCopy;
             _window.PasteMenuAction.Click += OnMenuPaste;
             _window.GotoLineMenuAction.Click += OnMenuGotoLine;
+            _window.EnlargeTextAction.Click += OnEnlargeTextSize;
+            _window.ReduceTextAction.Click += OnReduceTextSize;
+            _window.ResetTextAction.Click += OnResetTextSize;
+
+            _window.FileEditorTextBox.FontSize = Constants.editorDefaultTextSize;
 
             window = _window;
 
             loaded = false;
+            loadedFilePath = "";
 
             UpdateInfoBar();
 
 
             UpdateEditMenu();
+        }
+
+        private void OnResetTextSize(object sender, RoutedEventArgs e)
+        {
+            textBox.FontSize = Constants.editorDefaultTextSize;
+        }
+
+        private void OnReduceTextSize(object sender, RoutedEventArgs e)
+        {
+            ReduceText();
+        }
+
+        private void OnEnlargeTextSize(object sender, RoutedEventArgs e)
+        {
+            EnlargeText();
         }
 
         private void OnMenuGotoLine(object sender, RoutedEventArgs e)
@@ -122,6 +143,24 @@ namespace TrueStory
 
             UpdateInfoBar();
             UpdateEditMenu();
+        }
+
+
+        public void EnlargeText()
+        {
+            if(textBox.FontSize + Constants.editorTextSizeStep <= Constants.editorMaxTextSize)
+            {
+                textBox.FontSize += Constants.editorTextSizeStep;
+            }
+        }
+
+        public void ReduceText()
+        {
+            if(textBox.FontSize - Constants.editorTextSizeStep >= Constants.editorMinTextSize)
+            {
+                textBox.FontSize -= Constants.editorTextSizeStep;
+            }
+
         }
 
         void UpdateInfoBar()
@@ -413,5 +452,6 @@ namespace TrueStory
                 window.EditMenu.IsEnabled = false;
             }
         }
+
     }
 }

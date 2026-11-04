@@ -6,9 +6,9 @@
 
         public const int Major = 0;
         public const int Minor = 8;
-        public const int Patch = 0;
+        public const int Patch = 1;
 
-        public const string Alias = "Command Console Optional"; 
+        public const string Alias = "Enlarge/reduce text"; 
 
         public static string GetFullName()
         {
