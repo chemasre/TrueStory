@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace TrueStory.Source
 {
@@ -13,13 +14,34 @@ namespace TrueStory.Source
         public delegate string OnExecuteCommandHandler(string command);
         public delegate void OnCommandExecutedHandler(string command, string output);
 
+        public Story? Story { get { return story; } set { story = value; OnStoryChanged(); } }
+
+        private void OnStoryChanged()
+        {
+            if (story == null)
+            {
+                textBox.IsEnabled = false;
+                textBox.Visibility = Visibility.Collapsed;
+                label.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                textBox.IsEnabled = story.Header.commandConsoleEnabled;
+                textBox.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
+                label.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        Story? story;
+
         TextBox textBox;
+        Label label;
 
         StringBuilder command;
 
         KeyConverter keyConverter;
 
-        public CommandConsole(TextBox _textBox)
+        public CommandConsole(TextBox _textBox, Label _label)
         {
             DataObject.AddPastingHandler(_textBox, OnFileContentsPaste);
             DataObject.AddCopyingHandler(_textBox, OnFileContentsCopy);
@@ -35,6 +57,7 @@ namespace TrueStory.Source
             _textBox.CaretIndex = Constants.consolePrompt.Length;
 
             textBox = _textBox;
+            label = _label;
 
             command = new();
 

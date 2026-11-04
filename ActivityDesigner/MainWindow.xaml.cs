@@ -302,6 +302,8 @@ namespace ActivityDesigner
             EditableExtensionsText.Text = String.Join(Constants.extensionSeparator, data.editableExtensions);
             SanitizeExtensions(EditableExtensionsText);
 
+            ConsoleEnabledCheckbox.IsChecked = data.commandConsoleEnabled;
+
             if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled)
             {
                 QuestionsEnabledCheckbox.IsChecked = data.instructor.enabled;
@@ -474,6 +476,26 @@ namespace ActivityDesigner
 
 
             disableUIEvents = false;
+        }
+
+        private void OnConsoleChecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsoleEnabled = true;
+
+            needsSave = true;
+
+        }
+
+        private void OnConsoleUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsoleEnabled = false;
+
+            needsSave = true;
+
         }
 
         private void OnQuestionsChecked(object sender, RoutedEventArgs e)

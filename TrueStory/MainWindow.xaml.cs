@@ -72,7 +72,7 @@ namespace TrueStory
             folderView.OnFileSelected += OnFolderViewFileSelected;
             folderView.OnFolderSelected += OnFolderViewFolderSelected;
 
-            commandConsole = new(CommandConsoleTextBox);
+            commandConsole = new(CommandConsoleTextBox, CommandConsoleTitleLabel);
             commandConsole.OnExecuteCommand += OnExecuteCommand;
 
             instructor = new(this);
@@ -197,7 +197,6 @@ namespace TrueStory
                 CommandConsoleTextBox.IsEnabled = false;
                 FileMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.Visibility = Visibility.Hidden;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
             else if (_uiState == UIState.StoryNoSelection)
@@ -215,7 +214,6 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFileLoadedNoNeedsSave)
@@ -233,7 +231,6 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFileLoadedNeedsSave)
@@ -251,7 +248,6 @@ namespace TrueStory
                 SaveFileMenuAction.IsEnabled = true;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.StoryFolderSelected)
@@ -270,7 +266,6 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
             }
             else if (_uiState == UIState.Question)
@@ -289,10 +284,8 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
                 EditMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = true;
-                CommandConsoleTextBox.Visibility = Visibility.Hidden;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
-
 
 
             uiState = _uiState;
@@ -335,6 +328,7 @@ namespace TrueStory
 
                 UpdateFileTitle();
 
+                commandConsole.Story = story;
                 folderView.Story = story;
                 instructor.Story = story;
             }
@@ -358,7 +352,8 @@ namespace TrueStory
                     SetUIState(UIState.StoryNoSelection);
 
                     UpdateFileTitle();
-
+                    
+                    commandConsole.Story = story;
                     folderView.Story = story;
                     instructor.Story = story;
 
@@ -392,6 +387,7 @@ namespace TrueStory
             storyActions.Dispose();
             storyActions = null;
 
+            commandConsole.Story = null;
             folderView.Story = null;
             instructor.Story = null;
             story.Dispose();

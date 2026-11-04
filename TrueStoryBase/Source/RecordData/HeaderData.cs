@@ -227,6 +227,8 @@ namespace TrueStory
                 //"cs",
                 "java"
             };
+
+            public bool commandConsoleEnabled = true;
             
             public InstructorData instructor = new();
 
@@ -246,6 +248,7 @@ namespace TrueStory
             buffer.WriteInt(r.editableExtensions.Length);
             foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
             
+            buffer.WriteInt(r.commandConsoleEnabled ? 1 : 0);
             buffer.WriteInt(r.instructor.enabled ? 1 : 0);
             
             buffer.WriteInt(r.instructor.wait.time.min);
@@ -307,6 +310,7 @@ namespace TrueStory
             result.editableExtensions = new string[extensionsCount];
             for(int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
 
+            result.commandConsoleEnabled = (buffer.ReadInt() != 0);
             result.instructor.enabled = (buffer.ReadInt() != 0);
 
             result.instructor.wait.time.min = buffer.ReadInt();

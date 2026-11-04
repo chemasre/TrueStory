@@ -133,6 +133,7 @@ namespace TrueStory
                         editableExtensions = ActivityExtensionsText.Text.Split(Constants.extensionSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     };
 
+                    newHeader.commandConsoleEnabled = true;
                     newHeader.instructor.enabled = false;
                 }
                 else

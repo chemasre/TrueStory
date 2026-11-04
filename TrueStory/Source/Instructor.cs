@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -183,9 +184,21 @@ namespace TrueStory
         {
             bool startInstructor;
 
-            if (story == null) { startInstructor = false; }
-            else if (story.Header.instructor.enabled) { startInstructor = true; }
-            else { startInstructor = false; }
+            if (story == null)
+            {
+                startInstructor = false;
+                instructorTextBox.Visibility = Visibility.Collapsed;
+            }
+            else if (story.Header.instructor.enabled)
+            {
+                startInstructor = true;
+                instructorTextBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                startInstructor = false;
+                instructorTextBox.Visibility = Visibility.Collapsed;
+            }
 
             if (startInstructor)
             {
@@ -259,6 +272,7 @@ namespace TrueStory
         {
             if (!fileEditor.IsFileLoaded) { return;  }
             if (story == null) { return;  }
+            if(!story.Header.instructor.enabled) { return; }
 
             ref readonly RecordData.InstructorWaitData wait = ref story.Header.instructor.wait;
             ref readonly RecordData.InstructorObserveData observe = ref story.Header.instructor.observe;
@@ -511,6 +525,8 @@ namespace TrueStory
 
         void OnFileEditorContentsChanged(FileEditor.ContentChange c)
         {
+            if (story == null) { return; }
+            if(!story.Header.instructor.enabled) { return; }
 
             if(c.Added > 0)
             {
@@ -534,6 +550,9 @@ namespace TrueStory
 
         void OnCommandConsoleExecutedCommand(string command, string _)
         {
+            if (story == null) { return; }
+            if(!story.Header.instructor.enabled) { return; }
+
             commandsCounter++;
 
             if (CanFetchQuestion(RecordData.QuestionType.command))
