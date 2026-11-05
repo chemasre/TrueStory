@@ -2,7 +2,7 @@
 {
     public class Version
     {
-        public const string AppName = "TrueStory Editor";
+        public const string AppName = "TrueStory Activity Editor";
 
         public const int Major = 0;
         public const int Minor = 8;
