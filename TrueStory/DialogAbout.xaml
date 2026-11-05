@@ -10,7 +10,7 @@
     </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
-            <RichTextBox x:Name="Document" DockPanel.Dock="Left" IsReadOnly="True" IsDocumentEnabled="True" Padding="5,50,5,5" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" Width="150" Background="{x:Null}">
+            <RichTextBox x:Name="Document" DockPanel.Dock="Left" IsReadOnly="True" IsDocumentEnabled="True" Padding="5,50,5,5" BorderBrush="{x:Null}" BorderThickness="0,0,0,0" Width="150" Background="{x:Null}" Foreground="{DynamicResource TrueStoryNonEditableText}">
                 <FlowDocument>
                     <Paragraph TextAlignment="Center">
                         <InlineUIContainer>

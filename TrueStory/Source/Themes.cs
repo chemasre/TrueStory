@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -101,9 +102,9 @@ namespace TrueStory
                 lightThemeBrushes.Add(r, ((Brush)App.Current.FindResource(r)).Clone());
             }
 
-            SetDarkMode(_window.Settings.GetInt("DarkMode") != 0);
-
             window = _window;
+
+            SetDarkMode(_window.Settings.GetInt("DarkMode") != 0);
 
         }
 
