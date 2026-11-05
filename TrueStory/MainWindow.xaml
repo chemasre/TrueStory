@@ -56,5 +56,8 @@
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutNewFile}" Executed="OnShortcutNewFile"/>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutEnlargeText}" Executed="OnShortcutEnlargeText"/>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutReduceText}" Executed="OnShortcutReduceText"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutCopy}" Executed="OnShortcutCopy"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutCut}" Executed="OnShortcutCut"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutPaste}" Executed="OnShortcutPaste"/>
     </Window.CommandBindings>
 </Window>

@@ -464,5 +464,19 @@ namespace TrueStory
             }
         }
 
+        internal void OnShortcutCopy()
+        {
+            if (textBox.SelectionLength > 0) { DoCopyOrCut(false);  }
+        }
+
+        internal void OnShortcutCut()
+        {
+            if (textBox.SelectionLength > 0) { DoCopyOrCut(true); }
+        }
+
+        internal void OnShortcutPaste()
+        {
+            DoPaste();
+        }
     }
 }

@@ -58,6 +58,9 @@ namespace TrueStory
         public static RoutedCommand ShortcutSaveFile = new RoutedCommand();
         public static RoutedCommand ShortcutEnlargeText = new RoutedCommand();
         public static RoutedCommand ShortcutReduceText = new RoutedCommand();
+        public static RoutedCommand ShortcutCopy = new RoutedCommand();
+        public static RoutedCommand ShortcutCut = new RoutedCommand();
+        public static RoutedCommand ShortcutPaste = new RoutedCommand();
 
         UIState questionPreviousUIState;
 
@@ -655,6 +658,21 @@ namespace TrueStory
             if (ignoreUIevents) { return; }
 
             themes.DarkMode = false;
+        }
+
+        private void OnShortcutCopy(object sender, RoutedEventArgs e)
+        {
+            fileEditor.OnShortcutCopy();
+        }
+
+        private void OnShortcutCut(object sender, RoutedEventArgs e)
+        {
+            fileEditor.OnShortcutCut();
+        }
+
+        private void OnShortcutPaste(object sender, RoutedEventArgs e)
+        {
+            fileEditor.OnShortcutPaste();
         }
 
         private void OnWindowClosed(object sender, EventArgs e)
