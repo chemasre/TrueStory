@@ -51,12 +51,13 @@
                                     <Run Text="no permite que copies y pegues desde fuentes externas"/>
                                 </Bold> . La aplicación dispone de su propio sistema de copia/pega, lo que quiere decir que podrás copiar y pegar sólo entre documentos de la actividad.
                                     </Paragraph>
-                                    <Paragraph>
+                                    <!--<Paragraph>
                                 Por último,
                                 <Bold>
                                     <Run Text="realiza preguntas cada cierto tiempo acerca del contenido introducido en los documentos"/>
                                 </Bold>. Estas preguntas no deben tener un peso en la evaluación, pero pueden ser indicios de que estás introduciendo un contenido que no entiendes.
                                     </Paragraph>
+                                -->
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
@@ -91,7 +92,7 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Autor" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <!-- "<TabItem Header="Autor" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>Mi nombre es
@@ -104,6 +105,7 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
+                -->
             </TabControl>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False" HorizontalAlignment="Center">
