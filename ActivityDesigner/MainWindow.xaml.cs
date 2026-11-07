@@ -60,6 +60,9 @@ namespace ActivityDesigner
 
             questionControls = new()
             {
+                QuestionsWaitLabel,
+                QuestionsWaitProfileLoad,
+                QuestionsWaitProfileSave,
                 QuestionsTimeMinText,
                 QuestionsTimeMaxText,
                 QuestionsTextMinText,

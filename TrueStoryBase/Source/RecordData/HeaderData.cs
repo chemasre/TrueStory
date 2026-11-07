@@ -29,32 +29,32 @@ namespace TrueStory
         {
             public IntRangeData time = new()
             {
-                min = 20,
-                max = 40
+                min = 120,
+                max = 180
             };
 
             public IntRangeData characters = new()
             {
-                min = 50,
-                max = 80
+                min = 300,
+                max = 600
             };
 
             public IntRangeData fileOpens = new()
             {
-                min = 1,
-                max = 2
+                min = 3,
+                max = 6
             };
 
             public IntRangeData fileSaves = new()
             {
-                min = 1,
-                max = 2
+                min = 3,
+                max = 6
             };
 
             public IntRangeData commands = new()
             {
-                min = 1,
-                max = 2
+                min = 3,
+                max = 6
             };
 
             public InstructorWaitData() { }
