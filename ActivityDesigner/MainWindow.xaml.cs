@@ -27,7 +27,8 @@ namespace ActivityDesigner
             All,
             QuestionsEnabled,
             TemplateListModified,
-            ExtensionSeparatorsListModified
+            ExtensionSettingsModified,
+            QuestionChances
         }
 
         RecordData.NewHeaderData data;
@@ -302,8 +303,11 @@ namespace ActivityDesigner
                 UpdateTitle();
             }
 
-            EditableExtensionsText.Text = String.Join(Constants.extensionSeparator, data.editableExtensions);
-            SanitizeExtensions(EditableExtensionsText);
+            if (changeType == DataChangeType.All || changeType == DataChangeType.ExtensionSettingsModified)
+            {
+                EditableExtensionsText.Text = String.Join(Constants.extensionSeparator, data.editableExtensions);
+                SanitizeExtensions(EditableExtensionsText);
+            }
 
             ConsoleEnabledCheckbox.IsChecked = data.commandConsoleEnabled;
 
@@ -393,27 +397,30 @@ namespace ActivityDesigner
                     }
                 }
 
-                foreach (RecordData.QuestionChanceData chance in data.instructor.ask.chances)
+                if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionChances || changeType == DataChangeType.QuestionsEnabled)
                 {
-                    if (chance.type == RecordData.QuestionType.input)
+                    foreach (RecordData.QuestionChanceData chance in data.instructor.ask.chances)
                     {
-                        ProbabilityTextText.Text = chance.weight.ToString();
-                    }
-                    else if (chance.type == RecordData.QuestionType.time)
-                    {
-                        ProbabilityGeneralText.Text = chance.weight.ToString();
-                    }
-                    else if (chance.type == RecordData.QuestionType.fileSave)
-                    {
-                        ProbabilitySavesText.Text = chance.weight.ToString();
-                    }
-                    else if (chance.type == RecordData.QuestionType.fileOpen)
-                    {
-                        ProbabilityOpensText.Text = chance.weight.ToString();
-                    }
-                    else // chance.type == RecordData.QuestionType.commands
-                    {
-                        ProbabilityCommandsText.Text = chance.weight.ToString();
+                        if (chance.type == RecordData.QuestionType.input)
+                        {
+                            ProbabilityTextText.Text = chance.weight.ToString();
+                        }
+                        else if (chance.type == RecordData.QuestionType.time)
+                        {
+                            ProbabilityGeneralText.Text = chance.weight.ToString();
+                        }
+                        else if (chance.type == RecordData.QuestionType.fileSave)
+                        {
+                            ProbabilitySavesText.Text = chance.weight.ToString();
+                        }
+                        else if (chance.type == RecordData.QuestionType.fileOpen)
+                        {
+                            ProbabilityOpensText.Text = chance.weight.ToString();
+                        }
+                        else // chance.type == RecordData.QuestionType.commands
+                        {
+                            ProbabilityCommandsText.Text = chance.weight.ToString();
+                        }
                     }
                 }
 
@@ -431,7 +438,7 @@ namespace ActivityDesigner
                         c.Visibility = Visibility.Visible;
                     }
 
-                    if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled || changeType == DataChangeType.ExtensionSeparatorsListModified)
+                    if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled || changeType == DataChangeType.ExtensionSettingsModified)
                     {
 
                         WordSeparatorsExtensionList.Items.Clear();
@@ -765,7 +772,7 @@ namespace ActivityDesigner
 
             if (removedExtensions.Count > 0 || addedExtensions.Count > 0)
             {
-                UpdateView(DataChangeType.ExtensionSeparatorsListModified);
+                UpdateView(DataChangeType.ExtensionSettingsModified);
             }
 
             needsSave = true;
@@ -831,6 +838,253 @@ namespace ActivityDesigner
             }
         }
 
+        private void OnQuestionWaitProfileLoad(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new();
 
+            dialog.Filter = "question frequency files (*." + Constants.questionFrequencyProfileExtension + ")|*." + Constants.questionFrequencyProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                Profiles.QuestionFrequency? profile = Profiles.LoadQuestionFrequency(path);
+
+                if (profile != null)
+                {
+                    disableUIEvents = true;
+
+                    QuestionsTimeMinText.Text = profile.WaitTime.Min.ToString();
+                    QuestionsTimeMaxText.Text = profile.WaitTime.Max.ToString();
+                    QuestionsTextMinText.Text = profile.WaitCharacters.Min.ToString();
+                    QuestionsTextMaxText.Text = profile.WaitCharacters.Max.ToString();
+                    QuestionsSavesMinText.Text = profile.WaitFileSaves.Min.ToString();
+                    QuestionsSavesMaxText.Text = profile.WaitFileSaves.Max.ToString();
+                    QuestionsOpensMinText.Text = profile.WaitFileOpens.Min.ToString();
+                    QuestionsOpensMaxText.Text = profile.WaitFileOpens.Max.ToString();
+                    QuestionsCommandsMinText.Text = profile.WaitCommands.Min.ToString();
+                    QuestionsCommandsMaxText.Text = profile.WaitCommands.Max.ToString();
+                    QuestionsObserveMinText.Text = profile.ObserveTime.Min.ToString();
+                    QuestionsObserveMaxText.Text = profile.ObserveTime.Max.ToString();
+
+                    data.instructor.wait.time = profile.WaitTime.ToData();
+                    data.instructor.wait.characters = profile.WaitCharacters.ToData();
+                    data.instructor.wait.fileSaves = profile.WaitFileSaves.ToData();
+                    data.instructor.wait.fileOpens = profile.WaitFileOpens.ToData();
+                    data.instructor.wait.commands = profile.WaitCommands.ToData();
+                    data.instructor.observe.time = profile.ObserveTime.ToData();
+
+                    disableUIEvents = false;
+
+                    needsSave = true;
+
+                }
+                else
+                {
+                    MessageBox.Show("No se han podido cargar las esperas del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+            }
+        }
+
+        private void OnQuestionWaitProfileSave(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new();
+
+            dialog.Filter = "question frequency files (*." + Constants.questionFrequencyProfileExtension + ")|*." + Constants.questionFrequencyProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                Profiles.QuestionFrequency profile = new();
+
+                profile.WaitTime = new(data.instructor.wait.time);
+                profile.WaitCharacters = new(data.instructor.wait.characters);
+                profile.WaitFileSaves = new(data.instructor.wait.fileSaves);
+                profile.WaitFileOpens = new(data.instructor.wait.fileOpens);
+                profile.WaitCommands = new(data.instructor.wait.commands);
+                profile.ObserveTime = new(data.instructor.observe.time);
+
+                Profiles.SaveQuestionFrequency(profile, path);
+            }
+        }
+
+        private void OnQuestionTemplatesProfileLoad(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new();
+
+            dialog.Filter = "question templates files (*." + Constants.questionTemplatesProfileExtension+ ")|*." + Constants.questionTemplatesProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                Profiles.QuestionTemplates? profile = Profiles.LoadQuestionTemplates(path);
+
+                if (profile != null)
+                {
+                    data.instructor.ask.templates = profile.Templates;
+                    UpdateView(DataChangeType.TemplateListModified);
+                    needsSave = true;
+
+                }
+                else
+                {
+                    MessageBox.Show("No se han podido cargar las plantillas del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+            }
+
+        }
+
+        private void OnQuestionTemplatesProfileSave(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new();
+
+            dialog.Filter = "question templates files (*." + Constants.questionTemplatesProfileExtension + ")|*." + Constants.questionTemplatesProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+                Profiles.QuestionTemplates profile = new();
+                profile.Templates = data.instructor.ask.templates;
+                Profiles.SaveQuestionTemplates(profile, path);
+            }
+
+        }
+
+        private void OnQuestionChancesProfileSave(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new();
+
+            dialog.Filter = "question chances files (*." + Constants.questionChancesProfileExtension + ")|*." + Constants.questionChancesProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+                Profiles.QuestionChances profile = new();
+                profile.Chances = data.instructor.ask.chances;
+                Profiles.SaveQuestionChances(profile, path);
+            }
+        }
+
+        private void OnQuestionChancesProfileLoad(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new();
+
+            dialog.Filter = "question chances files (*." + Constants.questionChancesProfileExtension + ")|*." + Constants.questionChancesProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                Profiles.QuestionChances? profile = Profiles.LoadQuestionChances(path);
+
+                if (profile != null)
+                {
+                    data.instructor.ask.chances = profile.Chances;
+                    UpdateView(DataChangeType.QuestionChances);
+                    needsSave = true;
+
+                }
+                else
+                {
+                    MessageBox.Show("No se han podido cargar las probabilidades del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+            }
+
+        }
+
+        private void OnExtensionSettingsLoad(object sender, RoutedEventArgs e)
+        {
+            bool isSeparators = (sender == WordSeparatorsProfileLoad);
+
+            string infoText = isSeparators ? "Esto también reemplazará las extensiones de archivo editables" : "Esto también reemplazará los separadores de palabras de las extensiones";
+
+            MessageBoxResult confirmResult = MessageBox.Show(infoText, "Atención", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+
+            if (confirmResult == MessageBoxResult.OK)
+            {
+                OpenFileDialog dialog = new();
+
+                dialog.Filter = "extension settings files (*." + Constants.extensionSettingsExtension + ")|*." + Constants.extensionSettingsExtension;
+                dialog.FilterIndex = 1;
+
+                bool? result = dialog.ShowDialog();
+
+                if (result.GetValueOrDefault())
+                {
+                    string path = dialog.FileName;
+
+                    Profiles.ExtensionSettings? profile = Profiles.LoadExtensionSettings(path);
+
+                    if (profile != null)
+                    {
+                        data.editableExtensions = profile.EditableExtensions;
+                        data.instructor.observe.wordSeparators = profile.WordSeparators;
+                        UpdateView(DataChangeType.ExtensionSettingsModified);
+                        needsSave = true;
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se han podido cargar la configuración de extensiones del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+
+                }
+            }
+
+        }
+
+        private void OnExtensionSettingsSave(object sender, RoutedEventArgs e)
+        {
+            bool isSeparators = (sender == WordSeparatorsProfileSave);
+
+            string infoText = isSeparators ? "Esto también guardará las extensiones de archivo editables" : "Esto también guardará los separadores de palabras de las extensiones";
+
+            MessageBoxResult confirmResult = MessageBox.Show(infoText, "Atención", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+
+            if (confirmResult == MessageBoxResult.OK)
+            {
+                SaveFileDialog dialog = new();
+
+                dialog.Filter = "extension settings files (*." + Constants.extensionSettingsExtension + ")|*." + Constants.extensionSettingsExtension;
+                dialog.FilterIndex = 1;
+
+                bool? result = dialog.ShowDialog();
+
+                if (result.GetValueOrDefault())
+                {
+                    string path = dialog.FileName;
+                    Profiles.ExtensionSettings profile = new();
+
+                    profile.EditableExtensions = data.editableExtensions;
+                    profile.WordSeparators = data.instructor.observe.wordSeparators;
+
+                    Profiles.SaveExtensionSettings(profile, path);
+                }
+            }
+
+        }
     }
 }

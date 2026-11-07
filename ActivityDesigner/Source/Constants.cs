@@ -12,5 +12,11 @@
 
         public const string templateDefaultTitle = "Plantilla sin título";
 
+        public const string questionFrequencyProfileExtension = "questionfrequencies";
+        public const string questionTemplatesProfileExtension = "questiontemplates";
+        public const string questionChancesProfileExtension = "questionchances";
+        public const string extensionSettingsExtension = "extensionsettings";
+
+
     }
 }
