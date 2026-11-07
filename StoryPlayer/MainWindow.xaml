@@ -13,7 +13,7 @@
                 <MenuItem x:Name="CloseActivityMenuAction" Header="Cerrar actividad" Click="OnMenuCloseActivity"/>
             </MenuItem>
             <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource StoryPlayerMenu}" Padding="{DynamicResource StoryPlayerTabItemPadding}">
-                <MenuItem x:Name="AboutMenuAction" Header="Acerca de StoryPlayer"/>
+                <MenuItem x:Name="AboutMenuAction" Header="Acerca de StoryPlayer" Click="OnMenuAbout"/>
             </MenuItem>
         </Menu>
         <StackPanel x:Name="StoryControls" DockPanel.Dock="Bottom" Background="{DynamicResource StoryPlayerNonEditableTextBackground}">

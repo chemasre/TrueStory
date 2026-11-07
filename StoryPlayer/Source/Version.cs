@@ -4,6 +4,8 @@
     {
         public const string AppName = "TrueStory Activity Player";
 
+        public const string AppAuthor = "José Manuel Solís";
+
         public const int Major = 0;
         public const int Minor = 1;
         public const int Patch = 1;

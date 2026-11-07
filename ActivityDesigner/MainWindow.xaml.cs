@@ -1086,5 +1086,12 @@ namespace ActivityDesigner
             }
 
         }
+
+        private void OnMenuAbout(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(Version.GetFullName() + "\n\n" +
+                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + Version.AppAuthor + ".",
+                "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }
