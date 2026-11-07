@@ -5,10 +5,10 @@
         public const string AppName = "TrueStory Activity Designer";
 
         public const int Major = 0;
-        public const int Minor = 3;
+        public const int Minor = 4;
         public const int Patch = 0;
 
-        public const string Alias = "Command Console Optional";
+        public const string Alias = "Save/Load profiles";
 
         public static string GetFullName()
         {
