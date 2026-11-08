@@ -253,13 +253,13 @@ namespace TrueStory
 
                 timer.Start();
 
-                Console.WriteLine("Instructor started");
+                Utils.Log("Instructor started");
             }
             else
             {
                 timer.Stop();
 
-                Console.WriteLine("Instructor stopped");
+                Utils.Log("Instructor stopped");
             }
 
             instructorTextBox.Text = "";

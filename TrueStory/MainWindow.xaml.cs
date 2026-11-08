@@ -684,13 +684,13 @@ namespace TrueStory
                             {
                                 MessageBox.Show("El nuevo nombre no puede ser igual al anterior", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                             }
-                            else if (!Utils.IsValidFileName(name))
+                            else if (!Utils.IsValidFileName(newName))
                             {
                                 MessageBox.Show("El nuevo nombre no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                             }
-                            else if (!Utils.HasAllowedExtension(name, story.Header.editableExtensions))
+                            else if (!Utils.HasAllowedExtension(newName, story.Header.editableExtensions))
                             {
-                                string extensions = string.Join(';', story.Header.editableExtensions);
+                                string extensions = string.Join(Constants.extensionSeparator, story.Header.editableExtensions);
                                 MessageBox.Show("El nuevo fichero debe tener alguna de estas extensiones: " + extensions, "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                             }
                             else if (File.Exists(story.RootPath + Path.DirectorySeparatorChar + newName))

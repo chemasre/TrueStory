@@ -214,7 +214,7 @@ namespace TrueStory
         public struct NewHeaderData
         {
             public string title = "Actividad sin título";
-            public string student = "Nombre estudiante";
+            public string student = "Nombre del estudiante";
             public string guid = "";
             public string[] editableExtensions = new string[]
             {

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 
 namespace TrueStory
 {
@@ -58,11 +59,15 @@ namespace TrueStory
             string ext = Path.GetExtension(fileName);
 
             bool allowed = false;
-            int i = 0;
-            while (!allowed && i < allowedExtensions.Length)
+
+            if (ext.Length > 0)
             {
-                if (ext.Substring(1).ToLower() == allowedExtensions[i]) { allowed = true; }
-                else { i++;  }
+                int i = 0;
+                while (!allowed && i < allowedExtensions.Length)
+                {
+                    if (ext.Substring(1).ToLower() == allowedExtensions[i]) { allowed = true; }
+                    else { i++; }
+                }
             }
 
             return allowed;
@@ -104,14 +109,28 @@ namespace TrueStory
 
         }
 
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetConsoleWindow();
+
+        public static bool IsConsoleAvailable()
+        {
+            return (GetConsoleWindow() != IntPtr.Zero);
+        }
+
         public static void Log(string message)
         {
-            Console.WriteLine(message);
+            if (IsConsoleAvailable())
+            {
+                Console.WriteLine(message);
+            }
         }
 
         public static void ClearLog()
         {
-            Console.Clear();
+            if (IsConsoleAvailable())
+            {
+                Console.Clear();
+            }
         }
     }
 }

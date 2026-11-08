@@ -24,13 +24,17 @@ namespace TrueStory
 
         public DialogActivityProperties()
         {
+
+
             disableUIEvents = true;
             InitializeComponent();
             disableUIEvents = false;
 
-            ActivityTitleText.Text = "Título de la actividad";
-            ActivityExtensionsText.Text = "h,c,hpp,cpp,txt,html,html,css,js,php,cs,tsx,json";
-            StudentNameText.Text = "Nombre Apellido";
+            newHeader = new();
+
+            ActivityTitleText.Text = newHeader.title;
+            ActivityExtensionsText.Text = String.Join(Constants.extensionSeparator, newHeader.editableExtensions);
+            StudentNameText.Text = newHeader.student;
             ActivityFolderText.Text = "";
 
             activityFileControls = new();
@@ -45,7 +49,6 @@ namespace TrueStory
             noActivityFileControls.Add(ActivityExtensionsLabel);
             noActivityFileControls.Add(ActivityExtensionsText);
 
-            newHeader = new();
 
             UpdateUI();
 
