@@ -30,6 +30,12 @@ namespace TrueStory
             public FileChangeData[] changes;
         }
 
+        public struct RenameFileData
+        {
+            public string oldName;
+            public string newName;
+        }
+
         public struct CreateFileData
         {
             public string fileName;
@@ -133,6 +139,19 @@ namespace TrueStory
             data.folderName = reader.ReadString();
 
             return data;
+        }
+
+        public static RenameFileData DecodeRenameFileRecord(Story.Record r)
+        {
+            RenameFileData data = new();
+
+            BinaryBufferReader reader = new(r.data);
+
+            data.oldName = reader.ReadString();
+            data.newName = reader.ReadString();
+
+            return data;
+
         }
 
     }

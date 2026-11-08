@@ -121,6 +121,8 @@ namespace TrueStory
         {
             ignoreChanges = true;
             textBox.Text = _text;
+            textBox.IsUndoEnabled = false;
+            textBox.IsUndoEnabled = true;
             ignoreChanges = false;
 
 
@@ -137,6 +139,8 @@ namespace TrueStory
         {
             ignoreChanges = true;
             textBox.Text = "";
+            textBox.IsUndoEnabled = false;
+            textBox.IsUndoEnabled = true;
             ignoreChanges = false;
 
             loaded = false;

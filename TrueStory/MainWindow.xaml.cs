@@ -253,6 +253,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
+                RenameFileOrFolderMenuAction.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
@@ -274,6 +275,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                RenameFileOrFolderMenuAction.IsEnabled = true;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
@@ -295,6 +297,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = true;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                RenameFileOrFolderMenuAction.IsEnabled = true;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
@@ -316,6 +319,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = true;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
+                RenameFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = false;
@@ -338,6 +342,7 @@ namespace TrueStory
                 NewFolderMenuAction.IsEnabled = false;
                 SaveFileMenuAction.IsEnabled = false;
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
+                RenameFileOrFolderMenuAction.IsEnabled = false;
                 EditMenu.IsEnabled = false;
                 ViewMenu.IsEnabled = false;
                 EnlargeTextAction.IsEnabled = false;
@@ -582,7 +587,7 @@ namespace TrueStory
                 }
                 else
                 {
-                    result = MessageBox.Show("Vas a eliminar el fichero '" + name + "' estás seguro/a?", "Confirmar eliminación", MessageBoxButton.YesNo);
+                    result = MessageBox.Show("Vas a eliminar el fichero '" + name + "' estás seguro/a?", "Confirmar eliminación", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 }
 
                 if (result == MessageBoxResult.Yes)
@@ -592,6 +597,127 @@ namespace TrueStory
 
                     folderView.Update();
                 }
+            }
+
+        }
+
+        void OnMenuRenameFileOrFolder(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(story != null);
+
+            bool validSelection = true;
+
+            if (FolderViewList.SelectedIndex < 0)
+            {
+                validSelection = false;
+            }
+            else if (FolderViewList.SelectedItem as string == Constants.parentFolderName)
+            {
+                validSelection = false;
+            }
+
+            if (!validSelection)
+            {
+                MessageBox.Show("Selecciona primero el fichero que quieres renombrar", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            else
+            {
+                string name = ((string?)FolderViewList.SelectedItem ?? "");
+
+                bool isDirectory = name.StartsWith(Constants.folderPrefix);
+
+                if (isDirectory) { name = name.Remove(0, Constants.folderPrefix.Length); }
+
+                MessageBoxResult result;
+
+                if (isDirectory)
+                {
+                    MessageBox.Show("No se soporta todavía el renombrado de carpetas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    return;
+                }
+                else
+                {
+                    Debug.Assert(loadedFile != null);
+
+
+
+                    bool saveConfirmed = true;
+
+                    if(loadedFileNeedsSave)
+                    {
+                        result = MessageBox.Show("Debes guardar el fichero '" + loadedFile + "' antes de renombrarlo", "Confirmar guardado", MessageBoxButton.OKCancel);
+
+                        if (result == MessageBoxResult.OK)
+                        {
+                            story.AddSaveFile(loadedFile, FileEditorTextBox.Text, loadedFileChanges.ToArray());
+
+                            loadedFileNeedsSave = false;
+                            loadedFileChanges.Clear();
+                            UpdateFileTitle();
+                        }
+                        else
+                        {
+                            saveConfirmed = false;
+                        }
+                    }
+
+                    if (saveConfirmed)
+                    {
+                        SetUIState(UIState.StoryFileLoadedNoNeedsSave);
+
+                        string oldName = loadedFile;
+
+                        DialogAskName askName = new();
+                        askName.Title = "Renombrar fichero";
+                        askName.Message.Text = "Introduce el nuevo nombre para el fichero '" + oldName + "'";
+                        askName.Input.Text = loadedFile;
+                        askName.Input.SelectAll();
+
+                        bool? askResult = askName.ShowDialog();
+
+                        if (askResult.GetValueOrDefault())
+                        {
+                            string newName = askName.Input.Text?.Trim() ?? "";
+
+                            if (newName.Trim().ToLower() == oldName.Trim().ToLower())
+                            {
+                                MessageBox.Show("El nuevo nombre no puede ser igual al anterior", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            }
+                            else if (!Utils.IsValidFileName(name))
+                            {
+                                MessageBox.Show("El nuevo nombre no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            }
+                            else if (!Utils.HasAllowedExtension(name, story.Header.editableExtensions))
+                            {
+                                string extensions = string.Join(';', story.Header.editableExtensions);
+                                MessageBox.Show("El nuevo fichero debe tener alguna de estas extensiones: " + extensions, "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            }
+                            else if (File.Exists(story.RootPath + Path.DirectorySeparatorChar + newName))
+                            {
+                                MessageBox.Show("Ya existe un fichero con ese nombre", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            }
+                            else
+                            {
+                                story.AddRenameFile(oldName, newName);
+
+                                fileEditor.Load(newName, story.AddLoadFile(newName));
+                                loadedFile = newName;
+                                loadedFileNeedsSave = false;
+                                UpdateFileTitle();
+
+                                folderView.Update(true);
+                                folderView.SelectFileByName(newName, true);
+
+                                SetUIState(UIState.StoryFileLoadedNoNeedsSave);
+
+                            }
+
+
+                        }
+                    }
+                }
+
             }
 
         }

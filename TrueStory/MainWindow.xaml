@@ -19,19 +19,20 @@
                     <MenuItem x:Name="NewFolderMenuAction" Header="Carpeta" Click="OnMenuNewFolder"/>
                     <MenuItem x:Name="NewFileMenuAction" Header="Fichero" Click="OnMenuNewFile" InputGestureText="Ctrl+N"/>
                 </MenuItem>
+                <MenuItem x:Name="RenameFileOrFolderMenuAction" Header="Cambiar nombre" Click="OnMenuRenameFileOrFolder"/>
                 <MenuItem x:Name="DeleteFileOrFolderMenuAction" Header="Eliminar" Click="OnMenuDeleteFileOrFolder"/>
                 <MenuItem x:Name="SaveFileMenuAction" Header="Guardar" Click="OnMenuSaveFile" InputGestureText="Ctrl+S"/>
             </MenuItem>
             <MenuItem x:Name="EditMenu" Header="Edición" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
-                <MenuItem x:Name="CutMenuAction" Header="Cortar" ToolTip=""/>
-                <MenuItem x:Name="CopyMenuAction" Header="Copiar"/>
-                <MenuItem x:Name="PasteMenuAction" Header="Pegar"/>
+                <MenuItem x:Name="CutMenuAction" Header="Cortar" InputGestureText="Ctrl+X"/>
+                <MenuItem x:Name="CopyMenuAction" Header="Copiar" InputGestureText="Ctrl+C"/>
+                <MenuItem x:Name="PasteMenuAction" Header="Pegar" InputGestureText="Ctrl+V"/>
                 <Separator/>
                 <MenuItem x:Name="GotoLineMenuAction" Header="Ir a línea..."/>
             </MenuItem>
             <MenuItem x:Name="ViewMenu" Header="Ver" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
-                <MenuItem x:Name="EnlargeTextAction" Header="Agrandar texto"/>
-                <MenuItem x:Name="ReduceTextAction" Header="Reducir texto"/>
+                <MenuItem x:Name="EnlargeTextAction" Header="Agrandar texto" InputGestureText="Ctrl +"/>
+                <MenuItem x:Name="ReduceTextAction" Header="Reducir texto" InputGestureText="Ctrl -"/>
                 <MenuItem x:Name="ResetTextAction" Header="Restablecer tamaño de texto"/>
                 <Separator/>
                 <MenuItem x:Name="DarkModeCheckableAction" Header="Tema oscuro" IsCheckable="True" Checked="OnMenuDarkModeChecked" Unchecked="OnMenuDarkModeUnchecked"/>

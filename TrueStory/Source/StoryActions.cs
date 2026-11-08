@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Xml.Linq;
+using static TrueStory.Story;
 
 namespace TrueStory
 {
@@ -22,6 +24,7 @@ namespace TrueStory
             story.OnAddedCreateFile += OnCreateFile;
             story.OnAddedDeleteFile += OnDeleteFile;
             story.OnAddedDeleteFolder += OnDeleteFolder;
+            story.OnAddedRenameFile += OnRenameFile;
             story.OnAddedLoadFile += OnLoadFile;
             story.OnAddedSaveFile += OnSaveFile;
             story.OnAddedExecuteCommand += OnExecuteCommand;
@@ -67,6 +70,11 @@ namespace TrueStory
         {
             Directory.CreateDirectory(story.RootPath + Path.DirectorySeparatorChar + name);
 
+        }
+
+        void OnRenameFile(string oldName, string newName)
+        {
+            File.Move(story.RootPath + Path.DirectorySeparatorChar + oldName, story.RootPath + Path.DirectorySeparatorChar + newName);
         }
 
         void OnSaveFile(string name, string text)

@@ -138,6 +138,7 @@ namespace StoryPlayer
                     story.OnReadedQuestion += OnQuestionReaded;
                     story.OnReadedLoadFile += OnLoadFileReaded;
                     story.OnReadedSaveFile += OnSaveFileReaded;
+                    story.OnReadedRenameFile += OnRenameFileReaded;
 
                     SetState(State.StoryManualPlay);
 
@@ -307,6 +308,60 @@ namespace StoryPlayer
             lastReadedIsQuestion = false;
             lastReadedIsFileSave = false;
 
+        }
+
+        void OnRenameFileReaded(RecordData.RenameFileData data)
+        {
+            if (ignoreReadEvent) { return; }
+
+            BlockInfoLabel.Content = GetCursorText() + " Renombrado fichero " + data.oldName + " a " + data.newName;
+
+            if (lastReadDirection == ReadDirection.Forward)
+            {
+                bool changedFiles = false;
+
+                if (files.Contains(data.oldName))
+                {
+                    files.Remove(data.oldName);
+                    changedFiles = true;
+                }
+
+                if (!files.Contains(data.newName))
+                {
+                    files.Add(data.newName);
+                    changedFiles = true;
+                }
+
+                if (changedFiles)
+                {
+                    UpdateFolderView();
+                }
+
+            }
+            else
+            {
+                bool changedFiles = false;
+
+                if (files.Contains(data.newName))
+                {
+                    files.Remove(data.newName);
+                    changedFiles = true;
+                }
+
+                if (!files.Contains(data.oldName))
+                {
+                    files.Add(data.oldName);
+                    changedFiles = true;
+                }
+
+                if (changedFiles)
+                {
+                    UpdateFolderView();
+                }
+            }
+
+            lastReadedIsQuestion = false;
+            lastReadedIsFileSave = false;
         }
 
         void OnCreateFolderReaded(RecordData.CreateFolderData data)
@@ -503,6 +558,11 @@ namespace StoryPlayer
                         // Console.WriteLine("Do change " + lastReadedChangeIndex + "Offset: " + change.Offset + " Added: " + change.Added + " Removed: " + change.Removed + " AddedText: " + change.AddedText);
                         FileEditorTextBox.Text = ApplyFileChange(text, change, ReadDirection.Forward);
 
+                        int scrollLine = FileEditorTextBox.GetLineIndexFromCharacterIndex(change.Offset);
+                        FileEditorTextBox.ScrollToLine(scrollLine);
+
+                        if (change.Added > 0) { FileEditorTextBox.Select(change.Offset, change.Added); }
+
                         BlockInfoLabel.Content = GetCursorText() + ":" + GetChangeText() + " Aplicado cambio";
 
                         lastReadedChangeIndex++;
@@ -523,6 +583,11 @@ namespace StoryPlayer
 
                         //Console.WriteLine("Undo change " + lastReadedChangeIndex + "Backwards " + "Offset: " + change.Offset + " Added: " + change.Added + " Removed: " + change.Removed + " AddedText: " + change.AddedText);
                         FileEditorTextBox.Text = ApplyFileChange(text, change, ReadDirection.Backwards);
+
+                        int scrollLine = FileEditorTextBox.GetLineIndexFromCharacterIndex(change.Offset);
+                        FileEditorTextBox.ScrollToLine(scrollLine);
+
+                        if (change.Added > 0) { FileEditorTextBox.Select(change.Offset, change.Added); }
 
                         BlockInfoLabel.Content = GetCursorText() + ":" + GetChangeText() + " Revertido cambio";
 
@@ -561,7 +626,8 @@ namespace StoryPlayer
                         if (fileReadStop && (record.Value.type == RecordType.CreateFile ||
                                                   record.Value.type == RecordType.DeleteFile ||
                                                   record.Value.type == RecordType.LoadFile ||
-                                                  record.Value.type == RecordType.SaveFile))
+                                                  record.Value.type == RecordType.SaveFile ||
+                                                  record.Value.type == RecordType.RenameFile))
                         { stepDone = true; }
                         else if (consoleReadStop && record.Value.type == RecordType.ExecuteCommand)
                         { stepDone = true; }

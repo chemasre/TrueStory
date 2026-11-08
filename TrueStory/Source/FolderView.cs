@@ -20,6 +20,8 @@ namespace TrueStory
 
         ListBox listBox;
 
+        bool ignoreEvents;
+
         public FolderView(ListBox _listBox)
         {
             listBox = _listBox;
@@ -27,9 +29,11 @@ namespace TrueStory
             listBox.SelectionChanged += OnListBoxSelectionChanged;
         }
 
-        public void Update()
+        public void Update(bool dontRaiseEvents = false)
         {
             if (story == null) { listBox.Items.Clear(); return; }
+
+            ignoreEvents = dontRaiseEvents;
 
             listBox.Items.Clear();
 
@@ -50,10 +54,14 @@ namespace TrueStory
                     listBox.Items.Add(n);
                 }
             }
+
+            ignoreEvents = false;
         }
 
         void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ignoreEvents) { return;  }
+
             if (listBox.SelectedIndex < 0)
             {
                 OnDeselected?.Invoke();
@@ -88,6 +96,16 @@ namespace TrueStory
             return item.Substring(Constants.folderPrefix.Length);
         }
 
+        internal void SelectFileByName(string name, bool dontRaiseEvents = false)
+        {
+            int index = listBox.Items.IndexOf(name);
 
+            if (index >= 0)
+            {
+                ignoreEvents = dontRaiseEvents;
+                listBox.SelectedIndex = index;
+                ignoreEvents = false;
+            }
+        }
     }
 }

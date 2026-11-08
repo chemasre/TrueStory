@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Xml.Linq;
 
 namespace TrueStory
 {
@@ -33,7 +34,8 @@ namespace TrueStory
             ExecuteCommand,
             CloseStory,
             OpenStory,
-            Question
+            Question,
+            RenameFile
 
         }
 
@@ -48,6 +50,7 @@ namespace TrueStory
         public event CreateFolderAddedHandler? OnAddedCreateFolder;
         public event DeleteFileAddedHandler? OnAddedDeleteFile;
         public event DeleteFolderAddedHandler? OnAddedDeleteFolder;
+        public event RenamedFileHandler? OnAddedRenameFile;
         public event LoadFileAddedHandler? OnAddedLoadFile;
         public event SaveFileAddedHandler? OnAddedSaveFile;
         public event ExecuteCommandAddedHandler? OnAddedExecuteCommand;
@@ -60,6 +63,7 @@ namespace TrueStory
         public delegate void CreateFolderAddedHandler(string name);
         public delegate void DeleteFileAddedHandler(string name);
         public delegate void DeleteFolderAddedHandler(string name);
+        public delegate void RenamedFileHandler(string oldName, string newName);
         public delegate string LoadFileAddedHandler(string name);
         public delegate void SaveFileAddedHandler(string name, string text);
         public delegate string ExecuteCommandAddedHandler(string name);
@@ -74,6 +78,7 @@ namespace TrueStory
         public event DeleteFolderReadedHandler? OnReadedDeleteFolder;
         public event LoadFileReadedHandler? OnReadedLoadFile;
         public event SaveFileReadedHandler? OnReadedSaveFile;
+        public event RenameFileReadedHandler? OnReadedRenameFile;
         public event ExecuteCommandReadedHandler? OnReadedExecuteCommand;
         public event QuestionReadedHandler? OnReadedQuestion;
         public event CloseStoryReadedHandler? OnReadedCloseStory;
@@ -86,6 +91,7 @@ namespace TrueStory
         public delegate void DeleteFolderReadedHandler(RecordData.DeleteFolderData data);
         public delegate void LoadFileReadedHandler(RecordData.LoadFileData data);
         public delegate void SaveFileReadedHandler(RecordData.SaveFileData data);
+        public delegate void RenameFileReadedHandler(RecordData.RenameFileData data);
         public delegate void ExecuteCommandReadedHandler(RecordData.ExecuteCommandData data);
         public delegate void QuestionReadedHandler(RecordData.QuestionData q);
         public delegate void CloseStoryReadedHandler(RecordData.CloseStoryData data);
@@ -425,6 +431,11 @@ namespace TrueStory
                     RecordData.SaveFileData d = RecordData.DecodeSaveFileRecord(result.Value);
                     OnReadedSaveFile?.Invoke(d);
                 }
+                else if (result.Value.type == RecordType.RenameFile)
+                {
+                    RecordData.RenameFileData d = RecordData.DecodeRenameFileRecord(result.Value);
+                    OnReadedRenameFile?.Invoke(d);
+                }
                 else if (result.Value.type == RecordType.CreateFile)
                 {
                     RecordData.CreateFileData d = RecordData.DecodeCreateFileRecord(result.Value);
@@ -511,6 +522,28 @@ namespace TrueStory
             AddRecord(record);
 
             OnAddedDeleteFolder?.Invoke(name);
+        }
+
+        public void AddRenameFile(string oldName, string newName)
+        {
+            Debug.Assert(!disposed);
+            Debug.Assert(mode == Mode.Append || mode == Mode.Create);
+
+            Record record = new();
+
+            record.type = RecordType.RenameFile;
+
+            BinaryBufferWriter buffer = new();
+
+            buffer.WriteString(oldName);
+            buffer.WriteString(newName);
+
+            record.data = buffer.GetBytes();
+
+            AddRecord(record);
+
+            OnAddedRenameFile?.Invoke(oldName, newName);
+
         }
 
         public void AddDeleteFile(string name)
@@ -822,6 +855,14 @@ namespace TrueStory
                         string fileName = reader.ReadString();
                         Utils.Log("    Directory  : " + fileName);
                     }
+                    else if (record.Value.type == RecordType.RenameFile)
+                    {
+                        BinaryBufferReader reader = new(record.Value.data);
+                        string oldName = reader.ReadString();
+                        string newName = reader.ReadString();
+                        Utils.Log("    Old name   : " + oldName);
+                        Utils.Log("    New name   : " + newName);
+                    }
                     else if (record.Value.type == RecordType.ExecuteCommand)
                     {
                         BinaryBufferReader reader = new(record.Value.data);
@@ -910,8 +951,6 @@ namespace TrueStory
 
             disposed = true;
         }
-
-
 
     }
 }
