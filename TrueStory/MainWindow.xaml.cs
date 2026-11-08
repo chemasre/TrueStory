@@ -106,6 +106,9 @@ namespace TrueStory
             ShortcutEnlargeText.InputGestures.Add(new KeyGesture(Key.Add, ModifierKeys.Control));
             ShortcutReduceText.InputGestures.Add(new KeyGesture(Key.OemMinus, ModifierKeys.Control));
             ShortcutReduceText.InputGestures.Add(new KeyGesture(Key.Subtract, ModifierKeys.Control));
+            ShortcutCopy.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
+            ShortcutCut.InputGestures.Add(new KeyGesture(Key.X, ModifierKeys.Control));
+            ShortcutPaste.InputGestures.Add(new KeyGesture(Key.V, ModifierKeys.Control));
 
             loadedFileChanges = new();
 
