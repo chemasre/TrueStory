@@ -254,6 +254,7 @@ namespace TrueStory
                     int p = textBox.CaretIndex;
                     textBox.Text = textBox.Text.Insert(textBox.CaretIndex, SharedClipboard.Content);
                     textBox.CaretIndex = p + SharedClipboard.Content.Length;
+                    ignoreChanges = false;
 
                     OnContentsChanged?.Invoke(c);
                 }
