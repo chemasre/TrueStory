@@ -361,6 +361,8 @@ namespace TrueStory
             {
                 int p = textBox.CaretIndex;
 
+                double previousScrollOffset = textBox.VerticalOffset;
+
                 ignoreChanges = true;
                 textBox.Text = textBox.Text.Insert(p, Constants.tabAsSpaces);
                 textBox.CaretIndex = p + Constants.tabAsSpaces.Length;
@@ -378,6 +380,7 @@ namespace TrueStory
 
                 Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
 
+                textBox.ScrollToVerticalOffset(previousScrollOffset);
 
                 OnContentsChanged?.Invoke(c);
 
@@ -386,6 +389,8 @@ namespace TrueStory
             if (e.Key == Key.Return)
             {
                 // Utils.Log("Detected return");
+
+                double previousScrollOffset = textBox.VerticalOffset;
 
                 int lineIndex = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
                 string lineText = textBox.GetLineText(lineIndex);
@@ -414,6 +419,15 @@ namespace TrueStory
                 lastChangeTime = time;
 
                 Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
+
+                textBox.ScrollToVerticalOffset(previousScrollOffset);
+
+                int line = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
+                if (line > textBox.GetLastVisibleLineIndex())
+                {
+                    double lineHeight = 0;
+                    if (textBox.Text.Length > 0) { lineHeight = textBox.GetRectFromCharacterIndex(0).Height; }
+                }
 
                 OnContentsChanged?.Invoke(c);
 
