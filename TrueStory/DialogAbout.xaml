@@ -28,7 +28,7 @@
                                     <Run Text="TrueStory"/>
                                 </Bold>
                                 es una herramienta que te permite proporcionar a tu profesor/a indicios de que estás adquiriendo las
-                                <Bold>competencias previstas en el temario</Bold> cuando realizas actividades sin supervisión, desincentivando que "copies y pegues" contenido generado por IA sin comprenderlo realmente.
+                                <Bold>competencias previstas en el temario</Bold> cuando realizas actividades sin supervisión, desincentivando que "copies y pegues" contenido que no sea de tu autoría sin comprenderlo realmente.
                                 Estos indicios nunca deberían usarse como prueba, y se limitan registrar y validar
                                 <Bold>las modificaciones</Bold> que haces en los ficheros de la actividad.
                             </Paragraph>
@@ -64,15 +64,14 @@
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                                     <Paragraph>La aplicación
-                                        <Bold>NO monitoriza tu ordenador de ninguna forma</Bold>. TrueStory no examina qué otras ventanas tienes abiertas ni el contenido de tu disco, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
+                                        <Bold>NO monitoriza tu ordenador de ninguna forma</Bold>. TrueStory no examina qué otras ventanas tienes abiertas ni el contenido de tu disco fuera de la carpeta de la actividad, y por supuesto no accede ni a la cámara ni al micrófono de tu ordenador. Tienes disponible su código fuente en github si quieres comprobarlo por ti mismo/a.
                                     </Paragraph>
                             <Paragraph>La aplicación
-                                <Bold>NO te desincentiva a utilizar inteligencia artificial
-                                </Bold> . Puedes utilizar la inteligencia artificial para consultar información relevante, o pedir consejo sobre los pasos a seguir. Lo único que la aplicación intenta desincentivar es
-                                <Bold>que te suplante.</Bold>
+                                <Bold>NO te desincentiva a utilizar asistencia externa
+                                </Bold> . Puedes utilizar cualquier medio a tu alcance para consultar información relevante, o pedir consejo sobre los pasos a seguir.
                             </Paragraph>
                                     <Paragraph>Finalmente,
-                                <Bold>NO evita que &quot;hagas trampa&quot;</Bold>. Si te empeñas, puedes saltarte todos los controles que pone. Sólo espero que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir esa energía en formarte.
+                                <Bold>NO evita que &quot;hagas trampa&quot;</Bold>. Si te empeñas, puedes saltarte todos los controles que pone el editor. Sólo espero que eso te cueste un cierto esfuerzo con la esperanza de que al final decidas que vale más la pena invertir esa energía en formarte.
                                     </Paragraph>
                         </FlowDocument>
                     </RichTextBox>
@@ -96,9 +95,8 @@
                         <FlowDocument>
                             <Paragraph>Mi nombre es
                                 <Bold>José Manuel "Chema" Solís</Bold> y trabajo como profesor de Ciclos Formativos de Desarrollo de Aplicaciones.</Paragraph>
-                            <Paragraph>En el ámbito académico en estos momentos un tema de preocupación es que los alumnos/as están presentando trabajos generados con IA que
-                                <Bold>hacen difícil para el profesorado certificar
-                                que han adquirido las competencias</Bold>. Motivado por equilibrar un poco la balanza, decidí ponerme a trabajar en esta aplicación.</Paragraph>
+                            <Paragraph>En el ámbito académico un tema de preocupación en estos momentos es que debido a la tecnología disponible cada vez resulta más difícil para los profesores poder
+                                <Bold>certificar que el alumnado está adquiriendo las competencias cuando realiza actividades sin supervisión</Bold>. Esta herramienta surge para recuperar una cierta confianza en estos instrumentos evaluativos.</Paragraph>
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>

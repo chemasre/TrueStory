@@ -6,9 +6,9 @@
 
         public const int Major = 0;
         public const int Minor = 8;
-        public const int Patch = 3;
+        public const int Patch = 4;
 
-        public const string Alias = "Fixed scroll behaviour"; 
+        public const string Alias = "Find dialog"; 
 
         public static string GetFullName()
         {
