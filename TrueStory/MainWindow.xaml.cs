@@ -61,6 +61,8 @@ namespace TrueStory
         public static RoutedCommand ShortcutCopy = new RoutedCommand();
         public static RoutedCommand ShortcutCut = new RoutedCommand();
         public static RoutedCommand ShortcutPaste = new RoutedCommand();
+        public static RoutedCommand ShortcutGoto = new RoutedCommand();
+        public static RoutedCommand ShortcutFind = new RoutedCommand();
 
         UIState questionPreviousUIState;
 
@@ -109,6 +111,8 @@ namespace TrueStory
             ShortcutCopy.InputGestures.Add(new KeyGesture(Key.C, ModifierKeys.Control));
             ShortcutCut.InputGestures.Add(new KeyGesture(Key.X, ModifierKeys.Control));
             ShortcutPaste.InputGestures.Add(new KeyGesture(Key.V, ModifierKeys.Control));
+            ShortcutGoto.InputGestures.Add(new KeyGesture(Key.G, ModifierKeys.Control));
+            ShortcutFind.InputGestures.Add(new KeyGesture(Key.F, ModifierKeys.Control));
 
             loadedFileChanges = new();
 
@@ -804,9 +808,20 @@ namespace TrueStory
             fileEditor.OnShortcutPaste();
         }
 
+        private void OnShortcutGoto(object sender, RoutedEventArgs e)
+        {
+            fileEditor.OnShortcutGoto();
+        }
+
+        private void OnShortcutFind(object sender, RoutedEventArgs e)
+        {
+            fileEditor.OnShortcutFind();
+        }
+
         private void OnWindowClosed(object sender, EventArgs e)
         {
             Settings.Save();
         }
+
     }
 }

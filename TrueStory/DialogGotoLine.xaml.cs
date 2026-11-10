@@ -18,6 +18,26 @@ namespace TrueStory
         public DialogGotoLine()
         {
             InitializeComponent();
+
+            Loaded += OnLoaded;
+            Input.KeyDown += OnKeyDown;
+        }
+
+        private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == Key.Return)
+            {
+                line = Int32.Parse(Input.Text) - 1;
+
+                DialogResult = true;
+                Close();
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Input.Focus();
+            Input.SelectAll();
         }
 
         private void Accept_Click(object sender, RoutedEventArgs e)

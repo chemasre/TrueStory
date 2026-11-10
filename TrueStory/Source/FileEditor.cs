@@ -36,6 +36,8 @@ namespace TrueStory
         bool loaded;
         string loadedFilePath;
 
+        string lastSearch;
+
         public FileEditor(MainWindow _window)
         {
             DataObject.AddPastingHandler(_window.FileEditorTextBox, OnFileContentsPaste);
@@ -53,6 +55,7 @@ namespace TrueStory
             _window.CutMenuAction.Click += OnMenuCut;
             _window.CopyMenuAction.Click += OnMenuCopy;
             _window.PasteMenuAction.Click += OnMenuPaste;
+            _window.FindMenuAction.Click += OnMenuFind;
             _window.GotoLineMenuAction.Click += OnMenuGotoLine;
             _window.EnlargeTextAction.Click += OnEnlargeTextSize;
             _window.ReduceTextAction.Click += OnReduceTextSize;
@@ -86,20 +89,14 @@ namespace TrueStory
             EnlargeText();
         }
 
+        private void OnMenuFind(object sender, RoutedEventArgs e)
+        {
+            DoFind();
+        }
+
         private void OnMenuGotoLine(object sender, RoutedEventArgs e)
         {
-            DialogGotoLine d = new();
-            d.Message.Text = String.Format("Ir a línea ({0:0} - {1:0})", 1, textBox.LineCount);
-            d.MaxLines = textBox.LineCount;
-            d.Input.Text = "1";
-
-            bool? result = d.ShowDialog();
-
-            if (result.GetValueOrDefault())
-            {
-                textBox.CaretIndex = textBox.GetCharacterIndexFromLineIndex(d.Line);
-                textBox.ScrollToLine(d.Line);
-            }
+            DoGoto();
         }
 
         void OnMenuPaste(object sender, RoutedEventArgs e)
@@ -263,6 +260,98 @@ namespace TrueStory
                     OnContentsChanged?.Invoke(c);
                 }
             }
+        }
+
+        void DoFind()
+        {
+            DialogFind d = new();
+            d.Message.Text = "Texto a buscar";
+            d.Input.Text = textBox.SelectionLength > 0 ? textBox.SelectedText : lastSearch;
+            
+            bool? result = d.ShowDialog();
+            string target = d.Input.Text;
+
+            if(result.GetValueOrDefault())
+            {
+                textBox.Focus();
+
+                if(textBox.CaretIndex < 0 || textBox.CaretIndex >= textBox.Text.Length)
+                {
+                    textBox.CaretIndex = 0;
+                }
+
+                int searchStart;
+                bool continueSearch;
+                bool restarted = false;
+
+                bool caseSensitive = d.CaseSensitiveCheckBox.IsChecked.GetValueOrDefault(); 
+
+                do
+                {
+                    searchStart = textBox.CaretIndex;
+
+                    if(textBox.SelectedText == target) { searchStart += textBox.SelectionLength; }
+
+                    continueSearch = false;
+
+                    string text = textBox.Text.Substring(searchStart);
+
+                    if(!caseSensitive)
+                    {
+                        text = text.ToLower();
+                        target = target.ToLower();
+                    }
+
+                    int foundOffset = text.IndexOf(target);
+
+                    if(foundOffset >= 0)
+                    {
+                        int line;
+                        line = textBox.GetLineIndexFromCharacterIndex(searchStart + foundOffset);
+                        textBox.ScrollToLine(line);
+
+                        textBox.CaretIndex = searchStart + foundOffset;
+
+                        textBox.SelectionStart = searchStart + foundOffset;
+                        textBox.SelectionLength = target.Length;
+                    }
+                    else if(!restarted)
+                    {
+                        MessageBoxResult questionResult = MessageBox.Show("No se ha encontrado el texto ¿quieres buscar otra vez desde el principio?", "Texto no encontrado", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if(questionResult == MessageBoxResult.Yes)
+                        {
+                            textBox.CaretIndex = 0;
+                            continueSearch = true;
+                            restarted = true;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("El texto no aparece en el documento.", "Texto no encontrado", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+
+                } while(continueSearch);
+
+                lastSearch = target;
+            }
+        }
+
+        void DoGoto()
+        {
+            DialogGotoLine d = new();
+            d.Message.Text = String.Format("Ir a línea ({0:0} - {1:0})", 1, textBox.LineCount);
+            d.MaxLines = textBox.LineCount;
+            d.Input.Text = "1";
+
+            bool? result = d.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                textBox.Focus();
+                textBox.CaretIndex = textBox.GetCharacterIndexFromLineIndex(d.Line);
+                textBox.ScrollToLine(d.Line);
+            }
+
         }
 
         void OnFileContentsCopy(object sender, DataObjectCopyingEventArgs e)
@@ -485,17 +574,42 @@ namespace TrueStory
 
         internal void OnShortcutCopy()
         {
-            if (textBox.SelectionLength > 0) { DoCopyOrCut(false);  }
+            if(loaded)
+            {
+                if (textBox.SelectionLength > 0) { DoCopyOrCut(false);  }
+            }
         }
 
         internal void OnShortcutCut()
         {
-            if (textBox.SelectionLength > 0) { DoCopyOrCut(true); }
+            if(loaded)
+            {
+                if (textBox.SelectionLength > 0) { DoCopyOrCut(true); }
+            }
         }
 
         internal void OnShortcutPaste()
         {
-            DoPaste();
+            if(loaded)
+            {
+                DoPaste();
+            }
+        }
+
+        internal void OnShortcutFind()
+        {
+            if(loaded)
+            {
+                DoFind();
+            }
+        }
+
+        internal void OnShortcutGoto()
+        {
+            if(loaded)
+            {
+                DoGoto();
+            }
         }
     }
 }

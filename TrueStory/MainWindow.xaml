@@ -28,7 +28,8 @@
                 <MenuItem x:Name="CopyMenuAction" Header="Copiar" InputGestureText="Ctrl+C"/>
                 <MenuItem x:Name="PasteMenuAction" Header="Pegar" InputGestureText="Ctrl+V"/>
                 <Separator/>
-                <MenuItem x:Name="GotoLineMenuAction" Header="Ir a línea..."/>
+                <MenuItem x:Name="FindMenuAction" Header="Buscar..." InputGestureText="Ctrl+F"/>
+                <MenuItem x:Name="GotoLineMenuAction" Header="Ir a línea..." InputGestureText="Ctrl+G"/>
             </MenuItem>
             <MenuItem x:Name="ViewMenu" Header="Ver" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
                 <MenuItem x:Name="EnlargeTextAction" Header="Agrandar texto" InputGestureText="Ctrl +"/>
@@ -60,5 +61,7 @@
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutCopy}" Executed="OnShortcutCopy"/>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutCut}" Executed="OnShortcutCut"/>
         <CommandBinding Command="{x:Static local:MainWindow.ShortcutPaste}" Executed="OnShortcutPaste"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutGoto}" Executed="OnShortcutGoto"/>
+        <CommandBinding Command="{x:Static local:MainWindow.ShortcutFind}" Executed="OnShortcutFind"/>
     </Window.CommandBindings>
 </Window>
