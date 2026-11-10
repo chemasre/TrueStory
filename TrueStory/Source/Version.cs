@@ -6,9 +6,9 @@
 
         public const int Major = 0;
         public const int Minor = 8;
-        public const int Patch = 4;
+        public const int Patch = 5;
 
-        public const string Alias = "Find dialog"; 
+        public const string Alias = "Dark theme fix"; 
 
         public static string GetFullName()
         {
