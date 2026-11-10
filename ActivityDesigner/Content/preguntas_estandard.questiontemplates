@@ -1,0 +1,109 @@
+﻿{
+  "Templates": [
+    {
+      "type": 0,
+      "question": "\u00BFPara qu\u00E9 sirve \u0027[lineWord]\u0027 en la l\u00EDnea [lineIndex]?",
+      "contextLines": 3,
+      "contextWords": 2,
+      "timeLimit": 20
+    },
+    {
+      "type": 0,
+      "question": "\u00BFQu\u00E9 es la palabra \u0027[lineWord]\u0027 de la l\u00EDnea [lineIndex]?",
+      "contextLines": 3,
+      "contextWords": 2,
+      "timeLimit": 20
+    },
+    {
+      "type": 0,
+      "question": "\u00BFPara qu\u00E9 sirve la l\u00EDnea [lineIndex]?",
+      "contextLines": 3,
+      "contextWords": 2,
+      "timeLimit": 20
+    },
+    {
+      "type": 0,
+      "question": "\u00BFPor qu\u00E9 cambiaste la l\u00EDnea [lineIndex]?",
+      "contextLines": 3,
+      "contextWords": 2,
+      "timeLimit": 20
+    },
+    {
+      "type": 2,
+      "question": "\u00BFQu\u00E9 has cambiado en el fichero [fileName] que has guardado recientemente?",
+      "contextLines": -1,
+      "contextWords": 3,
+      "timeLimit": 15
+    },
+    {
+      "type": 3,
+      "question": "\u00BFPor qu\u00E9 has abierto recientemente el fichero [fileName]?",
+      "contextLines": -1,
+      "contextWords": 3,
+      "timeLimit": 15
+    },
+    {
+      "type": 3,
+      "question": "\u00BFPara qu\u00E9 sirve el fichero [fileName] que has abierto recientemente?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 10
+    },
+    {
+      "type": 4,
+      "question": "\u00BFQu\u00E9 quer\u00EDas probar la \u00FAltima vez que ejecutaste este comando?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 10
+    },
+    {
+      "type": 4,
+      "question": "\u00BFTuviste alg\u00FAn problema la \u00FAltima vez que ejecutaste el comando \u0027[commandName]\u0027?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 10
+    },
+    {
+      "type": 1,
+      "question": "\u00BFQu\u00E9 est\u00E1s haciendo ahora mismo en la actividad?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 20
+    },
+    {
+      "type": 1,
+      "question": "\u00BFQu\u00E9 has hecho antes que lo que est\u00E1s haciendo ahora en la actividad?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 20
+    },
+    {
+      "type": 1,
+      "question": "\u00BFCu\u00E1l es el \u00FAltimo problema que has tenido en esta actividad?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 20
+    },
+    {
+      "type": 1,
+      "question": "\u00BFCu\u00E1l es el problema m\u00E1s importante que has tenido hasta ahora en la actividad?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 20
+    },
+    {
+      "type": 1,
+      "question": "\u00BFQu\u00E9 te preocupa ahora mismo que crees que no sabr\u00E1s resolver en la actividad?",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 20
+    },
+    {
+      "type": 1,
+      "question": "Explica algo que est\u00E9s particularmente feliz de haber solucionado en la actividad",
+      "contextLines": 0,
+      "contextWords": 3,
+      "timeLimit": 20
+    }
+  ]
+}

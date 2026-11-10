@@ -1,0 +1,26 @@
+﻿{
+  "WaitTime": {
+    "Min": 15,
+    "Max": 30
+  },
+  "WaitCharacters": {
+    "Min": 15,
+    "Max": 30
+  },
+  "WaitFileOpens": {
+    "Min": 0,
+    "Max": 0
+  },
+  "WaitFileSaves": {
+    "Min": 0,
+    "Max": 0
+  },
+  "WaitCommands": {
+    "Min": 0,
+    "Max": 0
+  },
+  "ObserveTime": {
+    "Min": 3,
+    "Max": 5
+  }
+}

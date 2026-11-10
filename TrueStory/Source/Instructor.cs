@@ -621,7 +621,7 @@ namespace TrueStory
                     int lineWords = lineText.Split(ignoreCharacters, StringSplitOptions.RemoveEmptyEntries).Length;
 
                     if (contextStart >= 0 && contextEnd < numLines &&
-                        (contextEnd - contextStart + 1) > template.contextLines &&
+                        (contextEnd - contextStart + 1) >= template.contextLines &&
                         lineWords >= template.contextWords)
                     {
                         RecordData.QuestionContextData context = new();
@@ -667,11 +667,11 @@ namespace TrueStory
                     {
                         if (contextStart < 0 || contextEnd > numLines || (contextEnd - contextStart + 1) < template.contextLines)
                         {
-                            //Utils.Log("Not enough context available (lines)");
+                            Utils.Log("Not enough context available (lines)");
                         }
                         else
                         {
-                            //Utils.Log("Not enough context available (words)");
+                            Utils.Log("Not enough context available (words)");
                         }
 
                     }
