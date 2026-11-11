@@ -5,10 +5,10 @@
         public const string AppName = "TrueStory Activity Editor";
 
         public const int Major = 0;
-        public const int Minor = 8;
-        public const int Patch = 5;
+        public const int Minor = 9;
+        public const int Patch = 0;
 
-        public const string Alias = "Dark theme fix"; 
+        public const string Alias = "Fixed ExecutionEngineException";
 
         public static string GetFullName()
         {
