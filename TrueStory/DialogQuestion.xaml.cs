@@ -1,8 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace TrueStory
@@ -32,9 +34,18 @@ namespace TrueStory
             timer = new();
 
             Loaded += OnLoaded;
+            AnswerTextBox.KeyDown += OnKeyDown;
 
             SourceInitialized += OnSourceInitialized;
 
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                DoAcceptAndClose();
+            }
         }
 
         private void OnSourceInitialized(object? sender, EventArgs e)
@@ -160,13 +171,7 @@ namespace TrueStory
 
         void Accept_Click(object sender, RoutedEventArgs e)
         {
-            timer.Stop();
-
-            RecordData.QuestionData q = Question;
-            q.answer = AnswerTextBox.Text;
-            Question = q;
-
-            Close();
+            DoAcceptAndClose();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -174,6 +179,18 @@ namespace TrueStory
             base.OnClosed(e);
 
             timer.Stop();
+        }
+
+        private void DoAcceptAndClose()
+        {
+            timer.Stop();
+
+            RecordData.QuestionData q = Question;
+            q.answer = AnswerTextBox.Text;
+            Question = q;
+
+            Close();
+
         }
     }
 }

@@ -10,7 +10,7 @@
 
         public static readonly char[] forbiddenExtensionChars = new char[] { '.', '<', '>', ':', '"', '/', '\\', '|', '?', '*' };
         public const char extensionSeparator = ',';
-        public const string activitySettingsExtension = "storysettings";
+        public const string activitySettingsExtension = "activitysettings";
 
         // Console
 

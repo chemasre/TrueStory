@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Content\ejercicios_cortos_de_programación.storysettings" />
     <None Remove="Content\preguntas_estandard.questiontemplates" />
     <None Remove="Content\preguntas_muy_frecuentes.questionfrequencies" />
     <None Remove="Content\preguntas_sobre_texto_y_comandos.questionchances" />
@@ -18,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Content\ejercicios_cortos_de_programación.storysettings">
+    <Content Include="Content\ejercicios_cortos_de_programación.activitysettings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\preguntas_estandard.questiontemplates">

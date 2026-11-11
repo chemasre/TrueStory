@@ -139,6 +139,7 @@ namespace TrueStory
         {
             Utils.Log("Unblocking UI");
             SetUIState(questionPreviousUIState);
+            FileEditorTextBox.Focus();
         }
 
         private void OnClosing(object? sender, CancelEventArgs e)

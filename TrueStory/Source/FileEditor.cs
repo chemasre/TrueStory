@@ -469,9 +469,13 @@ namespace TrueStory
 
                 Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
 
-                textBox.ScrollToVerticalOffset(previousScrollOffset);
-
                 OnContentsChanged?.Invoke(c);
+
+                // It seems that GetLineText can throw an System.ExecutionEngineException
+                // if you execute the code to move the scroll before invoking OnContentsChanged,
+                // as the event handlers can invoke this method.
+
+                textBox.ScrollToVerticalOffset(previousScrollOffset);
 
                 e.Handled = true;
             }
@@ -509,6 +513,12 @@ namespace TrueStory
 
                 Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
 
+                OnContentsChanged?.Invoke(c);
+
+                // It seems that GetLineText can throw an System.ExecutionEngineException
+                // if you execute the code to move the scroll before invoking OnContentsChanged,
+                // as the event handlers can invoke this method.
+
                 textBox.ScrollToVerticalOffset(previousScrollOffset);
 
                 int line = textBox.GetLineIndexFromCharacterIndex(textBox.CaretIndex);
@@ -517,8 +527,6 @@ namespace TrueStory
                     double lineHeight = 0;
                     if (textBox.Text.Length > 0) { lineHeight = textBox.GetRectFromCharacterIndex(0).Height; }
                 }
-
-                OnContentsChanged?.Invoke(c);
 
                 e.Handled = true;
             }
