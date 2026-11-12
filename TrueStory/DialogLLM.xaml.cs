@@ -24,6 +24,16 @@ namespace TrueStory
     /// </summary>
     public partial class DialogLLM : Window
     {
+        public string ApiKey
+        {
+            get { return apiKey; } 
+            set { apiKey = value; DoSetKeyAsterisks(apiKey); }
+        }
+
+        StringBuilder builder;
+
+        string apiKey = "";
+
         public DialogLLM()
         {
             InitializeComponent();
@@ -32,42 +42,46 @@ namespace TrueStory
             WaitBar.Value = 0;
 
             Loaded += OnLoaded;
-            InputText.KeyDown += OnKeyDown;
+            InputText.PreviewKeyDown += OnPreviewKeyDown;
+
+            builder = new();
         }
 
-        private async void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void OnPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == Key.Return)
+            bool isControlPressed = ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
+
+            if(e.Key == Key.Return && !isControlPressed)
+            {
+                int previousCaret = InputText.CaretIndex;
+
+                InputText.Text = InputText.Text.Insert(InputText.CaretIndex, Environment.NewLine);
+                InputText.CaretIndex = previousCaret + Environment.NewLine.Length;
+
+                e.Handled = true;
+            }
+            else if(e.Key == Key.Return && isControlPressed)
             {
                 string userInput = InputText.Text;
 
                 WaitBar.IsIndeterminate = true;
 
-                string apiKey = ApiKeyInputText.Text;
-
-                string output = await SendRequestAndGetResponse(userInput, apiKey);
-
-                output = output.Replace("\\n", Environment.NewLine)
-                               .Replace("\n", "")
-                               .Replace("**", "");
+                string output = await LLMRequest(userInput, apiKey);
 
                 AnswerText.Text = output;
 
                 Console.WriteLine(AnswerText.Text);
 
                 WaitBar.IsIndeterminate = false;
+
+                e.Handled = true;
             }
+
         }
 
-        private async Task<string> SendRequestAndGetResponse(string userInput, string apiKey)
+        private async Task<string> LLMRequest(string userInput, string apiKey)
         {
-    //        "model": "gemini-3.8-flash",
-    //"input": [{
-    //  "type": "user_input",
-    //  "content": [{
-    //    "type": "text",
-    //    "text": "Explain serverless computing in one sentence."
-    //  }]
+            userInput = userInput.Replace("\"", "\\\"");
 
             string query =
                 "{" +
@@ -77,25 +91,6 @@ namespace TrueStory
                 "        }]" +
                 "     }]" +
                 "}";
-            //"{" + 
-            //"   \"contents\" : [{" +
-            //"        \"parts\" : [{" +
-            //"            \"text\": \"" + userInput + "\"" +
-            //"        }]"+
-            //"     }],"+
-            //"   \"generation_config\": {" +
-            //"        \"thinking_level\" : \"medium\"" +
-            //"   }" +
-            //"}";
-
-            //"{" +
-            //    "\"model\": \"gemini-3.8-flash\"," + 
-            //    "\"input\": \"" + userInput + "\"" +
-            //"}";
-
-            //"\"generation_config\": {" +
-            //"\"thinking_level\": \"LOW\"" +
-            //"}}";
 
             Console.WriteLine(query);
 
@@ -121,17 +116,25 @@ namespace TrueStory
                     responseText = (await response.Content.ReadAsStringAsync());
 
                     JsonNode? node = JsonNode.Parse(responseText);
-                    answerText = node?["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString() ?? "";
-                    answerText = answerText.Replace("\n","\r\n");
+
+                    builder.Clear();
+
+                    JsonNode? parts = node?["candidates"]?[0]?["content"]?["parts"];
+                    if(parts?.GetType() == typeof(JsonArray))
+                    {
+                        JsonArray partsArray = parts.AsArray();
+                        for(int i = 0; i < partsArray.Count; i ++)
+                        { builder.Append(partsArray[i]?["text"]?.ToString() ?? ""); }
+                    }
+                    answerText = builder.ToString().Replace("\n","\r\n");
                     
                     File.WriteAllText("Answer.txt", responseText);
 
-                    //responseText = responseText.Substring(responseText.IndexOf("\"text\": \"") + 9, responseText.IndexOf("\"", responseText.IndexOf("\"text\": \"") + 10) - responseText.IndexOf("\"text\": \"") - 9);
                     requestSuccess = true;
                 }
                 else
                 {
-                    errorText = $"Error: {response.StatusCode}\n{response.ReasonPhrase}\n{response.Content.ToString()}";
+                    errorText = $"Error: {response.StatusCode}\n{response.ReasonPhrase}\n";
                     requestSuccess = false;
                 }
 
@@ -170,10 +173,21 @@ namespace TrueStory
 
             if(r.GetValueOrDefault())
             {
-                string key = d.Input.Text.Trim();
-                ApiKeyInputText.Text = key;
+                apiKey = d.Input.Text.Trim();
+                DoSetKeyAsterisks(apiKey);
             }
                 
+        }
+
+        void DoSetKeyAsterisks(string key)
+        {
+            string asterisks = "";
+            for(int i = 0; i < key.Length; i ++)
+            {
+                asterisks = asterisks + (key.Length - i < 4 ? key[i] : "*");
+            }
+
+            ApiKeyInputText.Text = asterisks;
         }
     }
 }

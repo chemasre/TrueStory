@@ -827,11 +827,11 @@ namespace TrueStory
         {
             DialogLLM d = new();
 
-            d.ApiKeyInputText.Text = Settings.GetString("GeminiAPIKey");
+            d.ApiKey = Settings.GetString("GeminiAPIKey");
 
             d.ShowDialog();
 
-            Settings.SetString("GeminiAPIKey", d.ApiKeyInputText.Text);
+            Settings.SetString("GeminiAPIKey", d.ApiKey);
         }
     }
 }
