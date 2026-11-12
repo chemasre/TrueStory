@@ -14,7 +14,6 @@ namespace TrueStory
     /// </summary>
     public partial class MainWindow : Window
     {
-
         public string? LoadedFile { get { return loadedFile; } }
         public FileEditor FileEditor { get { return fileEditor; } }
         public CommandConsole CommandConsole { get { return commandConsole; } }
@@ -824,5 +823,15 @@ namespace TrueStory
             Settings.Save();
         }
 
+        private void OnMenuAskLLM(object sender, RoutedEventArgs e)
+        {
+            DialogLLM d = new();
+
+            d.ApiKeyInputText.Text = Settings.GetString("GeminiAPIKey");
+
+            d.ShowDialog();
+
+            Settings.SetString("GeminiAPIKey", d.ApiKeyInputText.Text);
+        }
     }
 }

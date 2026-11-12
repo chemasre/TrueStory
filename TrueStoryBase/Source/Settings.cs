@@ -15,9 +15,12 @@ namespace TrueStory
         public class Data
         {
             public List<Tuple<string, int>> IntValues { get; set; } = new();
+            public List<Tuple<string, string>> StringValues { get; set; } = new();
         }
 
         Dictionary<string, int> intValues = new();
+        Dictionary<string, string> stringValues = new();
+
 
         string file;
 
@@ -27,6 +30,7 @@ namespace TrueStory
             {
                 Data data = new();
                 foreach (KeyValuePair<string, int> kp in intValues) { data.IntValues.Add(new Tuple<string, int>(kp.Key, kp.Value)); }
+                foreach (KeyValuePair<string, string> kp in stringValues) { data.StringValues.Add(new Tuple<string, string>(kp.Key, kp.Value)); }
                 JsonSerializerOptions options = new() { WriteIndented = true };
                 string text = JsonSerializer.Serialize(data, options);
                 File.WriteAllText(_file, text, Encoding.UTF8);
@@ -36,6 +40,7 @@ namespace TrueStory
                 string text = File.ReadAllText(_file);
                 Data data = JsonSerializer.Deserialize<Data>(text) ?? new();
                 foreach (Tuple<string, int> t in data.IntValues) { intValues.Add(t.Item1, t.Item2);  }
+                foreach (Tuple<string, string> t in data.StringValues) { stringValues.Add(t.Item1, t.Item2);  }
             }
 
             file = _file;
@@ -53,11 +58,26 @@ namespace TrueStory
             else { intValues.Add(key, value); }
         }
 
+        public string GetString(string key, string defaultValue = "")
+        {
+            if (stringValues.ContainsKey(key)) { return stringValues[key]; }
+            else { return defaultValue;  }
+        }
+
+        public void SetString(string key, string value)
+        {
+            if (stringValues.ContainsKey(key)) { stringValues[key] = value; }
+            else { stringValues.Add(key, value); }
+        }
+
         public void Save()
         {
             Data data = new();
             foreach (KeyValuePair<string, int> kp in intValues)
             { data.IntValues.Add(new Tuple<string, int>(kp.Key, kp.Value)); }
+
+            foreach (KeyValuePair<string, string> kp in stringValues)
+            { data.StringValues.Add(new Tuple<string, string>(kp.Key, kp.Value)); }
             
             JsonSerializerOptions options = new() { WriteIndented = true };
             string text = JsonSerializer.Serialize(data, options);

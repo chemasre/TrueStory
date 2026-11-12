@@ -38,6 +38,9 @@
                 <Separator/>
                 <MenuItem x:Name="DarkModeCheckableAction" Header="Tema oscuro" IsCheckable="True" Checked="OnMenuDarkModeChecked" Unchecked="OnMenuDarkModeUnchecked"/>
             </MenuItem>
+            <MenuItem x:Name="ToolsMenu" Header="Herramientas" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
+                <MenuItem x:Name="AskLLMAction" Header="Gemini" InputGestureText="Ctrl +" Click="OnMenuAskLLM"/>
+            </MenuItem>
             <MenuItem x:Name="AboutMenu" Header="Acerca de" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
                 <MenuItem x:Name="AboutMenuAction" Header="Acerca de TrueStory" Click="OnMenuAboutApp"/>
             </MenuItem>
