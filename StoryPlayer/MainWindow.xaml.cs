@@ -228,7 +228,7 @@ namespace StoryPlayer
         {
             if (ignoreReadEvent) { return; }
 
-            BlockInfoLabel.Content = GetCursorText() + " Consulta a IA de " + c.lines + " líneas";
+            BlockInfoLabel.Content = GetCursorText() + " Consulta a IA de " + c.lines.Length + " líneas";
 
             languageModelChatWindow.Chat = c;
             lastReadedIsQuestion = false;
