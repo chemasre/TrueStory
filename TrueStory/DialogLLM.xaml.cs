@@ -24,11 +24,21 @@ namespace TrueStory
     /// </summary>
     public partial class DialogLLM : Window
     {
+        struct ChatLine
+        {
+            public bool isUser;
+            public string text;
+            public bool isError;
+            public string errorText;
+        }
+
         public string ApiKey
         {
             get { return apiKey; } 
             set { apiKey = value; DoSetKeyAsterisks(apiKey); }
         }
+
+        List<ChatLine> chatHistory;
 
         StringBuilder builder;
 
@@ -44,6 +54,7 @@ namespace TrueStory
             Loaded += OnLoaded;
             InputText.PreviewKeyDown += OnPreviewKeyDown;
 
+            chatHistory = new();
             builder = new();
         }
 
@@ -62,39 +73,88 @@ namespace TrueStory
             }
             else if(e.Key == Key.Return && isControlPressed)
             {
+                InputText.IsEnabled = false;
+
                 string userInput = InputText.Text;
 
                 WaitBar.IsIndeterminate = true;
 
-                string output = await LLMRequest(userInput, apiKey);
+                userInput = userInput.Replace("\"", "\\\"");
 
-                AnswerText.Text = output;
+                ChatLine lineInput = new() { isUser = true, text = userInput };
 
-                Console.WriteLine(AnswerText.Text);
+                chatHistory.Add(lineInput);
+
+                ChatLine lineOutput = await LLMAsk(chatHistory, apiKey);
+
+                if(!lineOutput.isError)
+                {
+                    chatHistory.Add(lineOutput);
+
+                    builder.Clear();
+
+                    foreach(ChatLine line in chatHistory)
+                    {
+                        builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
+                        builder.AppendLine();
+                        builder.AppendLine();
+                    }
+
+                    AnswerText.Text = builder.ToString();
+                    AnswerText.ScrollToEnd();
+
+                    InputText.Clear();
+
+                    Console.WriteLine(AnswerText.Text);
+                }
+                else
+                {
+                    MessageBox.Show("Se ha producido un error: " + lineOutput.errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
                 WaitBar.IsIndeterminate = false;
+
+                InputText.IsEnabled = true;
 
                 e.Handled = true;
             }
 
         }
 
-        private async Task<string> LLMRequest(string userInput, string apiKey)
+        private async Task<ChatLine> LLMAsk(List<ChatLine> chatHistory, string apiKey)
         {
-            userInput = userInput.Replace("\"", "\\\"");
+            ChatLine result;
 
-            string query =
-                "{" +
-                "   \"contents\" : [{" +
-                "        \"parts\" : [{" +
-                "            \"text\": \"" + userInput + "\"" +
-                "        }]" +
-                "     }]" +
-                "}";
+
+            JsonObject root = new JsonObject();
+            JsonArray contents = new JsonArray();
+
+            List<ChatLine> validLines = chatHistory.FindAll(l  => !l.isError);
+            int lineCount = 0;
+
+            foreach(ChatLine line in validLines)
+            {
+                JsonObject lineObject = new JsonObject();
+                lineObject.Add("role", line.isUser ? "user" : "model");
+
+                JsonArray partsArray = new JsonArray();
+                JsonObject partObject = new JsonObject();
+                partObject.Add("text", line.text);
+
+                partsArray.Add(partObject);
+                lineObject.Add("parts", partsArray);
+
+                contents.Add(lineObject);
+
+            }
+
+            root.Add("contents", contents);
+
+            string query = root.ToJsonString();
 
             Console.WriteLine(query);
+            File.WriteAllText("Query.txt", query);
 
-            
             using var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent");
             request.Headers.Add("x-goog-api-key",apiKey);
@@ -104,6 +164,7 @@ namespace TrueStory
 
             bool requestSuccess = false;
             string responseText = "";
+            bool isError = false;
             string errorText = "";
             string answerText = "";
 
@@ -134,6 +195,7 @@ namespace TrueStory
                 }
                 else
                 {
+                    isError = true;
                     errorText = $"Error: {response.StatusCode}\n{response.ReasonPhrase}\n";
                     requestSuccess = false;
                 }
@@ -141,18 +203,20 @@ namespace TrueStory
             }
             catch(HttpRequestException httpException)
             {
-                MessageBox.Show("El servidor no respondió a la petición");
+                isError = true;
                 errorText = httpException.HttpRequestError.ToString();
                 requestSuccess = false;
             }
             catch(TaskCanceledException taskCancelledException)
             {
-                MessageBox.Show("La petición superó el tiempo de espera máximo");
+                isError = true;
                 errorText = taskCancelledException.Message.ToString();
                 requestSuccess = false;
             }
 
-            return requestSuccess ? answerText : errorText;
+            result = new() { isUser = false, text = answerText, isError = isError, errorText = errorText };
+
+            return result;
 
         }
 
