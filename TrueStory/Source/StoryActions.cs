@@ -94,11 +94,12 @@ namespace TrueStory
         {
             DialogLLM d = new();
             d.ApiKey = window.Settings.GetString("LanguageModelAPIKey");
-            d.URL = window.Settings.GetString("LanguageModelURL", Constants.languageModelDefaultURL);
+            d.ApiURL = window.Settings.GetString("LanguageModelURL", Constants.languageModelDefaultURL);
 
             d.ShowDialog();
 
             window.Settings.SetString("LanguageModelAPIKey", d.ApiKey);
+            window.Settings.SetString("LanguageModelURL", d.ApiURL);
 
             return d.Chat;
         }

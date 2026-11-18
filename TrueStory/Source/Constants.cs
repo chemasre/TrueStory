@@ -45,6 +45,9 @@
 
         public const string languageModelDefaultURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
 
+        public const int languageModelMaxRetries = 5;
+        public const int languageModelBaseWait = 2;
+
         // Log
 
         public const string logFileName = "log.txt";

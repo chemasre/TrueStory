@@ -6,9 +6,9 @@
 
         public const int Major = 0;
         public const int Minor = 10;
-        public const int Patch = 0;
+        public const int Patch = 1;
 
-        public const string Alias = "Consultas IA integradas";
+        public const string Alias = "Reintentos en las consultas IA";
 
         public static string GetFullName()
         {

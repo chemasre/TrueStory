@@ -38,7 +38,11 @@ namespace TrueStory
             set { apiKey = value; DoUpdateKeyText(apiKey); }
         }
 
-        public string URL { get; set; }
+        public string ApiURL
+        {
+            get { return apiURL; } 
+            set { apiURL = value; DoUpdateURLText(apiURL); }
+        }
 
         public RecordData.LanguageModelChatData Chat
         {
@@ -67,6 +71,7 @@ namespace TrueStory
         StringBuilder builder;
 
         string apiKey = "";
+        string apiURL = "";
 
         public DialogLLM()
         {
@@ -77,6 +82,8 @@ namespace TrueStory
 
             Loaded += OnLoaded;
             InputText.PreviewKeyDown += OnPreviewKeyDown;
+
+            StatusLabel.Content = "";
 
             chatHistory = new();
             builder = new();
@@ -97,7 +104,8 @@ namespace TrueStory
             }
             else if(e.Key == Key.Return && isControlPressed)
             {
-                if(apiKey.Trim().Length == 0) { MessageBox.Show("Tienes que definir una clave de API para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
+                if(apiKey.Trim().Length == 0) { MessageBox.Show("Tienes que definir una clave de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
+                else if(apiURL.Trim().Length == 0) { MessageBox.Show("Tienes que definir una URL de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
                 else
                 {
                     InputText.IsEnabled = false;
@@ -110,35 +118,65 @@ namespace TrueStory
 
                     ChatLine lineInput = new() { isUser = true, text = userInput };
 
-                    chatHistory.Add(lineInput);
+                    bool success;
+                    string errorText = "";
+                    int retries = 0;
 
-                    ChatLine lineOutput = await LLMAsk(chatHistory, apiKey);
-
-                    if(!lineOutput.isError)
+                    do
                     {
-                        chatHistory.Add(lineOutput);
-
-                        builder.Clear();
-
-                        foreach(ChatLine line in chatHistory)
+                        if(retries > 0)
                         {
-                            builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
-                            builder.AppendLine();
-                            builder.AppendLine();
+                            int seconds = (int)Math.Pow(Constants.languageModelBaseWait, retries);
+                            StatusLabel.Content = "<esperando " + seconds + " segundos (reintento " + retries + ")>";
+                            await Task.Delay(seconds * 1000);
                         }
 
-                        AnswerText.Text = builder.ToString();
-                        AnswerText.ScrollToEnd();
+                        StatusLabel.Content = "<esperando respuesta>";
 
-                        InputText.Clear();
+                        chatHistory.Add(lineInput);
 
-                        Console.WriteLine(AnswerText.Text);
-                    }
-                    else
+                        ChatLine lineOutput = await LLMAsk(chatHistory, apiKey);
+
+                        if(!lineOutput.isError)
+                        {
+                            chatHistory.Add(lineOutput);
+
+                            builder.Clear();
+
+                            foreach(ChatLine line in chatHistory)
+                            {
+                                builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
+                                builder.AppendLine();
+                                builder.AppendLine();
+                            }
+
+                            AnswerText.Text = builder.ToString();
+                            AnswerText.ScrollToEnd();
+
+                            InputText.Clear();
+
+                            success = true;
+
+                        }
+                        else
+                        {
+                            chatHistory.RemoveAt(chatHistory.Count - 1);
+
+                            errorText = lineOutput.errorText;
+
+                            retries ++;
+                            success = false;
+                            
+                        }
+                    } while(!success && retries < Constants.languageModelMaxRetries); 
+
+                    if(!success)
                     {
-                        MessageBox.Show("Se ha producido un error: " + lineOutput.errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("No se ha podido enviar la consulta. Error: " + errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
 
+                    StatusLabel.Content = "";
+                        
                     WaitBar.IsIndeterminate = false;
 
                     InputText.IsEnabled = true;
@@ -186,7 +224,7 @@ namespace TrueStory
             File.WriteAllText("Query.txt", query);
 
             using var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, URL);
+            var request = new HttpRequestMessage(HttpMethod.Post, apiURL);
             request.Headers.Add("x-goog-api-key",apiKey);
             request.Content = new StringContent(query, Encoding.UTF8, "application/json");
 
@@ -273,6 +311,25 @@ namespace TrueStory
                 
         }
 
+
+        private void OnSetApiURLButtonClicked(object sender, RoutedEventArgs e)
+        {
+            DialogAskName d = new();
+
+            d.Title = "Introducir URL de API";
+            d.Message.Text = "Introduce la URL de API Gemini que quieras utilizar para las consultas.";
+            d.Input.Text = apiURL;
+            
+            bool? r = d.ShowDialog();
+
+            if(r.GetValueOrDefault())
+            {
+                apiURL = d.Input.Text.Trim();
+                DoUpdateURLText(apiURL);
+            }
+
+        }
+
         void DoUpdateKeyText(string key)
         {
             if(key.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin clave> "; }
@@ -289,9 +346,20 @@ namespace TrueStory
 
         }
 
+        void DoUpdateURLText(string url)
+        {
+            if(url.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin url> "; }
+            else
+            {
+                URLInputText.Text = url.Trim();
+            }
+
+        }
+
         private void OnCloseButtonPressed(object sender, RoutedEventArgs e)
         {
             Close();
         }
+
     }
 }
