@@ -127,7 +127,7 @@ namespace TrueStory
                         if(retries > 0)
                         {
                             int seconds = (int)Math.Pow(Constants.languageModelBaseWait, retries);
-                            StatusLabel.Content = "<esperando " + seconds + " segundos (reintento " + retries + ")>";
+                            StatusLabel.Content = "<esperando " + seconds + " segundos (reintento " + retries + " de " + Constants.languageModelMaxRetries + ")>";
                             await Task.Delay(seconds * 1000);
                         }
 
