@@ -38,6 +38,30 @@ namespace TrueStory
             set { apiKey = value; DoSetKeyAsterisks(apiKey); }
         }
 
+        public string URL { get; set; }
+
+        public RecordData.LanguageModelChatData Chat
+        {
+            get
+            {
+                RecordData.LanguageModelChatData result = new();
+
+                List<RecordData.LanguageModelChatLineData> lines = new();
+
+                foreach(ChatLine line in chatHistory)
+                {
+                    if(!line.isError)
+                    {
+                        lines.Add(new() { isUser = line.isUser, text = line.text});
+                    }
+                }
+
+                result.lines = lines.ToArray();
+
+                return result;
+            }
+        }
+
         List<ChatLine> chatHistory;
 
         StringBuilder builder;
@@ -115,6 +139,7 @@ namespace TrueStory
                 WaitBar.IsIndeterminate = false;
 
                 InputText.IsEnabled = true;
+                InputText.Focus();
 
                 e.Handled = true;
             }
@@ -156,7 +181,7 @@ namespace TrueStory
             File.WriteAllText("Query.txt", query);
 
             using var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent");
+            var request = new HttpRequestMessage(HttpMethod.Post, URL);
             request.Headers.Add("x-goog-api-key",apiKey);
             request.Content = new StringContent(query, Encoding.UTF8, "application/json");
 

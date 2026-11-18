@@ -41,6 +41,9 @@
         public const int editorMinTextSize = 12;
         public const int editorMaxTextSize = 32;
 
+        // AI
+
+        public const string languageModelDefaultURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent";
 
         // Log
 

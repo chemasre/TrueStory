@@ -17,6 +17,11 @@ namespace TrueStory
             reader = new BinaryReader(stream);
         }
 
+        public byte ReadByte()
+        {
+            return reader.ReadByte();
+        }
+
         public int ReadInt()
         {
             return reader.ReadInt32();

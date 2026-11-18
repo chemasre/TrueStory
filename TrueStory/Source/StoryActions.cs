@@ -30,6 +30,7 @@ namespace TrueStory
             story.OnAddedExecuteCommand += OnExecuteCommand;
             story.OnAddedQuestion += OnQuestion;
             story.OnAddedCloseStory += OnCloseStory;
+            story.OnAddedLanguageModelChat += OnLanguageModelChat;
 
             encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         }
@@ -87,6 +88,19 @@ namespace TrueStory
             string text = File.ReadAllText(story.RootPath + Path.DirectorySeparatorChar + name, encoding);
 
             return text;
+        }
+
+        RecordData.LanguageModelChatData OnLanguageModelChat()
+        {
+            DialogLLM d = new();
+            d.ApiKey = window.Settings.GetString("LanguageModelAPIKey");
+            d.URL = window.Settings.GetString("LanguageModelURL", Constants.languageModelDefaultURL);
+
+            d.ShowDialog();
+
+            window.Settings.SetString("LanguageModelAPIKey", d.ApiKey);
+
+            return d.Chat;
         }
 
         RecordData.QuestionData OnQuestion(RecordData.QuestionData question)
@@ -155,6 +169,7 @@ namespace TrueStory
             story.OnAddedExecuteCommand -= OnExecuteCommand;
             story.OnAddedQuestion -= OnQuestion;
             story.OnAddedCloseStory -= OnCloseStory;
+            story.OnAddedLanguageModelChat -= OnLanguageModelChat;
         }
 
     }

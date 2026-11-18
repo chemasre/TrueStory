@@ -825,13 +825,9 @@ namespace TrueStory
 
         private void OnMenuAskLLM(object sender, RoutedEventArgs e)
         {
-            DialogLLM d = new();
+            Debug.Assert(story != null);
 
-            d.ApiKey = Settings.GetString("GeminiAPIKey");
-
-            d.ShowDialog();
-
-            Settings.SetString("GeminiAPIKey", d.ApiKey);
+            story.AddLanguageModelChat();
         }
     }
 }

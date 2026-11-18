@@ -35,7 +35,8 @@ namespace TrueStory
             CloseStory,
             OpenStory,
             Question,
-            RenameFile
+            RenameFile,
+            LanguageModelChat
 
         }
 
@@ -56,6 +57,7 @@ namespace TrueStory
         public event ExecuteCommandAddedHandler? OnAddedExecuteCommand;
         public event QuestionAddedHandler? OnAddedQuestion;
         public event CloseStoryAddedHandler? OnAddedCloseStory;
+        public event LanguageModelChatAddedHandler? OnAddedLanguageModelChat;
 
 
         public delegate void OpenStoryAddedHandler(RecordData.CloseStoryData data);
@@ -69,6 +71,7 @@ namespace TrueStory
         public delegate string ExecuteCommandAddedHandler(string name);
         public delegate RecordData.QuestionData QuestionAddedHandler(RecordData.QuestionData q);
         public delegate RecordData.CloseStoryData CloseStoryAddedHandler();
+        public delegate RecordData.LanguageModelChatData LanguageModelChatAddedHandler();
 
         public event HeaderReadedHandler? OnReadedHeader;
         public event OpenStoryReadedHandler? OnReadedOpenStory;
@@ -688,6 +691,33 @@ namespace TrueStory
             AddRecord(record);
 
 
+        }
+
+        public void AddLanguageModelChat()
+        {
+            Debug.Assert(!disposed);
+            Debug.Assert(mode == Mode.Append || mode == Mode.Create);
+
+            RecordData.LanguageModelChatData chatData = OnAddedLanguageModelChat?.Invoke() ?? new RecordData.LanguageModelChatData();
+
+            Record record = new();
+
+            record.type = RecordType.LanguageModelChat;
+
+            BinaryBufferWriter buffer = new();
+
+            buffer.WriteInt(chatData.lines.Length);
+
+            foreach(RecordData.LanguageModelChatLineData line in chatData.lines)
+            {
+                buffer.WriteByte((byte)(line.isUser ? 1 : 0));
+                buffer.WriteString(line.text);
+
+            }
+
+            record.data = buffer.GetBytes();
+
+            AddRecord(record);
         }
 
         public void AddOpenStory()

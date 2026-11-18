@@ -14,6 +14,11 @@ namespace TrueStory
             writer = new BinaryWriter(stream);
         }
 
+        public void WriteByte(byte n)
+        {
+            writer.Write(n);
+        }
+
         public void WriteInt(int n)
         {
             writer.Write(n);
