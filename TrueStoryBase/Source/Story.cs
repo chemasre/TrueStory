@@ -84,6 +84,7 @@ namespace TrueStory
         public event RenameFileReadedHandler? OnReadedRenameFile;
         public event ExecuteCommandReadedHandler? OnReadedExecuteCommand;
         public event QuestionReadedHandler? OnReadedQuestion;
+        public event LanguageModelChatReadedHandler? OnReadedLanguageModelChat;
         public event CloseStoryReadedHandler? OnReadedCloseStory;
 
         public delegate void HeaderReadedHandler(RecordData.NewHeaderData data);
@@ -96,7 +97,8 @@ namespace TrueStory
         public delegate void SaveFileReadedHandler(RecordData.SaveFileData data);
         public delegate void RenameFileReadedHandler(RecordData.RenameFileData data);
         public delegate void ExecuteCommandReadedHandler(RecordData.ExecuteCommandData data);
-        public delegate void QuestionReadedHandler(RecordData.QuestionData q);
+        public delegate void QuestionReadedHandler(RecordData.QuestionData data);
+        public delegate void LanguageModelChatReadedHandler(RecordData.LanguageModelChatData data);
         public delegate void CloseStoryReadedHandler(RecordData.CloseStoryData data);
 
         public const string StoryFilename = ".truestory";
@@ -469,6 +471,11 @@ namespace TrueStory
                     RecordData.QuestionData d = RecordData.DecodeQuestionRecord(result.Value);
                     OnReadedQuestion?.Invoke(d);
                 }
+                else if (result.Value.type == RecordType.LanguageModelChat)
+                {
+                    RecordData.LanguageModelChatData d = RecordData.DecodeLanguageModelChatRecord(result.Value);
+                    OnReadedLanguageModelChat?.Invoke(d);
+                }
                 else if (result.Value.type == RecordType.CloseStory)
                 {
                     RecordData.CloseStoryData d = RecordData.DecodeCloseStoryRecord(result.Value);
@@ -700,24 +707,28 @@ namespace TrueStory
 
             RecordData.LanguageModelChatData chatData = OnAddedLanguageModelChat?.Invoke() ?? new RecordData.LanguageModelChatData();
 
-            Record record = new();
-
-            record.type = RecordType.LanguageModelChat;
-
-            BinaryBufferWriter buffer = new();
-
-            buffer.WriteInt(chatData.lines.Length);
-
-            foreach(RecordData.LanguageModelChatLineData line in chatData.lines)
+            if(chatData.lines.Length > 0)
             {
-                buffer.WriteByte((byte)(line.isUser ? 1 : 0));
-                buffer.WriteString(line.text);
+                Record record = new();
 
+                record.type = RecordType.LanguageModelChat;
+
+                BinaryBufferWriter buffer = new();
+
+                buffer.WriteInt(chatData.lines.Length);
+
+                foreach(RecordData.LanguageModelChatLineData line in chatData.lines)
+                {
+                    buffer.WriteByte((byte)(line.isUser ? 1 : 0));
+                    buffer.WriteString(line.text);
+
+                }
+
+                record.data = buffer.GetBytes();
+
+                AddRecord(record);
             }
 
-            record.data = buffer.GetBytes();
-
-            AddRecord(record);
         }
 
         public void AddOpenStory()

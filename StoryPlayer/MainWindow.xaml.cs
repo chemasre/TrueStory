@@ -27,12 +27,14 @@ namespace StoryPlayer
         State state;
 
         QuestionWindow questionWindow;
+        LLMWindow languageModelChatWindow;
 
         HashSet<string> files;
         HashSet<string> folders;
 
         ReadDirection? lastReadDirection;
         bool lastReadedIsQuestion;
+        bool lastReadedIsLanguageModelChat;
         bool lastReadedIsFileSave;
         RecordData.SaveFileData? lastReadedSaveFileData;
         int lastReadedChangeIndex;
@@ -46,6 +48,7 @@ namespace StoryPlayer
             InitializeComponent();
 
             questionWindow = new();
+            languageModelChatWindow = new();
 
             files = new();
             folders = new();
@@ -72,6 +75,7 @@ namespace StoryPlayer
                 CommandConsoleTextBox.Visibility = Visibility.Hidden;
                 FolderViewList.Visibility = Visibility.Hidden;
                 questionWindow.Visibility = Visibility.Hidden;
+                languageModelChatWindow.Visibility = Visibility.Hidden;
 
                 ClearFolderView();
             }
@@ -84,6 +88,7 @@ namespace StoryPlayer
                 CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
                 questionWindow.Visibility = Visibility.Hidden;
+                languageModelChatWindow.Visibility = Visibility.Hidden;
                 GotoStartButton.IsEnabled = true;
                 PreviousChangeButton.IsEnabled = true;
                 PlayButton.IsEnabled = true;
@@ -102,6 +107,7 @@ namespace StoryPlayer
                 CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FolderViewList.Visibility = Visibility.Visible;
                 questionWindow.Visibility = Visibility.Hidden;
+                languageModelChatWindow.Visibility = Visibility.Hidden;
                 GotoStartButton.IsEnabled = false;
                 PreviousChangeButton.IsEnabled = false;
                 PlayButton.IsEnabled = false;
@@ -136,6 +142,7 @@ namespace StoryPlayer
                     story.OnReadedDeleteFolder += OnDeleteFolderReaded;
                     story.OnReadedExecuteCommand += OnExecuteCommandReaded;
                     story.OnReadedQuestion += OnQuestionReaded;
+                    story.OnReadedLanguageModelChat += OnLanguageModelChatReaded;
                     story.OnReadedLoadFile += OnLoadFileReaded;
                     story.OnReadedSaveFile += OnSaveFileReaded;
                     story.OnReadedRenameFile += OnRenameFileReaded;
@@ -152,6 +159,7 @@ namespace StoryPlayer
                     folders.Clear();
                     lastReadDirection = null;
                     lastReadedIsQuestion = false;
+                    lastReadedIsLanguageModelChat = false;
                     lastReadedIsFileSave = false;
                     lastReadedSaveFileData = null;
                     lastReadedChangeIndex = 0;
@@ -174,6 +182,7 @@ namespace StoryPlayer
             folders.Clear();
             lastReadDirection = null;
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
             lastReadedSaveFileData = null;
             lastReadedChangeIndex = 0;
@@ -199,6 +208,7 @@ namespace StoryPlayer
             FileEditorTextBox.Text = "";
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
         }
 
@@ -210,6 +220,19 @@ namespace StoryPlayer
 
             questionWindow.Question = q;
             lastReadedIsQuestion = true;
+            lastReadedIsLanguageModelChat = false;
+            lastReadedIsFileSave = false;
+        }
+
+        void OnLanguageModelChatReaded(RecordData.LanguageModelChatData c)
+        {
+            if (ignoreReadEvent) { return; }
+
+            BlockInfoLabel.Content = GetCursorText() + " Consulta a IA de " + c.lines + " líneas";
+
+            languageModelChatWindow.Chat = c;
+            lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = true;
             lastReadedIsFileSave = false;
         }
 
@@ -241,6 +264,7 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = true;
 
             lastReadedSaveFileData = data;
@@ -266,6 +290,8 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
+
             lastReadedIsFileSave = false;
 
         }
@@ -279,6 +305,7 @@ namespace StoryPlayer
             CommandConsoleTextBox.Text = "> " + data.name + "\n" + data.result + "\n";
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -306,6 +333,7 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -361,6 +389,7 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
         }
 
@@ -385,6 +414,7 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -410,6 +440,7 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -437,6 +468,7 @@ namespace StoryPlayer
             }
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -450,6 +482,7 @@ namespace StoryPlayer
             FileEditorTextBox.Text = "";
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -463,6 +496,7 @@ namespace StoryPlayer
             FileEditorTextBox.Text = "";
 
             lastReadedIsQuestion = false;
+            lastReadedIsLanguageModelChat = false;
             lastReadedIsFileSave = false;
 
         }
@@ -488,6 +522,9 @@ namespace StoryPlayer
             if (lastReadedIsQuestion) { questionWindow.Show(); }
             else { questionWindow.Hide(); }
 
+            if (lastReadedIsLanguageModelChat) { languageModelChatWindow.Show(); }
+            else { languageModelChatWindow.Hide(); }
+
         }
 
         void OnGotoEnd(object sender, RoutedEventArgs e)
@@ -510,6 +547,8 @@ namespace StoryPlayer
             if (lastReadedIsQuestion) { questionWindow.Show(); }
             else { questionWindow.Hide(); }
 
+            if (lastReadedIsLanguageModelChat) { languageModelChatWindow.Show(); }
+            else { languageModelChatWindow.Hide(); }
         }
 
         void OnNextStep(object sender, RoutedEventArgs e)
@@ -534,6 +573,7 @@ namespace StoryPlayer
 
             bool consoleReadStop = ConsoleEventsCheckBox.IsChecked.GetValueOrDefault();
             bool questionReadStop = QuestionEventsCheckBox.IsChecked.GetValueOrDefault();
+            bool languageModelChatStop = LanguageModelChatEventsCheckBox.IsChecked.GetValueOrDefault();
             bool fileReadStop = FileEventsCheckBox.IsChecked.GetValueOrDefault();
             bool activityReadStop = ActivityEventsCheckbox.IsChecked.GetValueOrDefault();
             bool contentReadStop = ContentEventsCheckBox.IsChecked.GetValueOrDefault();
@@ -633,6 +673,8 @@ namespace StoryPlayer
                         { stepDone = true; }
                         else if (questionReadStop && record.Value.type == RecordType.Question)
                         { stepDone = true; }
+                        else if(languageModelChatStop && record.Value.type == RecordType.LanguageModelChat)
+                        { stepDone = true; }
                         else if (consoleReadStop && record.Value.type == RecordType.ExecuteCommand)
                         { stepDone = true; }
                         else if (activityReadStop && (record.Value.type == RecordType.OpenStory ||
@@ -662,6 +704,9 @@ namespace StoryPlayer
 
             if (lastReadedIsQuestion) { questionWindow.Show(); }
             else { questionWindow.Hide(); }
+
+            if (lastReadedIsLanguageModelChat) { languageModelChatWindow.Show(); }
+            else { languageModelChatWindow.Hide(); }
 
         }
 

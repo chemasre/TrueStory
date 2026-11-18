@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 
 
 namespace TrueStory
@@ -240,6 +239,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
                 ResetTextAction.IsEnabled = false;
+                ToolsMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
@@ -262,6 +262,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
                 ResetTextAction.IsEnabled = false;
+                ToolsMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -284,6 +285,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
                 ResetTextAction.IsEnabled = true;
+                ToolsMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -306,6 +308,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
                 ResetTextAction.IsEnabled = true;
+                ToolsMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -325,10 +328,12 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 RenameFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
+                ToolsMenu.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
                 ResetTextAction.IsEnabled = false;
+                ToolsMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -352,6 +357,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
                 ResetTextAction.IsEnabled = false;
+                ToolsMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = true;
                 FolderViewList.Visibility = Visibility.Hidden;
             }

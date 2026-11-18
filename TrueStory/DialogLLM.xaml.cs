@@ -35,7 +35,7 @@ namespace TrueStory
         public string ApiKey
         {
             get { return apiKey; } 
-            set { apiKey = value; DoSetKeyAsterisks(apiKey); }
+            set { apiKey = value; DoUpdateKeyText(apiKey); }
         }
 
         public string URL { get; set; }
@@ -97,49 +97,54 @@ namespace TrueStory
             }
             else if(e.Key == Key.Return && isControlPressed)
             {
-                InputText.IsEnabled = false;
-
-                string userInput = InputText.Text;
-
-                WaitBar.IsIndeterminate = true;
-
-                userInput = userInput.Replace("\"", "\\\"");
-
-                ChatLine lineInput = new() { isUser = true, text = userInput };
-
-                chatHistory.Add(lineInput);
-
-                ChatLine lineOutput = await LLMAsk(chatHistory, apiKey);
-
-                if(!lineOutput.isError)
-                {
-                    chatHistory.Add(lineOutput);
-
-                    builder.Clear();
-
-                    foreach(ChatLine line in chatHistory)
-                    {
-                        builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
-                        builder.AppendLine();
-                        builder.AppendLine();
-                    }
-
-                    AnswerText.Text = builder.ToString();
-                    AnswerText.ScrollToEnd();
-
-                    InputText.Clear();
-
-                    Console.WriteLine(AnswerText.Text);
-                }
+                if(apiKey.Trim().Length == 0) { MessageBox.Show("Tienes que definir una clave de API para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
                 else
                 {
-                    MessageBox.Show("Se ha producido un error: " + lineOutput.errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    InputText.IsEnabled = false;
+
+                    string userInput = InputText.Text;
+
+                    WaitBar.IsIndeterminate = true;
+
+                    userInput = userInput.Replace("\"", "\\\"");
+
+                    ChatLine lineInput = new() { isUser = true, text = userInput };
+
+                    chatHistory.Add(lineInput);
+
+                    ChatLine lineOutput = await LLMAsk(chatHistory, apiKey);
+
+                    if(!lineOutput.isError)
+                    {
+                        chatHistory.Add(lineOutput);
+
+                        builder.Clear();
+
+                        foreach(ChatLine line in chatHistory)
+                        {
+                            builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
+                            builder.AppendLine();
+                            builder.AppendLine();
+                        }
+
+                        AnswerText.Text = builder.ToString();
+                        AnswerText.ScrollToEnd();
+
+                        InputText.Clear();
+
+                        Console.WriteLine(AnswerText.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Se ha producido un error: " + lineOutput.errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    WaitBar.IsIndeterminate = false;
+
+                    InputText.IsEnabled = true;
+                    InputText.Focus();
+
                 }
-
-                WaitBar.IsIndeterminate = false;
-
-                InputText.IsEnabled = true;
-                InputText.Focus();
 
                 e.Handled = true;
             }
@@ -256,27 +261,37 @@ namespace TrueStory
 
             d.Title = "Introducir clave de API";
             d.Message.Text = "Introduce la clave de API Gemini que quieras utilizar para las consultas.";
-            d.Input.Text = "API_KEY";
+            d.Input.Text = apiKey;
             
             bool? r = d.ShowDialog();
 
             if(r.GetValueOrDefault())
             {
                 apiKey = d.Input.Text.Trim();
-                DoSetKeyAsterisks(apiKey);
+                DoUpdateKeyText(apiKey);
             }
                 
         }
 
-        void DoSetKeyAsterisks(string key)
+        void DoUpdateKeyText(string key)
         {
-            string asterisks = "";
-            for(int i = 0; i < key.Length; i ++)
+            if(key.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin clave> "; }
+            else
             {
-                asterisks = asterisks + (key.Length - i < 4 ? key[i] : "*");
+                string asterisks = "";
+                for(int i = 0; i < key.Length; i ++)
+                {
+                    asterisks = asterisks + (key.Length - i < 4 ? key[i] : "*");
+                }
+
+                ApiKeyInputText.Text = asterisks;
             }
 
-            ApiKeyInputText.Text = asterisks;
+        }
+
+        private void OnCloseButtonPressed(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

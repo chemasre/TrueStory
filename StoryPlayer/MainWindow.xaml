@@ -29,6 +29,7 @@
                     <CheckBox x:Name="ContentEventsCheckBox" Content="Texto" Padding="{DynamicResource StoryPlayerTabItemPadding}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsChecked="True"/>
                     <CheckBox x:Name="ConsoleEventsCheckBox" Content="Comandos" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True"/>
                     <CheckBox x:Name="QuestionEventsCheckBox" Content="Preguntas" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True"/>
+                    <CheckBox x:Name="LanguageModelChatEventsCheckBox" Content="Consultas IA" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True"/>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{DynamicResource StoryPlayerPanelPadding}">
                     <Button x:Name="GotoStartButton" Content="Inicio" Padding="{DynamicResource StoryPlayerTabItemPadding}" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Click="OnGotoStart"/>
