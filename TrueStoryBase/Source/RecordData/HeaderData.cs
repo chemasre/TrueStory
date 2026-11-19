@@ -248,7 +248,7 @@ namespace TrueStory
             
             public InstructorData instructor = new();
 
-            public bool languageModelEnabled = false;
+            public bool languageModelEnabled = true;
 
             public NewHeaderData() { }
         }
