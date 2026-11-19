@@ -6,7 +6,7 @@
 
         public const int Major = 0;
         public const int Minor = 11;
-        public const int Patch = 0;
+        public const int Patch = 1;
 
         public const string Alias = "Reintentos en las consultas IA";
 

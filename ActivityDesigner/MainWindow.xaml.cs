@@ -862,7 +862,7 @@ namespace ActivityDesigner
         private void OnQuestionWaitProfileLoad(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new();
-
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
             dialog.Filter = "question frequency files (*." + Constants.questionFrequencyProfileExtension + ")|*." + Constants.questionFrequencyProfileExtension;
             dialog.FilterIndex = 1;
 
@@ -915,6 +915,7 @@ namespace ActivityDesigner
         {
             SaveFileDialog dialog = new();
 
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
             dialog.Filter = "question frequency files (*." + Constants.questionFrequencyProfileExtension + ")|*." + Constants.questionFrequencyProfileExtension;
             dialog.FilterIndex = 1;
 
@@ -941,6 +942,7 @@ namespace ActivityDesigner
         {
             OpenFileDialog dialog = new();
 
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
             dialog.Filter = "question templates files (*." + Constants.questionTemplatesProfileExtension+ ")|*." + Constants.questionTemplatesProfileExtension;
             dialog.FilterIndex = 1;
 
@@ -972,6 +974,7 @@ namespace ActivityDesigner
         {
             SaveFileDialog dialog = new();
 
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
             dialog.Filter = "question templates files (*." + Constants.questionTemplatesProfileExtension + ")|*." + Constants.questionTemplatesProfileExtension;
             dialog.FilterIndex = 1;
 
@@ -991,6 +994,7 @@ namespace ActivityDesigner
         {
             SaveFileDialog dialog = new();
 
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
             dialog.Filter = "question chances files (*." + Constants.questionChancesProfileExtension + ")|*." + Constants.questionChancesProfileExtension;
             dialog.FilterIndex = 1;
 
@@ -1009,6 +1013,7 @@ namespace ActivityDesigner
         {
             OpenFileDialog dialog = new();
 
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
             dialog.Filter = "question chances files (*." + Constants.questionChancesProfileExtension + ")|*." + Constants.questionChancesProfileExtension;
             dialog.FilterIndex = 1;
 
@@ -1048,6 +1053,7 @@ namespace ActivityDesigner
             {
                 OpenFileDialog dialog = new();
 
+                dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
                 dialog.Filter = "extension settings files (*." + Constants.extensionSettingsExtension + ")|*." + Constants.extensionSettingsExtension;
                 dialog.FilterIndex = 1;
 
@@ -1089,6 +1095,7 @@ namespace ActivityDesigner
             {
                 SaveFileDialog dialog = new();
 
+                dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
                 dialog.Filter = "extension settings files (*." + Constants.extensionSettingsExtension + ")|*." + Constants.extensionSettingsExtension;
                 dialog.FilterIndex = 1;
 
