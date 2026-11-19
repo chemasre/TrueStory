@@ -15,20 +15,20 @@ namespace TrueStory
             FlowDocument doc = Document.Document;
             Paragraph p;
 
-            p = new Paragraph(new Run(Version.GetVersion(false)));
+            p = new Paragraph(new Run(AppInfo.GetVersion(false)));
             p.TextAlignment = TextAlignment.Center;
             p.Margin = new Thickness(0, 5, 0, 10);
 
             doc.Blocks.InsertAfter(doc.Blocks.FirstBlock, p);
 
-            p = new Paragraph(new Bold(new Run(Version.AppName)));
+            p = new Paragraph(new Bold(new Run(AppInfo.AppName)));
             p.FontSize *= 1.2f;
             p.TextAlignment = TextAlignment.Center;
             p.Margin = new Thickness(0, 0, 0, 5);
 
             doc.Blocks.InsertBefore(doc.Blocks.FirstBlock.NextBlock, p);
 
-            Title += Version.AppName;
+            Title += AppInfo.AppName;
         }
 
         private void Accept_Click(object sender, RoutedEventArgs e)

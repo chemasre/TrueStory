@@ -218,6 +218,18 @@ namespace TrueStory
 
             root.Add("contents", contents);
 
+            JsonObject instruction = new JsonObject();
+
+            JsonArray instructionParts = new JsonArray();
+            JsonObject instructionPart = new JsonObject();
+
+            instructionPart.Add("text", Constants.languageModelInstructions);
+            instructionParts.Add(instructionPart);
+
+            instruction.Add("parts", instructionParts);
+
+            root.Add("systemInstruction", instruction);
+
             string query = root.ToJsonString();
 
             Console.WriteLine(query);

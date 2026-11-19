@@ -507,7 +507,7 @@ namespace TrueStory
         void UpdateWindowTitle()
         {
             if (story != null) { Title = story.Header.title + " - " + story.Header.student;  }
-            else { Title = Version.GetFullName(); }
+            else { Title = AppInfo.GetFullName(); }
 
         }
 

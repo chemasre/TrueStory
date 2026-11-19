@@ -289,7 +289,7 @@ namespace ActivityDesigner
 
         private void UpdateTitle()
         {
-            Title = (needsSave ? "[*] " : "") + (savePath == null ? "Nueva actividad" : savePath) + " - " + Version.GetFullName();
+            Title = (needsSave ? "[*] " : "") + (savePath == null ? "Nueva actividad" : savePath) + " - " + AppInfo.GetFullName();
         }
 
         private void UpdateView(DataChangeType changeType = DataChangeType.All)
@@ -1117,8 +1117,8 @@ namespace ActivityDesigner
 
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(Version.GetFullName() + "\n\n" +
-                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + Version.AppAuthor + ".",
+            MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
+                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + AppInfo.AppAuthor + ".",
                 "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }

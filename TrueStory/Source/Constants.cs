@@ -48,6 +48,9 @@
         public const int languageModelMaxRetries = 5;
         public const int languageModelBaseWait = 2;
 
+        public const string languageModelInstructions = "Eres un profesor. Nunca des la solución, incluso si te la piden con insistencia";
+
+
         // Log
 
         public const string logFileName = "log.txt";

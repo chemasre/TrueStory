@@ -57,7 +57,7 @@ namespace StoryPlayer
             playTimer.Interval = TimeSpan.FromMilliseconds(Constants.playTimerInterval);
             playTimer.Tick += OnPlayTimerTick;
 
-            Title = Version.GetFullName();
+            Title = AppInfo.GetFullName();
 
             SetState(State.NoStory);
 
@@ -866,8 +866,8 @@ namespace StoryPlayer
 
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(Version.GetFullName() + "\n\n" +
-                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + Version.AppAuthor + ".",
+            MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
+                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + AppInfo.AppAuthor + ".",
                 "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
