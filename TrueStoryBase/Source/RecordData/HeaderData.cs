@@ -129,6 +129,21 @@ namespace TrueStory
                 {
                     extension = "java",
                     separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':','=' }
+                },
+                new ()
+                {
+                    extension = "cs",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':','=' }
+                },
+                new ()
+                {
+                    extension = "sh",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':','=' }
+                },
+                new ()
+                {
+                    extension = "bash",
+                    separators = new char[] { ';', '(', ')', '[', ']', '"', '\'', '.', ',', '<','>','/','{','}',':','=' }
                 }
 
             };
@@ -224,13 +239,16 @@ namespace TrueStory
                 //"tsx",
                 "c", "h",
                 "hpp", "cpp",
-                //"cs",
-                "java"
+                "cs",
+                "java",
+                "sh", "bash"
             };
 
             public bool commandConsoleEnabled = true;
             
             public InstructorData instructor = new();
+
+            public bool languageModelEnabled = false;
 
             public NewHeaderData() { }
         }
@@ -249,6 +267,7 @@ namespace TrueStory
             foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
             
             buffer.WriteInt(r.commandConsoleEnabled ? 1 : 0);
+            buffer.WriteInt(r.languageModelEnabled ? 1 : 0);
             buffer.WriteInt(r.instructor.enabled ? 1 : 0);
             
             buffer.WriteInt(r.instructor.wait.time.min);
@@ -311,6 +330,7 @@ namespace TrueStory
             for(int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
 
             result.commandConsoleEnabled = (buffer.ReadInt() != 0);
+            result.languageModelEnabled = (buffer.ReadInt() != 0);
             result.instructor.enabled = (buffer.ReadInt() != 0);
 
             result.instructor.wait.time.min = buffer.ReadInt();

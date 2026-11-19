@@ -310,6 +310,7 @@ namespace ActivityDesigner
             }
 
             ConsoleEnabledCheckbox.IsChecked = data.commandConsoleEnabled;
+            LanguageModelCheckbox.IsChecked = data.languageModelEnabled;
 
             if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled)
             {
@@ -503,6 +504,26 @@ namespace ActivityDesigner
             if (disableUIEvents) { return; }
 
             data.commandConsoleEnabled = false;
+
+            needsSave = true;
+
+        }
+
+        private void OnLanguageModelChecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.languageModelEnabled = true;
+
+            needsSave = true;
+
+        }
+
+        private void OnLanguageModelUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.languageModelEnabled = false;
 
             needsSave = true;
 

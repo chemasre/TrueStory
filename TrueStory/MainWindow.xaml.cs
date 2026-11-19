@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Runtime.InteropServices;
 
 
 namespace TrueStory
@@ -13,6 +15,9 @@ namespace TrueStory
     /// </summary>
     public partial class MainWindow : Window
     {
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
+
         public string? LoadedFile { get { return loadedFile; } }
         public FileEditor FileEditor { get { return fileEditor; } }
         public CommandConsole CommandConsole { get { return commandConsole; } }
@@ -124,6 +129,16 @@ namespace TrueStory
             UpdateFileTitle();
             UpdateWindowTitle();
 
+            SourceInitialized += OnSourceInitialized;
+        }
+
+        private void OnSourceInitialized(object? sender, EventArgs e)
+        {
+            // Excluye la ventana de las capturas de pantalla
+            // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity
+
+            WindowInteropHelper helper = new WindowInteropHelper(this);
+            SetWindowDisplayAffinity(helper.EnsureHandle(), 0x01);
         }
 
         private void OnInstructorQuestionStarts()
@@ -226,6 +241,11 @@ namespace TrueStory
 
         void SetUIState(UIState _uiState)
         {
+            if(story != null)
+            {
+                ToolsMenu.Visibility = story.Header.languageModelEnabled ? Visibility.Visible : Visibility.Collapsed;
+            }
+
             if (_uiState == UIState.NoStory)
             {
                 NewActivityMenuAction.IsEnabled = true;

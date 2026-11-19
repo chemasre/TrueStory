@@ -7,10 +7,10 @@
         public const string AppAuthor = "José Manuel Solís";
 
         public const int Major = 0;
-        public const int Minor = 4;
+        public const int Minor = 11;
         public const int Patch = 0;
 
-        public const string Alias = "Save/Load profiles";
+        public const string Alias = "Added AI checkbox";
 
         public static string GetFullName()
         {
