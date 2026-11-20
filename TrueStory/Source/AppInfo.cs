@@ -2,7 +2,7 @@
 {
     public class AppInfo
     {
-        public const string AppName = "TrueStory Activity Editor";
+        public const string AppName = "TrueEditor";
 
         public static string GetFullName()
         {

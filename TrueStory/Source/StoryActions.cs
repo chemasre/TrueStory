@@ -90,11 +90,12 @@ namespace TrueStory
             return text;
         }
 
-        RecordData.LanguageModelChatData OnLanguageModelChat()
+        RecordData.LanguageModelChatData OnLanguageModelChat(string? initialUserLine)
         {
             DialogLLM d = new();
             d.ApiKey = window.Settings.GetString("LanguageModelAPIKey");
             d.ApiURL = window.Settings.GetString("LanguageModelURL", Constants.languageModelDefaultURL);
+            d.InitialUserLine = initialUserLine;
 
             d.ShowDialog();
 

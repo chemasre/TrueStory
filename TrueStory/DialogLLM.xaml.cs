@@ -35,14 +35,21 @@ namespace TrueStory
         public string ApiKey
         {
             get { return apiKey; } 
-            set { apiKey = value; DoUpdateKeyText(apiKey); }
+            set { apiKey = value; UpdateKeyText(apiKey); }
         }
 
         public string ApiURL
         {
             get { return apiURL; } 
-            set { apiURL = value; DoUpdateURLText(apiURL); }
+            set { apiURL = value; UpdateURLText(apiURL); }
         }
+
+        public string? InitialUserLine
+        {
+            set { initialUserLine = value; }
+        }
+
+        string? initialUserLine;
 
         public RecordData.LanguageModelChatData Chat
         {
@@ -104,84 +111,14 @@ namespace TrueStory
             }
             else if(e.Key == Key.Return && isControlPressed)
             {
-                if(apiKey.Trim().Length == 0) { MessageBox.Show("Tienes que definir una clave de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
-                else if(apiURL.Trim().Length == 0) { MessageBox.Show("Tienes que definir una URL de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); }
-                else
+                bool canSend = CheckCanSend();
+
+                if(canSend)
                 {
-                    InputText.IsEnabled = false;
-
-                    string userInput = InputText.Text;
-
-                    WaitBar.IsIndeterminate = true;
-
-                    userInput = userInput.Replace("\"", "\\\"");
-
-                    ChatLine lineInput = new() { isUser = true, text = userInput };
-
-                    bool success;
-                    string errorText = "";
-                    int retries = 0;
-
-                    do
-                    {
-                        if(retries > 0)
-                        {
-                            int seconds = (int)Math.Pow(Constants.languageModelBaseWait, retries);
-                            StatusLabel.Content = "<esperando " + seconds + " segundos (reintento " + retries + " de " + Constants.languageModelMaxRetries + ")>";
-                            await Task.Delay(seconds * 1000);
-                        }
-
-                        StatusLabel.Content = "<esperando respuesta>";
-
-                        chatHistory.Add(lineInput);
-
-                        ChatLine lineOutput = await LLMAsk(chatHistory, apiKey);
-
-                        if(!lineOutput.isError)
-                        {
-                            chatHistory.Add(lineOutput);
-
-                            builder.Clear();
-
-                            foreach(ChatLine line in chatHistory)
-                            {
-                                builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
-                                builder.AppendLine();
-                                builder.AppendLine();
-                            }
-
-                            AnswerText.Text = builder.ToString();
-                            AnswerText.ScrollToEnd();
-
-                            InputText.Clear();
-
-                            success = true;
-
-                        }
-                        else
-                        {
-                            chatHistory.RemoveAt(chatHistory.Count - 1);
-
-                            errorText = lineOutput.errorText;
-
-                            retries ++;
-                            success = false;
-                            
-                        }
-                    } while(!success && retries < Constants.languageModelMaxRetries); 
-
-                    if(!success)
-                    {
-                        MessageBox.Show("No se ha podido enviar la consulta. Error: " + errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-
-                    StatusLabel.Content = "";
-                        
-                    WaitBar.IsIndeterminate = false;
-
-                    InputText.IsEnabled = true;
+                    LockUI();
+                    await SendLine(InputText.Text);
+                    UnlockUI();
                     InputText.Focus();
-
                 }
 
                 e.Handled = true;
@@ -189,16 +126,112 @@ namespace TrueStory
 
         }
 
-        private async Task<ChatLine> LLMAsk(List<ChatLine> chatHistory, string apiKey)
+        void LockUI()
+        {
+            InputText.IsEnabled = false;
+            WaitBar.IsIndeterminate = true;
+        }
+
+        void UnlockUI()
+        {
+            WaitBar.IsIndeterminate = false;
+            InputText.IsEnabled = true;
+        }
+
+        bool CheckCanSend()
+        {
+            bool result = true;
+
+            if(apiKey.Trim().Length == 0)
+            {
+                MessageBox.Show("Tienes que definir una clave de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                result = false;
+            }
+            else if(apiURL.Trim().Length == 0)
+            {
+                MessageBox.Show("Tienes que definir una URL de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                result = false;
+            }
+
+            return result;
+        }
+
+        async private Task SendLine(string userLine)
+        {
+
+            //userLine = userLine.Replace("\"", "\\\"");
+
+            ChatLine lineInput = new() { isUser = true, text = userLine };
+
+            bool success;
+            string errorText = "";
+            int retries = 0;
+
+            do
+            {
+                if(retries > 0)
+                {
+                    int seconds = (int)Math.Pow(Constants.languageModelBaseWait, retries);
+                    StatusLabel.Content = "<esperando " + seconds + " segundos (reintento " + retries + " de " + Constants.languageModelMaxRetries + ")>";
+                    await Task.Delay(seconds * 1000);
+                }
+
+                StatusLabel.Content = "<esperando respuesta>";
+
+                chatHistory.Add(lineInput);
+
+                ChatLine lineOutput = await SendHistory(chatHistory, apiKey);
+
+                if(!lineOutput.isError)
+                {
+                    chatHistory.Add(lineOutput);
+
+                    builder.Clear();
+
+                    foreach(ChatLine line in chatHistory)
+                    {
+                        builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
+                        builder.AppendLine();
+                        builder.AppendLine();
+                    }
+
+                    AnswerText.Text = builder.ToString();
+                    AnswerText.ScrollToEnd();
+
+                    InputText.Clear();
+
+                    success = true;
+
+                }
+                else
+                {
+                    chatHistory.RemoveAt(chatHistory.Count - 1);
+
+                    errorText = lineOutput.errorText;
+
+                    retries ++;
+                    success = false;
+                            
+                }
+            } while(!success && retries < Constants.languageModelMaxRetries); 
+
+            if(!success)
+            {
+                MessageBox.Show("No se ha podido enviar la consulta. Error: " + errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            StatusLabel.Content = "";
+
+        }
+
+        private async Task<ChatLine> SendHistory(List<ChatLine> chatHistory, string apiKey)
         {
             ChatLine result;
-
 
             JsonObject root = new JsonObject();
             JsonArray contents = new JsonArray();
 
             List<ChatLine> validLines = chatHistory.FindAll(l  => !l.isError);
-            int lineCount = 0;
 
             foreach(ChatLine line in validLines)
             {
@@ -300,8 +333,22 @@ namespace TrueStory
 
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        async private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if(initialUserLine != null)
+            {
+                InputText.Text = initialUserLine;
+
+                bool canSend = CheckCanSend();
+
+                if(canSend)
+                {
+                    LockUI();
+                    await SendLine(initialUserLine);
+                    UnlockUI();
+                }
+            }
+
             InputText.Focus();
         }
 
@@ -318,7 +365,7 @@ namespace TrueStory
             if(r.GetValueOrDefault())
             {
                 apiKey = d.Input.Text.Trim();
-                DoUpdateKeyText(apiKey);
+                UpdateKeyText(apiKey);
             }
                 
         }
@@ -337,12 +384,12 @@ namespace TrueStory
             if(r.GetValueOrDefault())
             {
                 apiURL = d.Input.Text.Trim();
-                DoUpdateURLText(apiURL);
+                UpdateURLText(apiURL);
             }
 
         }
 
-        void DoUpdateKeyText(string key)
+        void UpdateKeyText(string key)
         {
             if(key.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin clave> "; }
             else
@@ -358,7 +405,7 @@ namespace TrueStory
 
         }
 
-        void DoUpdateURLText(string url)
+        void UpdateURLText(string url)
         {
             if(url.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin url> "; }
             else

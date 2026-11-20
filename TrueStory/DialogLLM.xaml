@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
         mc:Ignorable="d"
-        Title="Consultar IA" Width="600" SizeToContent="Height" Background="{DynamicResource TrueEditorBackground}">
+        Title="Asistente" Width="600" SizeToContent="Height" Background="{DynamicResource TrueEditorBackground}">
     <DockPanel>
         <TextBox x:Name="AnswerText" DockPanel.Dock="Top" MinHeight="500" IsReadOnly="True" Padding="20,20,20,40" FontFamily="{DynamicResource TrueStoryCodeFont}" Margin="20,20,20,10" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MaxHeight="500" TextWrapping="Wrap"/>
         <ProgressBar x:Name="WaitBar" DockPanel.Dock="Top" MinHeight="10" Margin="20,10,20,10" Foreground="#FF07C51B" Background="{DynamicResource TrueEditorNonEditableTextBackground}" IsIndeterminate="True"/>

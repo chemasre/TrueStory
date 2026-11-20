@@ -71,7 +71,7 @@ namespace TrueStory
         public delegate string ExecuteCommandAddedHandler(string name);
         public delegate RecordData.QuestionData QuestionAddedHandler(RecordData.QuestionData q);
         public delegate RecordData.CloseStoryData CloseStoryAddedHandler();
-        public delegate RecordData.LanguageModelChatData LanguageModelChatAddedHandler();
+        public delegate RecordData.LanguageModelChatData LanguageModelChatAddedHandler(string? initialUserLine);
 
         public event HeaderReadedHandler? OnReadedHeader;
         public event OpenStoryReadedHandler? OnReadedOpenStory;
@@ -700,12 +700,12 @@ namespace TrueStory
 
         }
 
-        public void AddLanguageModelChat()
+        public void AddLanguageModelChat(string? initialQuestion = null)
         {
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            RecordData.LanguageModelChatData chatData = OnAddedLanguageModelChat?.Invoke() ?? new RecordData.LanguageModelChatData();
+            RecordData.LanguageModelChatData chatData = OnAddedLanguageModelChat?.Invoke(initialQuestion) ?? new RecordData.LanguageModelChatData();
 
             if(chatData.lines.Length > 0)
             {

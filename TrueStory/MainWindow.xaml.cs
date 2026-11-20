@@ -128,6 +128,7 @@ namespace TrueStory
 
             UpdateFileTitle();
             UpdateWindowTitle();
+            AboutMenuAction.Header += AppInfo.AppName;
 
             SourceInitialized += OnSourceInitialized;
         }
@@ -849,11 +850,27 @@ namespace TrueStory
             Settings.Save();
         }
 
-        private void OnMenuAskLLM(object sender, RoutedEventArgs e)
+        private void OnMenuLLMGeneralQuestion(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
 
             story.AddLanguageModelChat();
+        }
+
+        private void OnMenuLLMContextualQuestion1(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(story != null);
+
+            story.AddLanguageModelChat(Constants.languageModelContextualQuestion1 + "\n" + "\"" + FileEditorTextBox.SelectedText + "\"");
+
+        }
+
+        private void OnMenuLLMContextualQuestion2(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(story != null);
+
+            story.AddLanguageModelChat(Constants.languageModelContextualQuestion2 + "\n" + "\"" + FileEditorTextBox.SelectedText + "\"");
+
         }
     }
 }

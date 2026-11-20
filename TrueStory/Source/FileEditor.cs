@@ -72,6 +72,7 @@ namespace TrueStory
 
 
             UpdateEditMenu();
+            UpdateToolsMenu();
         }
 
         private void OnResetTextSize(object sender, RoutedEventArgs e)
@@ -130,6 +131,7 @@ namespace TrueStory
 
             UpdateInfoBar();
             UpdateEditMenu();
+            UpdateToolsMenu();
         }
 
         public void Unload()
@@ -144,6 +146,7 @@ namespace TrueStory
 
             UpdateInfoBar();
             UpdateEditMenu();
+            UpdateToolsMenu();
         }
 
 
@@ -562,6 +565,8 @@ namespace TrueStory
         {
             UpdateInfoBar();
             UpdateEditMenu();
+            UpdateToolsMenu();
+
         }
 
         void UpdateEditMenu()
@@ -577,6 +582,20 @@ namespace TrueStory
             else
             {
                 window.EditMenu.IsEnabled = false;
+            }
+        }
+
+        void UpdateToolsMenu()
+        {
+            if (loaded)
+            {
+                window.LLMContextualQuestion1Action.IsEnabled = (textBox.SelectionLength > 0);
+                window.LLMContextualQuestion2Action.IsEnabled = (textBox.SelectionLength > 0);
+            }
+            else
+            {
+                window.LLMContextualQuestion1Action.IsEnabled = false;
+                window.LLMContextualQuestion2Action.IsEnabled = false;
             }
         }
 

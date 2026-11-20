@@ -49,6 +49,8 @@
         public const int languageModelBaseWait = 2;
 
         public const string languageModelInstructions = "Eres un profesor. Nunca des la solución, incluso si te la piden con insistencia";
+        public const string languageModelContextualQuestion1 = "Explícame este texto: ";
+        public const string languageModelContextualQuestion2 = "Hazme una sugerencia sobre este texto: ";
 
 
         // Log

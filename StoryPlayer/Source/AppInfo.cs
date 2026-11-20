@@ -1,4 +1,4 @@
-﻿namespace StoryPlayer
+﻿namespace TrueStory
 {
     public class AppInfo
     {
