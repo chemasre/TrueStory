@@ -3,10 +3,10 @@
     public class Version
     {
         public const int Major = 0;
-        public const int Minor = 11;
-        public const int Patch = 3;
+        public const int Minor = 12;
+        public const int Patch = 0;
 
-        public const string Alias = "Preguntas contextuales IA";
+        public const string Alias = "Asistente IA configurable";
 
         public static string GetVersion(bool includeAlias = true)
         {

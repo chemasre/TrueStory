@@ -137,7 +137,7 @@ namespace TrueStory
                     };
 
                     newHeader.commandConsoleEnabled = true;
-                    newHeader.languageModelEnabled = true;
+                    newHeader.assistant.enabled = true;
                     newHeader.instructor.enabled = false;
                 }
                 else

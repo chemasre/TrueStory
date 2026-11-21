@@ -244,7 +244,7 @@ namespace TrueStory
         {
             if(story != null)
             {
-                ToolsMenu.Visibility = story.Header.languageModelEnabled ? Visibility.Visible : Visibility.Collapsed;
+                ToolsMenu.Visibility = story.Header.assistant.enabled ? Visibility.Visible : Visibility.Collapsed;
             }
 
             if (_uiState == UIState.NoStory)
@@ -424,11 +424,13 @@ namespace TrueStory
 
                 UpdateFileTitle();
                 UpdateWindowTitle();
+                UpdateAssistantMenu();
 
 
                 commandConsole.Story = story;
                 folderView.Story = story;
                 instructor.Story = story;
+
             }
         }
 
@@ -451,7 +453,7 @@ namespace TrueStory
 
                     UpdateFileTitle();
                     UpdateWindowTitle();
-
+                    UpdateAssistantMenu();
 
                     commandConsole.Story = story;
                     folderView.Story = story;
@@ -510,6 +512,14 @@ namespace TrueStory
             if (story != null) { Title = story.Header.title + " - " + story.Header.student;  }
             else { Title = AppInfo.GetFullName(); }
 
+        }
+
+        void UpdateAssistantMenu()
+        {
+            Debug.Assert(story != null);
+
+            LLMContextualQuestion1Action.Header = story.Header.assistant.contextualQuery1.title;
+            LLMContextualQuestion2Action.Header = story.Header.assistant.contextualQuery2.title;
         }
 
         void OnMenuNewFolder(object sender, RoutedEventArgs e)
@@ -861,7 +871,7 @@ namespace TrueStory
         {
             Debug.Assert(story != null);
 
-            story.AddLanguageModelChat(Constants.languageModelContextualQuestion1 + "\n" + "\"" + FileEditorTextBox.SelectedText + "\"");
+            story.AddLanguageModelChat(story.Header.assistant.contextualQuery1.query + "\n" + "\"" + FileEditorTextBox.SelectedText + "\"");
 
         }
 
@@ -869,7 +879,7 @@ namespace TrueStory
         {
             Debug.Assert(story != null);
 
-            story.AddLanguageModelChat(Constants.languageModelContextualQuestion2 + "\n" + "\"" + FileEditorTextBox.SelectedText + "\"");
+            story.AddLanguageModelChat(story.Header.assistant.contextualQuery2.query + "\n" + "\"" + FileEditorTextBox.SelectedText + "\"");
 
         }
     }

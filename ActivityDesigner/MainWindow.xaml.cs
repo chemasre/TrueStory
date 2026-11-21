@@ -28,7 +28,8 @@ namespace ActivityDesigner
             QuestionsEnabled,
             TemplateListModified,
             ExtensionSettingsModified,
-            QuestionChances
+            QuestionChances,
+            AssistantEnabled
         }
 
         RecordData.NewHeaderData data;
@@ -38,6 +39,7 @@ namespace ActivityDesigner
         HashSet<Control> templateTypeTextControls;
         HashSet<Control> wordSeparatorsControls;
         HashSet<Control> wordSeparatorsExtensionControls;
+        HashSet<Control> assistantControls;
 
         bool disableUIEvents;
 
@@ -126,6 +128,11 @@ namespace ActivityDesigner
 
             selectedTemplate = -1;
             selectedExtension = -1;
+
+            assistantControls = new()
+            {
+                AssistantTab                
+            };
 
             savePath = null;
             needsSave = false;
@@ -310,14 +317,13 @@ namespace ActivityDesigner
             }
 
             ConsoleEnabledCheckbox.IsChecked = data.commandConsoleEnabled;
-            LanguageModelCheckbox.IsChecked = data.languageModelEnabled;
 
             if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled)
             {
                 QuestionsEnabledCheckbox.IsChecked = data.instructor.enabled;
 
                 foreach (Control c in questionControls)
-                { c.Visibility = data.instructor.enabled ? Visibility.Visible : Visibility.Hidden; }
+                { c.Visibility = data.instructor.enabled ? Visibility.Visible : Visibility.Collapsed; }
 
                 if (!data.instructor.enabled) { Tabs.SelectedIndex = 0; }
             }
@@ -367,7 +373,7 @@ namespace ActivityDesigner
                     if (selectedTemplate < 0)
                     {
                         foreach (Control c in templateControls)
-                        { c.Visibility = Visibility.Hidden; }
+                        { c.Visibility = Visibility.Collapsed; }
                     }
                     else
                     {
@@ -391,7 +397,7 @@ namespace ActivityDesigner
                         else
                         {
                             foreach (Control c in templateTypeTextControls)
-                            { c.Visibility = Visibility.Hidden; }
+                            { c.Visibility = Visibility.Collapsed; }
                         }
 
                         TemplatesList.SelectedIndex = selectedTemplate;
@@ -429,7 +435,7 @@ namespace ActivityDesigner
                 {
                     foreach (Control c in wordSeparatorsControls)
                     {
-                        c.Visibility = Visibility.Hidden;
+                        c.Visibility = Visibility.Collapsed;
                     }
                 }
                 else
@@ -464,7 +470,7 @@ namespace ActivityDesigner
                         {
                             foreach (Control c in wordSeparatorsExtensionControls)
                             {
-                                c.Visibility = Visibility.Hidden;
+                                c.Visibility = Visibility.Collapsed;
                             }
                         }
                         else
@@ -482,6 +488,32 @@ namespace ActivityDesigner
 
                         WordSeparatorsExtensionList.SelectedIndex = selectedExtension;
                     }
+                }
+            }
+
+            if (changeType == DataChangeType.All || changeType == DataChangeType.AssistantEnabled)
+            {
+                AssistantEnabledCheckbox.IsChecked = data.assistant.enabled;
+
+                foreach (Control c in assistantControls)
+                { c.Visibility = data.assistant.enabled ? Visibility.Visible : Visibility.Collapsed; }
+
+                if (!data.assistant.enabled) { Tabs.SelectedIndex = 0; }
+            }
+
+            if (data.assistant.enabled)
+            {
+                if (changeType == DataChangeType.All || changeType == DataChangeType.AssistantEnabled)
+                {
+                    AssistantNameText.Text = data.assistant.name;
+
+                    AssistantInstructionsText.Text = data.assistant.instructions;
+
+                    AssistantContextualQuestion1TitleText.Text = data.assistant.contextualQuery1.title;
+                    AssistantContextualQuestion1TextText.Text = data.assistant.contextualQuery1.query;
+
+                    AssistantContextualQuestion2TitleText.Text = data.assistant.contextualQuery2.title;
+                    AssistantContextualQuestion2TextText.Text = data.assistant.contextualQuery2.query;
                 }
             }
 
@@ -513,7 +545,7 @@ namespace ActivityDesigner
         {
             if (disableUIEvents) { return; }
 
-            data.languageModelEnabled = true;
+            data.assistant.enabled = true;
 
             needsSave = true;
 
@@ -523,7 +555,7 @@ namespace ActivityDesigner
         {
             if (disableUIEvents) { return; }
 
-            data.languageModelEnabled = false;
+            data.assistant.enabled = false;
 
             needsSave = true;
 
@@ -665,7 +697,7 @@ namespace ActivityDesigner
             }
             else
             {
-                foreach (Control c in templateTypeTextControls) { c.Visibility = Visibility.Hidden; }
+                foreach (Control c in templateTypeTextControls) { c.Visibility = Visibility.Collapsed; }
             }
 
             needsSave = true;
@@ -800,6 +832,45 @@ namespace ActivityDesigner
             UpdateTitle();
 
         }
+
+        private void OnAssistantChecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.assistant.enabled = true;
+            UpdateView(DataChangeType.AssistantEnabled);
+
+            needsSave = true;
+            UpdateTitle();
+
+        }
+
+        private void OnAssistantUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.assistant.enabled = false;
+            UpdateView(DataChangeType.AssistantEnabled);
+
+            needsSave = true;
+            UpdateTitle();
+        }
+
+        private void OnAssistantParamChanged(object sender, TextChangedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.assistant.name = AssistantNameText.Text;
+            data.assistant.instructions = AssistantInstructionsText.Text;
+            data.assistant.contextualQuery1.title = AssistantContextualQuestion1TitleText.Text;
+            data.assistant.contextualQuery1.query = AssistantContextualQuestion1TextText.Text;
+            data.assistant.contextualQuery2.title = AssistantContextualQuestion2TitleText.Text;
+            data.assistant.contextualQuery2.query = AssistantContextualQuestion2TextText.Text;
+
+            needsSave = true;
+            UpdateTitle();
+        }
+
 
         void SanitizeInt(TextBox textBox)
         {
@@ -1121,5 +1192,7 @@ namespace ActivityDesigner
                 "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + AppInfo.AppAuthor + ".",
                 "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+
     }
 }

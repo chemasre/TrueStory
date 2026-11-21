@@ -96,6 +96,7 @@ namespace TrueStory
             d.ApiKey = window.Settings.GetString("LanguageModelAPIKey");
             d.ApiURL = window.Settings.GetString("LanguageModelURL", Constants.languageModelDefaultURL);
             d.InitialUserLine = initialUserLine;
+            d.Parameters = story.Header.assistant;
 
             d.ShowDialog();
 

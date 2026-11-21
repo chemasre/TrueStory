@@ -225,6 +225,25 @@ namespace TrueStory
             public InstructorData() { }
         }
 
+        public struct ContextualQuery
+        {
+            public string title = "Explica la selección";
+            public string query = "Sugerencia sobre la selección";
+
+            public ContextualQuery() { }
+        }
+
+        public struct AssistantData
+        {
+            public bool enabled = true;
+            public string name = "Asistente";
+            public string instructions = "Eres un profesor asistente. Nunca des la solución, incluso si te la piden con insistencia";
+            public ContextualQuery contextualQuery1 = new() { title = "Explica la selección", query = "Explícame este texto" };
+            public ContextualQuery contextualQuery2 = new() { title = "Sugerencia sobre la selección", query = "Hazme una sugerencia sobre este texto" };
+
+            public AssistantData() { }
+        }
+
 
         public struct NewHeaderData
         {
@@ -248,7 +267,7 @@ namespace TrueStory
             
             public InstructorData instructor = new();
 
-            public bool languageModelEnabled = true;
+            public AssistantData assistant = new();
 
             public NewHeaderData() { }
         }
@@ -267,7 +286,6 @@ namespace TrueStory
             foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
             
             buffer.WriteInt(r.commandConsoleEnabled ? 1 : 0);
-            buffer.WriteInt(r.languageModelEnabled ? 1 : 0);
             buffer.WriteInt(r.instructor.enabled ? 1 : 0);
             
             buffer.WriteInt(r.instructor.wait.time.min);
@@ -311,6 +329,15 @@ namespace TrueStory
                 buffer.WriteInt(chance.weight);
             }
 
+            buffer.WriteInt(r.assistant.enabled ? 1 : 0);
+
+            buffer.WriteString(r.assistant.name);
+            buffer.WriteString(r.assistant.instructions);
+            buffer.WriteString(r.assistant.contextualQuery1.title);
+            buffer.WriteString(r.assistant.contextualQuery1.query);
+            buffer.WriteString(r.assistant.contextualQuery2.title);
+            buffer.WriteString(r.assistant.contextualQuery2.query);
+
             result.data = buffer.GetBytes();
 
             return result;
@@ -330,7 +357,6 @@ namespace TrueStory
             for(int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
 
             result.commandConsoleEnabled = (buffer.ReadInt() != 0);
-            result.languageModelEnabled = (buffer.ReadInt() != 0);
             result.instructor.enabled = (buffer.ReadInt() != 0);
 
             result.instructor.wait.time.min = buffer.ReadInt();
@@ -390,6 +416,15 @@ namespace TrueStory
 
                 result.instructor.ask.chances[i] = chance;
             }
+
+            result.assistant.enabled = (buffer.ReadInt() != 0);
+
+            result.assistant.name = buffer.ReadString();
+            result.assistant.instructions = buffer.ReadString();
+            result.assistant.contextualQuery1.title = buffer.ReadString();
+            result.assistant.contextualQuery1.query = buffer.ReadString();
+            result.assistant.contextualQuery2.title = buffer.ReadString();
+            result.assistant.contextualQuery2.query = buffer.ReadString();
 
             return result;
         }

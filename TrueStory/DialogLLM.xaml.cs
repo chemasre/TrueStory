@@ -49,6 +49,8 @@ namespace TrueStory
             set { initialUserLine = value; }
         }
 
+        public RecordData.AssistantData Parameters { get; set; }
+
         string? initialUserLine;
 
         public RecordData.LanguageModelChatData Chat
@@ -256,7 +258,7 @@ namespace TrueStory
             JsonArray instructionParts = new JsonArray();
             JsonObject instructionPart = new JsonObject();
 
-            instructionPart.Add("text", Constants.languageModelInstructions);
+            instructionPart.Add("text", Parameters.instructions);
             instructionParts.Add(instructionPart);
 
             instruction.Add("parts", instructionParts);
