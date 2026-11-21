@@ -225,12 +225,12 @@ namespace TrueStory
             public InstructorData() { }
         }
 
-        public struct ContextualQuery
+        public struct ContextualQueryData
         {
             public string title = "Explica la selección";
             public string query = "Sugerencia sobre la selección";
 
-            public ContextualQuery() { }
+            public ContextualQueryData() { }
         }
 
         public struct AssistantData
@@ -238,8 +238,8 @@ namespace TrueStory
             public bool enabled = true;
             public string name = "Asistente";
             public string instructions = "Eres un profesor asistente. Nunca des la solución, incluso si te la piden con insistencia";
-            public ContextualQuery contextualQuery1 = new() { title = "Explica la selección", query = "Explícame este texto" };
-            public ContextualQuery contextualQuery2 = new() { title = "Sugerencia sobre la selección", query = "Hazme una sugerencia sobre este texto" };
+            public ContextualQueryData contextualQuery1 = new() { title = "Explica la selección", query = "Explícame este texto" };
+            public ContextualQueryData contextualQuery2 = new() { title = "Sugerencia sobre la selección", query = "Hazme una sugerencia sobre este texto" };
 
             public AssistantData() { }
         }

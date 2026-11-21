@@ -1186,13 +1186,71 @@ namespace ActivityDesigner
 
         }
 
+        private void OnAssistantParamsProfileLoad(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new();
+
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
+            dialog.Filter = "assistant param files (*." + Constants.questionChancesProfileExtension + ")|*." + Constants.questionChancesProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                Profiles.AssistantParams? profile = Profiles.LoadAssistantParams(path);
+
+                if (profile != null)
+                {
+                    data.assistant.name = profile.Name;
+                    data.assistant.instructions = profile.Instructions;
+                    data.assistant.contextualQuery1 = profile.ContextualQuery1;
+                    data.assistant.contextualQuery2 = profile.ContextualQuery2;
+
+                    UpdateView();
+                    needsSave = true;
+
+                }
+                else
+                {
+                    MessageBox.Show("No se han podido cargar las probabilidades del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+            }
+
+        }
+
+        private void OnAssistantParamsProfileSave(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new();
+
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
+            dialog.Filter = "assistant params files (*." + Constants.assistantParamsProfileExtension + ")|*." + Constants.assistantParamsProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+                Profiles.AssistantParams profile = new();
+                profile.Name = data.assistant.name;
+                profile.Instructions = data.assistant.instructions;
+                profile.ContextualQuery1 = data.assistant.contextualQuery1;
+                profile.ContextualQuery2 = data.assistant.contextualQuery2;
+                Profiles.SaveAssistantParams(profile, path);
+            }
+
+        }
+
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
                 "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + AppInfo.AppAuthor + ".",
                 "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
 
     }
 }

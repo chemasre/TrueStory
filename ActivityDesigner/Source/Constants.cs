@@ -19,6 +19,8 @@
         public const string questionChancesProfileExtension = "questionchances";
         public const string extensionSettingsExtension = "extensionsettings";
 
+        public const string assistantParamsProfileExtension = "assistantparams";
+
 
     }
 }

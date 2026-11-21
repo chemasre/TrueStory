@@ -4,7 +4,7 @@
     {
         public const int Major = 0;
         public const int Minor = 12;
-        public const int Patch = 1;
+        public const int Patch = 2;
 
         public const string Alias = "Asistente IA configurable";
 

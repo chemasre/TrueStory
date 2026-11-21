@@ -58,6 +58,30 @@ namespace ActivityDesigner
             public InstructorObserveWordSeparators[] WordSeparators { get; set; } = new InstructorObserveWordSeparators[0];
         }
 
+        public class AssistantParams
+        {
+            public string Name { get; set; } = "";
+            public string Instructions { get; set; } = "";
+            public ContextualQueryData ContextualQuery1 { get; set; } = new();
+            public ContextualQueryData ContextualQuery2 { get; set; } = new();
+        }
+
+        public static AssistantParams? LoadAssistantParams(string fileName)
+        {
+            AssistantParams? result;
+            string text = File.ReadAllText(fileName);
+            result = JsonSerializer.Deserialize<AssistantParams>(text);
+
+            return result;
+        }
+
+        public static void SaveAssistantParams(AssistantParams profile, string fileName)
+        {
+            JsonSerializerOptions options = new() { WriteIndented = true };
+            string text = JsonSerializer.Serialize(profile, options);
+            File.WriteAllText(fileName, text, Encoding.UTF8);
+        }
+
         public static QuestionFrequency? LoadQuestionFrequency(string fileName)
         {
             QuestionFrequency? result;
