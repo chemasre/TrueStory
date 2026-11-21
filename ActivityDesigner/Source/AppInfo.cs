@@ -4,7 +4,7 @@
     {
         public const string AppName = "TrueStory Activity Designer";
 
-        public const string AppAuthor = "José Manuel Solís";
+        public const string AppAuthor = "Sinestesia";
 
         public static string GetFullName()
         {

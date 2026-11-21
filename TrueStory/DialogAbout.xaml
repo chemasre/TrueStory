@@ -89,24 +89,29 @@
                 <TabItem Header="Autor" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
-                            <Paragraph>Mi nombre es
-                                <Bold>José Manuel "Chema" Solís</Bold> y trabajo como profesor de Ciclos Formativos de Desarrollo de Aplicaciones. A lo largo de los años he desarrollado, bajo mi marca
-                                <Bold>Sinestesia</Bold>, herramientas educativas como:
+                            <Paragraph>
+                                Me llamo
+                                <Bold>José Manuel (Chema) Solís</Bold> y trabajo como profesor en Ciclos Formativos. Además de esta herramienta pedagógica, bajo mi marca <Bold>Sinestesia</Bold> he desarrollado también:
                             </Paragraph>
                             <List>
                                 <ListItem>
                                     <Paragraph>
-                                        MiniBoy Color: una consola pedagógica.
+                                        <Bold>MiniBoy Color</Bold>: una consola pedagógica.
                                     </Paragraph>
                                 </ListItem>
                                 <ListItem>
                                     <Paragraph>
-                                        Data Trek: trade conflicts.
+                                        <Bold>Data Trek: trade conflicts</Bold>, que gamifica retos de programación.
                                     </Paragraph>
                                 </ListItem>
                                 <ListItem>
                                     <Paragraph>
-                                        Programabara, un generador de programaciones didácticas.
+                                        <Bold>Programabara</Bold>, un generador de programaciones didácticas.
+                                    </Paragraph>
+                                </ListItem>
+                                <ListItem>
+                                    <Paragraph>
+                                        <Bold>Turtle Sandbox</Bold>, un entorno para enseñar programación a artistas.
                                     </Paragraph>
                                 </ListItem>
                             </List>
