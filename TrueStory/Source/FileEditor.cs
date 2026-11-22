@@ -11,7 +11,7 @@ namespace TrueStory
 
         public TextBox TextBox { get { return textBox; } }
         public bool IsFileLoaded { get { return loaded; } }
-        public string LoadedFilePath { get { return loadedFilePath;  } }
+        public string LoadedFilePath { get { return loadedFilePath; } }
 
         public struct ContentChange
         {
@@ -159,7 +159,7 @@ namespace TrueStory
 
         public void EnlargeText()
         {
-            if(textBox.FontSize + Constants.editorTextSizeStep <= Constants.editorMaxTextSize)
+            if (textBox.FontSize + Constants.editorTextSizeStep <= Constants.editorMaxTextSize)
             {
                 textBox.FontSize += Constants.editorTextSizeStep;
 
@@ -169,7 +169,7 @@ namespace TrueStory
 
         public void ReduceText()
         {
-            if(textBox.FontSize - Constants.editorTextSizeStep >= Constants.editorMinTextSize)
+            if (textBox.FontSize - Constants.editorTextSizeStep >= Constants.editorMinTextSize)
             {
                 textBox.FontSize -= Constants.editorTextSizeStep;
 
@@ -210,7 +210,7 @@ namespace TrueStory
                     lastChangeTime = time;
 
                     Utils.Log("Change Offset:" + c.Offset + " Added: " + c.Added + " Removed: " + c.Removed + " Text: " + c.AddedText);
-                    
+
                     ignoreChanges = true;
                     textBox.SelectedText = "";
                     ignoreChanges = false;
@@ -270,15 +270,15 @@ namespace TrueStory
             DialogFind d = new();
             d.Message.Text = "Texto a buscar";
             d.Input.Text = textBox.SelectionLength > 0 ? textBox.SelectedText : lastSearch;
-            
+
             bool? result = d.ShowDialog();
             string target = d.Input.Text;
 
-            if(result.GetValueOrDefault())
+            if (result.GetValueOrDefault())
             {
                 textBox.Focus();
 
-                if(textBox.CaretIndex < 0 || textBox.CaretIndex >= textBox.Text.Length)
+                if (textBox.CaretIndex < 0 || textBox.CaretIndex >= textBox.Text.Length)
                 {
                     textBox.CaretIndex = 0;
                 }
@@ -287,19 +287,19 @@ namespace TrueStory
                 bool continueSearch;
                 bool restarted = false;
 
-                bool caseSensitive = d.CaseSensitiveCheckBox.IsChecked.GetValueOrDefault(); 
+                bool caseSensitive = d.CaseSensitiveCheckBox.IsChecked.GetValueOrDefault();
 
                 do
                 {
                     searchStart = textBox.CaretIndex;
 
-                    if(textBox.SelectedText == target) { searchStart += textBox.SelectionLength; }
+                    if (textBox.SelectedText == target) { searchStart += textBox.SelectionLength; }
 
                     continueSearch = false;
 
                     string text = textBox.Text.Substring(searchStart);
 
-                    if(!caseSensitive)
+                    if (!caseSensitive)
                     {
                         text = text.ToLower();
                         target = target.ToLower();
@@ -307,7 +307,7 @@ namespace TrueStory
 
                     int foundOffset = text.IndexOf(target);
 
-                    if(foundOffset >= 0)
+                    if (foundOffset >= 0)
                     {
                         int line;
                         line = textBox.GetLineIndexFromCharacterIndex(searchStart + foundOffset);
@@ -318,10 +318,10 @@ namespace TrueStory
                         textBox.SelectionStart = searchStart + foundOffset;
                         textBox.SelectionLength = target.Length;
                     }
-                    else if(!restarted)
+                    else if (!restarted)
                     {
                         MessageBoxResult questionResult = MessageBox.Show("No se ha encontrado el texto ¿quieres buscar otra vez desde el principio?", "Texto no encontrado", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if(questionResult == MessageBoxResult.Yes)
+                        if (questionResult == MessageBoxResult.Yes)
                         {
                             textBox.CaretIndex = 0;
                             continueSearch = true;
@@ -333,7 +333,7 @@ namespace TrueStory
                         MessageBox.Show("El texto no aparece en el documento.", "Texto no encontrado", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
 
-                } while(continueSearch);
+                } while (continueSearch);
 
                 lastSearch = target;
             }
@@ -408,7 +408,7 @@ namespace TrueStory
 
         void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (ignoreChanges) { return;  }
+            if (ignoreChanges) { return; }
 
             //Utils.Log("----------------------------------------------------");
 
@@ -601,15 +601,15 @@ namespace TrueStory
 
         internal void OnShortcutCopy()
         {
-            if(loaded)
+            if (loaded)
             {
-                if (textBox.SelectionLength > 0) { DoCopyOrCut(false);  }
+                if (textBox.SelectionLength > 0) { DoCopyOrCut(false); }
             }
         }
 
         internal void OnShortcutCut()
         {
-            if(loaded)
+            if (loaded)
             {
                 if (textBox.SelectionLength > 0) { DoCopyOrCut(true); }
             }
@@ -617,7 +617,7 @@ namespace TrueStory
 
         internal void OnShortcutPaste()
         {
-            if(loaded)
+            if (loaded)
             {
                 DoPaste();
             }
@@ -625,7 +625,7 @@ namespace TrueStory
 
         internal void OnShortcutFind()
         {
-            if(loaded)
+            if (loaded)
             {
                 DoFind();
             }
@@ -633,7 +633,7 @@ namespace TrueStory
 
         internal void OnShortcutGoto()
         {
-            if(loaded)
+            if (loaded)
             {
                 DoGoto();
             }

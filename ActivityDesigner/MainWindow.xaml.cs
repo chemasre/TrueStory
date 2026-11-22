@@ -1,18 +1,9 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 using TrueStory;
 
 namespace ActivityDesigner
@@ -131,7 +122,7 @@ namespace ActivityDesigner
 
             assistantControls = new()
             {
-                AssistantTab                
+                AssistantTab
             };
 
             savePath = null;
@@ -792,7 +783,7 @@ namespace ActivityDesigner
             foreach (RecordData.InstructorObserveWordSeparators extensionSeparator in extensionSeparators)
             {
                 if (editableExtensions.Contains(extensionSeparator.extension)) { newExtensionSeparators.Add(extensionSeparator); }
-                else { removedExtensions.Add(extensionSeparator.extension);  }
+                else { removedExtensions.Add(extensionSeparator.extension); }
             }
 
             // Create new extension separators
@@ -897,7 +888,7 @@ namespace ActivityDesigner
             foreach (char c in previousChars)
             {
                 if (!newChars.Contains(c)) { newChars.Add(c); }
-                else { removed ++;  }
+                else { removed++; }
             }
 
             textBox.Text = new string(newChars.ToArray());
@@ -1014,7 +1005,7 @@ namespace ActivityDesigner
             OpenFileDialog dialog = new();
 
             dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
-            dialog.Filter = "question templates files (*." + Constants.questionTemplatesProfileExtension+ ")|*." + Constants.questionTemplatesProfileExtension;
+            dialog.Filter = "question templates files (*." + Constants.questionTemplatesProfileExtension + ")|*." + Constants.questionTemplatesProfileExtension;
             dialog.FilterIndex = 1;
 
             bool? result = dialog.ShowDialog();
@@ -1248,8 +1239,8 @@ namespace ActivityDesigner
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
-                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + AppInfo.AppAuthor + ".",
-                "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
+                "Este programa se distribuye de forma gratuita para uso personal y no comercial. Queda prohibida su venta, su redistribución con fines comerciales y su uso en entornos profesionales sin autorización expresa del autor.\n\n" +
+                "© 2026 Sinestesia Game Design.\nTodos los derechos reservados", "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
     }

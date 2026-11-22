@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
-using System.Threading.Tasks;
 
 namespace TrueStory
 {
@@ -39,8 +33,8 @@ namespace TrueStory
             {
                 string text = File.ReadAllText(_file);
                 Data data = JsonSerializer.Deserialize<Data>(text) ?? new();
-                foreach (Tuple<string, int> t in data.IntValues) { intValues.Add(t.Item1, t.Item2);  }
-                foreach (Tuple<string, string> t in data.StringValues) { stringValues.Add(t.Item1, t.Item2);  }
+                foreach (Tuple<string, int> t in data.IntValues) { intValues.Add(t.Item1, t.Item2); }
+                foreach (Tuple<string, string> t in data.StringValues) { stringValues.Add(t.Item1, t.Item2); }
             }
 
             file = _file;
@@ -49,7 +43,7 @@ namespace TrueStory
         public int GetInt(string key, int defaultValue = 0)
         {
             if (intValues.ContainsKey(key)) { return intValues[key]; }
-            else { return defaultValue;  }
+            else { return defaultValue; }
         }
 
         public void SetInt(string key, int value)
@@ -61,7 +55,7 @@ namespace TrueStory
         public string GetString(string key, string defaultValue = "")
         {
             if (stringValues.ContainsKey(key)) { return stringValues[key]; }
-            else { return defaultValue;  }
+            else { return defaultValue; }
         }
 
         public void SetString(string key, string value)
@@ -78,7 +72,7 @@ namespace TrueStory
 
             foreach (KeyValuePair<string, string> kp in stringValues)
             { data.StringValues.Add(new Tuple<string, string>(kp.Key, kp.Value)); }
-            
+
             JsonSerializerOptions options = new() { WriteIndented = true };
             string text = JsonSerializer.Serialize(data, options);
             File.WriteAllText(file, text, Encoding.UTF8);

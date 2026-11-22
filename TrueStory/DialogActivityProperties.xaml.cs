@@ -1,7 +1,5 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.IO;
-using System.Reflection.PortableExecutable;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -173,7 +171,7 @@ namespace TrueStory
         {
             OpenFileDialog dialog = new();
 
-            dialog.Filter = "activity files (*."+ Constants.activitySettingsExtension + ")|*." + Constants.activitySettingsExtension;
+            dialog.Filter = "activity files (*." + Constants.activitySettingsExtension + ")|*." + Constants.activitySettingsExtension;
             dialog.FilterIndex = 1;
 
             bool? result = dialog.ShowDialog();
@@ -186,7 +184,7 @@ namespace TrueStory
 
         private void DontUseActivityFileRadio_Checked(object sender, RoutedEventArgs e)
         {
-            if (disableUIEvents) { return;  }
+            if (disableUIEvents) { return; }
 
             UpdateUI();
         }

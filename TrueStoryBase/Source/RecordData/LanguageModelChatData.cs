@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TrueStory
+﻿namespace TrueStory
 {
-    public partial class  RecordData
+    public partial class RecordData
     {
         public struct LanguageModelChatLineData
         {

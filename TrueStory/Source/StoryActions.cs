@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Xml.Linq;
-using static TrueStory.Story;
 
 namespace TrueStory
 {

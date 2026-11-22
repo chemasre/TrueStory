@@ -11,7 +11,7 @@
 
         public static string GetVersion(bool includeAlias = true)
         {
-            return "v" + Version.Major + "." + Version.Minor + "." + Version.Patch + (includeAlias ? " [" + Version.Alias + "]" :"");
+            return "v" + Version.Major + "." + Version.Minor + "." + Version.Patch + (includeAlias ? " [" + Version.Alias + "]" : "");
         }
 
     }

@@ -2,10 +2,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
 
 
 namespace TrueStory
@@ -23,9 +23,9 @@ namespace TrueStory
         public CommandConsole CommandConsole { get { return commandConsole; } }
         public Instructor Instructor { get { return instructor; } }
         public Story? Story { get { return story; } }
-        public Settings Settings { get { return settings;  } }
+        public Settings Settings { get { return settings; } }
 
-        public static Log Log { get { return log;  } }
+        public static Log Log { get { return log; } }
 
         Story? story;
         StoryActions? storyActions;
@@ -158,8 +158,8 @@ namespace TrueStory
 
         private void OnClosing(object? sender, CancelEventArgs e)
         {
-            if (story == null) { return;  }
-            if (uiState == UIState.Question) { e.Cancel = true; return;  }
+            if (story == null) { return; }
+            if (uiState == UIState.Question) { e.Cancel = true; return; }
 
             CheckFileNeedsSave();
 
@@ -215,7 +215,7 @@ namespace TrueStory
 
         private void OnShortcutSaveFile(object sender, ExecutedRoutedEventArgs e)
         {
-            if(FileMenu.IsEnabled && SaveFileMenuAction.IsEnabled)
+            if (FileMenu.IsEnabled && SaveFileMenuAction.IsEnabled)
             {
                 OnMenuSaveFile(sender, e);
             }
@@ -242,7 +242,7 @@ namespace TrueStory
 
         void SetUIState(UIState _uiState)
         {
-            if(story != null)
+            if (story != null)
             {
                 ToolsMenu.Visibility = story.Header.assistant.enabled ? Visibility.Visible : Visibility.Collapsed;
             }
@@ -412,10 +412,10 @@ namespace TrueStory
         {
             DialogActivityProperties dialog = new();
 
-            bool ? result = dialog.ShowDialog();
+            bool? result = dialog.ShowDialog();
 
 
-            if(result.GetValueOrDefault())
+            if (result.GetValueOrDefault())
             {
                 story = new Story(dialog.ActivityFolderText.Text.Trim(), Story.Mode.Create, dialog.NewHeader);
                 storyActions = new StoryActions(story, this);
@@ -473,7 +473,7 @@ namespace TrueStory
         void OnMenuCloseActivity(object sender, RoutedEventArgs e)
         {
             Debug.Assert(story != null);
-            
+
             CheckFileNeedsSave();
 
             FileEditor.Unload();
@@ -502,14 +502,14 @@ namespace TrueStory
 
         void UpdateFileTitle()
         {
-            if (story != null && loadedFile != null) { FileEditorTitleLabel.Content = (loadedFileNeedsSave ? "[*]":"") + loadedFile + ""; }
+            if (story != null && loadedFile != null) { FileEditorTitleLabel.Content = (loadedFileNeedsSave ? "[*]" : "") + loadedFile + ""; }
             else { FileEditorTitleLabel.Content = "Editor de ficheros"; }
 
         }
 
         void UpdateWindowTitle()
         {
-            if (story != null) { Title = story.Header.title + " - " + story.Header.student;  }
+            if (story != null) { Title = story.Header.title + " - " + story.Header.student; }
             else { Title = AppInfo.GetFullName(); }
 
         }
@@ -534,7 +534,7 @@ namespace TrueStory
 
             bool? result = dialog.ShowDialog();
 
-            if(result.HasValue && result.Value)
+            if (result.HasValue && result.Value)
             {
                 string name = dialog.Input.Text;
 
@@ -542,7 +542,7 @@ namespace TrueStory
                 {
                     MessageBox.Show("El nombre de la carpeta no puede estar vacío o contener carácteres especiales", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
-                else if(Directory.Exists(story.RootPath + Path.DirectorySeparatorChar + name))
+                else if (Directory.Exists(story.RootPath + Path.DirectorySeparatorChar + name))
                 {
                     MessageBox.Show("Ya existe una carpeta con ese nombre", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
@@ -599,16 +599,16 @@ namespace TrueStory
 
             bool validSelection = true;
 
-            if(FolderViewList.SelectedIndex < 0)
+            if (FolderViewList.SelectedIndex < 0)
             {
                 validSelection = false;
             }
-            else if(FolderViewList.SelectedItem as string == Constants.parentFolderName)
+            else if (FolderViewList.SelectedItem as string == Constants.parentFolderName)
             {
                 validSelection = false;
             }
 
-            if(!validSelection)
+            if (!validSelection)
             {
                 MessageBox.Show("Selecciona primero el fichero o carpeta que quieres eliminar", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
@@ -622,7 +622,7 @@ namespace TrueStory
 
                 MessageBoxResult result;
 
-                if(isDirectory)
+                if (isDirectory)
                 {
                     result = MessageBox.Show("Vas a eliminar la carpeta '" + name + "' estás seguro/a?", "Confirmar eliminación", MessageBoxButton.YesNo);
                 }
@@ -634,7 +634,7 @@ namespace TrueStory
                 if (result == MessageBoxResult.Yes)
                 {
                     if (isDirectory) { story.AddDeleteDirectory(name); }
-                    else { story.AddDeleteFile(name);  }
+                    else { story.AddDeleteFile(name); }
 
                     folderView.Update();
                 }
@@ -685,7 +685,7 @@ namespace TrueStory
 
                     bool saveConfirmed = true;
 
-                    if(loadedFileNeedsSave)
+                    if (loadedFileNeedsSave)
                     {
                         result = MessageBox.Show("Debes guardar el fichero '" + loadedFile + "' antes de renombrarlo", "Confirmar guardado", MessageBoxButton.OKCancel);
 
@@ -800,7 +800,7 @@ namespace TrueStory
             story.AddSaveFile(item, FileEditorTextBox.Text, loadedFileChanges.ToArray());
             loadedFileChanges.Clear();
 
-            if(loadedFileNeedsSave)
+            if (loadedFileNeedsSave)
             {
                 loadedFileNeedsSave = false;
 
@@ -818,7 +818,7 @@ namespace TrueStory
 
         private void OnMenuDarkModeChecked(object sender, RoutedEventArgs e)
         {
-            if (ignoreUIevents) { return;  }
+            if (ignoreUIevents) { return; }
 
             themes.DarkMode = true;
         }

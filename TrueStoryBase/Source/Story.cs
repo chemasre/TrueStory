@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Xml.Linq;
 
 namespace TrueStory
 {
@@ -103,7 +102,7 @@ namespace TrueStory
 
         public const string StoryFilename = ".truestory";
 
-        public string RootPath { get { return rootPath;  } }
+        public string RootPath { get { return rootPath; } }
 
         public long TotalRecords
         {
@@ -125,7 +124,7 @@ namespace TrueStory
             }
         }
 
-        public ref readonly RecordData.NewHeaderData Header { get { return ref header;  } }
+        public ref readonly RecordData.NewHeaderData Header { get { return ref header; } }
 
         FileStream file;
         string rootPath;
@@ -300,7 +299,7 @@ namespace TrueStory
 
             record.data.CopyTo(buffer, offset);
             offset += record.data.Length;
-            
+
             // Data length and type is added again to make
             // it easier to read the contents backwards
 
@@ -707,7 +706,7 @@ namespace TrueStory
 
             RecordData.LanguageModelChatData chatData = OnAddedLanguageModelChat?.Invoke(initialQuestion) ?? new RecordData.LanguageModelChatData();
 
-            if(chatData.lines.Length > 0)
+            if (chatData.lines.Length > 0)
             {
                 Record record = new();
 
@@ -717,7 +716,7 @@ namespace TrueStory
 
                 buffer.WriteInt(chatData.lines.Length);
 
-                foreach(RecordData.LanguageModelChatLineData line in chatData.lines)
+                foreach (RecordData.LanguageModelChatLineData line in chatData.lines)
                 {
                     buffer.WriteByte((byte)(line.isUser ? 1 : 0));
                     buffer.WriteString(line.text);

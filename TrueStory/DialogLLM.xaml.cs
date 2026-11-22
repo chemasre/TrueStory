@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.IO;
+﻿using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
+using System.Text;
 using System.Text.Json.Nodes;
+using System.Windows;
+using System.Windows.Input;
 
 namespace TrueStory
 {
@@ -34,13 +22,13 @@ namespace TrueStory
 
         public string ApiKey
         {
-            get { return apiKey; } 
+            get { return apiKey; }
             set { apiKey = value; UpdateKeyText(apiKey); }
         }
 
         public string ApiURL
         {
-            get { return apiURL; } 
+            get { return apiURL; }
             set { apiURL = value; UpdateURLText(apiURL); }
         }
 
@@ -61,11 +49,11 @@ namespace TrueStory
 
                 List<RecordData.LanguageModelChatLineData> lines = new();
 
-                foreach(ChatLine line in chatHistory)
+                foreach (ChatLine line in chatHistory)
                 {
-                    if(!line.isError)
+                    if (!line.isError)
                     {
-                        lines.Add(new() { isUser = line.isUser, text = line.text});
+                        lines.Add(new() { isUser = line.isUser, text = line.text });
                     }
                 }
 
@@ -102,7 +90,7 @@ namespace TrueStory
         {
             bool isControlPressed = ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control);
 
-            if(e.Key == Key.Return && !isControlPressed)
+            if (e.Key == Key.Return && !isControlPressed)
             {
                 int previousCaret = InputText.CaretIndex;
 
@@ -111,11 +99,11 @@ namespace TrueStory
 
                 e.Handled = true;
             }
-            else if(e.Key == Key.Return && isControlPressed)
+            else if (e.Key == Key.Return && isControlPressed)
             {
                 bool canSend = CheckCanSend();
 
-                if(canSend)
+                if (canSend)
                 {
                     LockUI();
                     await SendLine(InputText.Text);
@@ -144,12 +132,12 @@ namespace TrueStory
         {
             bool result = true;
 
-            if(apiKey.Trim().Length == 0)
+            if (apiKey.Trim().Length == 0)
             {
                 MessageBox.Show("Tienes que definir una clave de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 result = false;
             }
-            else if(apiURL.Trim().Length == 0)
+            else if (apiURL.Trim().Length == 0)
             {
                 MessageBox.Show("Tienes que definir una URL de API Gemini para hacer consultas", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 result = false;
@@ -171,7 +159,7 @@ namespace TrueStory
 
             do
             {
-                if(retries > 0)
+                if (retries > 0)
                 {
                     int seconds = (int)Math.Pow(Constants.languageModelBaseWait, retries);
                     StatusLabel.Content = "<esperando " + seconds + " segundos (reintento " + retries + " de " + Constants.languageModelMaxRetries + ")>";
@@ -184,15 +172,15 @@ namespace TrueStory
 
                 ChatLine lineOutput = await SendHistory(chatHistory, apiKey);
 
-                if(!lineOutput.isError)
+                if (!lineOutput.isError)
                 {
                     chatHistory.Add(lineOutput);
 
                     builder.Clear();
 
-                    foreach(ChatLine line in chatHistory)
+                    foreach (ChatLine line in chatHistory)
                     {
-                        builder.Append((line.isUser ? "User: " : "Model: ") + line.text);
+                        builder.Append((line.isUser ? "Estudiante: " : Parameters.name + ": ") + line.text);
                         builder.AppendLine();
                         builder.AppendLine();
                     }
@@ -211,13 +199,13 @@ namespace TrueStory
 
                     errorText = lineOutput.errorText;
 
-                    retries ++;
+                    retries++;
                     success = false;
-                            
-                }
-            } while(!success && retries < Constants.languageModelMaxRetries); 
 
-            if(!success)
+                }
+            } while (!success && retries < Constants.languageModelMaxRetries);
+
+            if (!success)
             {
                 MessageBox.Show("No se ha podido enviar la consulta. Error: " + errorText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -233,9 +221,9 @@ namespace TrueStory
             JsonObject root = new JsonObject();
             JsonArray contents = new JsonArray();
 
-            List<ChatLine> validLines = chatHistory.FindAll(l  => !l.isError);
+            List<ChatLine> validLines = chatHistory.FindAll(l => !l.isError);
 
-            foreach(ChatLine line in validLines)
+            foreach (ChatLine line in validLines)
             {
                 JsonObject lineObject = new JsonObject();
                 lineObject.Add("role", line.isUser ? "user" : "model");
@@ -272,7 +260,7 @@ namespace TrueStory
 
             using var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post, apiURL);
-            request.Headers.Add("x-goog-api-key",apiKey);
+            request.Headers.Add("x-goog-api-key", apiKey);
             request.Content = new StringContent(query, Encoding.UTF8, "application/json");
 
             client.Timeout = new TimeSpan(0, 0, 200);
@@ -296,14 +284,14 @@ namespace TrueStory
                     builder.Clear();
 
                     JsonNode? parts = node?["candidates"]?[0]?["content"]?["parts"];
-                    if(parts?.GetType() == typeof(JsonArray))
+                    if (parts?.GetType() == typeof(JsonArray))
                     {
                         JsonArray partsArray = parts.AsArray();
-                        for(int i = 0; i < partsArray.Count; i ++)
+                        for (int i = 0; i < partsArray.Count; i++)
                         { builder.Append(partsArray[i]?["text"]?.ToString() ?? ""); }
                     }
-                    answerText = builder.ToString().Replace("\n","\r\n");
-                    
+                    answerText = builder.ToString().Replace("\n", "\r\n");
+
                     File.WriteAllText("Answer.txt", responseText);
 
                     requestSuccess = true;
@@ -316,13 +304,13 @@ namespace TrueStory
                 }
 
             }
-            catch(HttpRequestException httpException)
+            catch (HttpRequestException httpException)
             {
                 isError = true;
                 errorText = httpException.HttpRequestError.ToString();
                 requestSuccess = false;
             }
-            catch(TaskCanceledException taskCancelledException)
+            catch (TaskCanceledException taskCancelledException)
             {
                 isError = true;
                 errorText = taskCancelledException.Message.ToString();
@@ -337,13 +325,13 @@ namespace TrueStory
 
         async private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if(initialUserLine != null)
+            if (initialUserLine != null)
             {
                 InputText.Text = initialUserLine;
 
                 bool canSend = CheckCanSend();
 
-                if(canSend)
+                if (canSend)
                 {
                     LockUI();
                     await SendLine(initialUserLine);
@@ -361,15 +349,15 @@ namespace TrueStory
             d.Title = "Introducir clave de API";
             d.Message.Text = "Introduce la clave de API Gemini que quieras utilizar para las consultas.";
             d.Input.Text = apiKey;
-            
+
             bool? r = d.ShowDialog();
 
-            if(r.GetValueOrDefault())
+            if (r.GetValueOrDefault())
             {
                 apiKey = d.Input.Text.Trim();
                 UpdateKeyText(apiKey);
             }
-                
+
         }
 
 
@@ -380,10 +368,10 @@ namespace TrueStory
             d.Title = "Introducir URL de API";
             d.Message.Text = "Introduce la URL de API Gemini que quieras utilizar para las consultas.";
             d.Input.Text = apiURL;
-            
+
             bool? r = d.ShowDialog();
 
-            if(r.GetValueOrDefault())
+            if (r.GetValueOrDefault())
             {
                 apiURL = d.Input.Text.Trim();
                 UpdateURLText(apiURL);
@@ -393,11 +381,11 @@ namespace TrueStory
 
         void UpdateKeyText(string key)
         {
-            if(key.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin clave> "; }
+            if (key.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin clave> "; }
             else
             {
                 string asterisks = "";
-                for(int i = 0; i < key.Length; i ++)
+                for (int i = 0; i < key.Length; i++)
                 {
                     asterisks = asterisks + (key.Length - i < 4 ? key[i] : "*");
                 }
@@ -409,7 +397,7 @@ namespace TrueStory
 
         void UpdateURLText(string url)
         {
-            if(url.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin url> "; }
+            if (url.Trim().Length <= 0) { ApiKeyInputText.Text = "<sin url> "; }
             else
             {
                 URLInputText.Text = url.Trim();

@@ -45,8 +45,8 @@ namespace StoryPlayer
                     }
 
                     table.BorderBrush = new SolidColorBrush(Colors.LightGray);
-                    table.Foreground= (Brush)App.Current.Resources["StoryPlayerEditableText"];
-                    table.Background= (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"];;
+                    table.Foreground = (Brush)App.Current.Resources["StoryPlayerEditableText"];
+                    table.Background = (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"]; ;
                     table.BorderThickness = new Thickness(1);
                     table.Padding = new Thickness(5);
 
@@ -63,8 +63,8 @@ namespace StoryPlayer
                     p.TextAlignment = TextAlignment.Center;
                     p.FontSize *= 1.2f;
                     p.Margin = new Thickness(0);
-                    p.Foreground= (Brush)App.Current.Resources["StoryPlayerEditableText"];;
-                    p.Background= (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"];;
+                    p.Foreground = (Brush)App.Current.Resources["StoryPlayerEditableText"]; ;
+                    p.Background = (Brush)App.Current.Resources["StoryPlayerEditableTextBackground"]; ;
 
                     doc.Blocks.Add(p);
                 }

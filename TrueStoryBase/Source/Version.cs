@@ -10,7 +10,7 @@
 
         public static string GetVersion(bool includeAlias = true)
         {
-            return "v" + Major + "." + Minor + "." + Patch + (includeAlias ? " [" + Alias + "]" :"");
+            return "v" + Major + "." + Minor + "." + Patch + (includeAlias ? " [" + Alias + "]" : "");
         }
 
     }

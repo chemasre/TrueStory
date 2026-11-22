@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using TrueStory;
 using static TrueStory.RecordData;
-using static TrueStory.Settings;
 
 namespace ActivityDesigner
 {
@@ -110,7 +105,7 @@ namespace ActivityDesigner
 
         public static void SaveQuestionTemplates(QuestionTemplates profile, string fileName)
         {
-            JsonSerializerOptions options = new() { WriteIndented = true, IncludeFields = true  };
+            JsonSerializerOptions options = new() { WriteIndented = true, IncludeFields = true };
             string text = JsonSerializer.Serialize(profile, options);
             File.WriteAllText(fileName, text, Encoding.UTF8);
         }

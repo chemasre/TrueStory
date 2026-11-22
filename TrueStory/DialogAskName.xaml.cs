@@ -18,7 +18,7 @@ namespace TrueStory
 
         private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == Key.Return)
+            if (e.Key == Key.Return)
             {
                 DialogResult = true;
                 Close();
@@ -46,7 +46,7 @@ namespace TrueStory
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(!DialogResult.HasValue) { DialogResult = false; }
+            if (!DialogResult.HasValue) { DialogResult = false; }
         }
     }
 }

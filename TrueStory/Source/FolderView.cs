@@ -60,7 +60,7 @@ namespace TrueStory
 
         void OnListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ignoreEvents) { return;  }
+            if (ignoreEvents) { return; }
 
             if (listBox.SelectedIndex < 0)
             {

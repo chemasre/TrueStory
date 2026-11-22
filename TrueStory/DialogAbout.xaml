@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
-        mc:Ignorable="d" Width="640" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de " Background="{DynamicResource TrueEditorBackground}" FontFamily="{DynamicResource TrueStoryFont}" FontSize="{DynamicResource TrueStoryFontSize}">
+        mc:Ignorable="d" Width="640" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Title="Acerca de " Background="{DynamicResource TrueEditorWindowBackground}" FontFamily="{DynamicResource TrueStoryFont}" FontSize="{DynamicResource TrueStoryFontSize}">
     <Window.Resources>
 
     </Window.Resources>
@@ -75,23 +75,22 @@
                 <TabItem Header="Licencia" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
-                            <Paragraph TextAlignment="Left" Margin="0,0,0,10" FontStyle="Normal">
-                                El ejecutable de esta aplicación y su código están bajo licencia Creative Commons <Hyperlink NavigateUri="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</Hyperlink> , lo que significa que puedes utilizarlos para uso no comercial y distribuirlos sin modificaciones, siempre y cuando me acredites como autor.
-                            </Paragraph>
                             <Paragraph TextAlignment="Center" Margin="0,20,0,0">
                                 <InlineUIContainer>
-                                    <Image Source="/AboutLicense.png" Width="100" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <Image Source="/AboutLicense.png" Width="200" Margin="10,0,10,10" RenderOptions.BitmapScalingMode="HighQuality"/>
                                 </InlineUIContainer>
                             </Paragraph>
+                            <Paragraph TextAlignment="Justify" >Este programa se distribuye de forma gratuita para uso personal y no comercial. Queda prohibida su venta, su redistribución con fines comerciales y su uso en entornos profesionales sin autorización expresa del autor.</Paragraph>
+                            <Paragraph TextAlignment="Center" >© 2026 Sinestesia Game Design. Todos los derechos reservados.</Paragraph>
+
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Autor" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Otras herramientas" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>
-                                Me llamo
-                                <Bold>José Manuel (Chema) Solís</Bold> y trabajo como profesor en Ciclos Formativos. Además de esta herramienta pedagógica, bajo mi marca <Bold>Sinestesia</Bold> he desarrollado también:
+                                Otras herramientas pedagógicas que he desarrollado:
                             </Paragraph>
                             <List>
                                 <ListItem>
@@ -121,7 +120,7 @@
             </TabControl>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}" />
         </DockPanel>
     </DockPanel>
 </Window>

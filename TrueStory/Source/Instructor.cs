@@ -137,12 +137,12 @@ namespace TrueStory
                 commandsCounter = value.commandsCounter;
                 questionCommandsWait = value.commandsWait > 0 ? value.commandsWait : randCommandsWait;
                 opensCounter = value.opensCounter;
-                questionOpensWait = value.opensWait > 0 ? value.opensWait: randOpensWait;
+                questionOpensWait = value.opensWait > 0 ? value.opensWait : randOpensWait;
                 savesCounter = value.savesCounter;
-                questionSavesWait = value.savesWait > 0 ? value.savesWait: randSavesWait;
+                questionSavesWait = value.savesWait > 0 ? value.savesWait : randSavesWait;
             }
         }
-        
+
 
         public Instructor(MainWindow _window)
         {
@@ -270,9 +270,9 @@ namespace TrueStory
 
         void OnTimerTick(object? sender, EventArgs e)
         {
-            if (!fileEditor.IsFileLoaded) { return;  }
-            if (story == null) { return;  }
-            if(!story.Header.instructor.enabled) { return; }
+            if (!fileEditor.IsFileLoaded) { return; }
+            if (story == null) { return; }
+            if (!story.Header.instructor.enabled) { return; }
 
             ref readonly RecordData.InstructorWaitData wait = ref story.Header.instructor.wait;
             ref readonly RecordData.InstructorObserveData observe = ref story.Header.instructor.observe;
@@ -280,8 +280,8 @@ namespace TrueStory
 
             Utils.ClearLog();
             Utils.Log("Instructor      : " + state);
-            Utils.Log("Idle timer      : " + idleTimer + "/" + idleWait );
-            Utils.Log("Fetch timer     : " + fetchTimer + "/" + fetchWait );
+            Utils.Log("Idle timer      : " + idleTimer + "/" + idleWait);
+            Utils.Log("Fetch timer     : " + fetchTimer + "/" + fetchWait);
             Utils.Log("Warning timer   : " + warningTimer + "/" + Constants.questionWarningTime);
             Utils.Log("Characters wait : " + inputCharactersCounter + "/" + questionCharactersWait);
             Utils.Log("Commands wait   : " + commandsCounter + "/" + questionCommandsWait);
@@ -318,7 +318,7 @@ namespace TrueStory
                     fetchTimer = 0;
 
                     questionCandidates.Clear();
-                    
+
 
                     //instructorTextBox.Text = "Observando";
                     //instructorTextBox.Background = new SolidColorBrush(Colors.Orange);
@@ -341,7 +341,7 @@ namespace TrueStory
 
                 if (fetchTimer > fetchWait)
                 {
-                    if(questionCandidates.Count > 0)
+                    if (questionCandidates.Count > 0)
                     {
                         //Utils.Log("Choosing question between " + questionCandidates.Count + " candidates");
 
@@ -526,9 +526,9 @@ namespace TrueStory
         void OnFileEditorContentsChanged(FileEditor.ContentChange c)
         {
             if (story == null) { return; }
-            if(!story.Header.instructor.enabled) { return; }
+            if (!story.Header.instructor.enabled) { return; }
 
-            if(c.Added > 0)
+            if (c.Added > 0)
             {
                 string? extension = Utils.GetExtension(fileEditor.LoadedFilePath)?.ToLower();
                 Debug.Assert(extension != null);
@@ -551,7 +551,7 @@ namespace TrueStory
         void OnCommandConsoleExecutedCommand(string command, string _)
         {
             if (story == null) { return; }
-            if(!story.Header.instructor.enabled) { return; }
+            if (!story.Header.instructor.enabled) { return; }
 
             commandsCounter++;
 

@@ -2,7 +2,7 @@
 {
     public class AppInfo
     {
-        public const string AppName = "TrueStory Activity Designer";
+        public const string AppName = "TrueEditor Activity Designer";
 
         public const string AppAuthor = "Sinestesia";
 

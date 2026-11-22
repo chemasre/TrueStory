@@ -1,8 +1,6 @@
-﻿using System.Reflection.PortableExecutable;
-
-namespace TrueStory
+﻿namespace TrueStory
 {
-    public partial class  RecordData
+    public partial class RecordData
     {
 
         // Common
@@ -63,8 +61,8 @@ namespace TrueStory
 
         public struct InstructorObserveWordSeparators
         {
-            public string extension = "txt" ;
-            public char[] separators = new char[] {'.',',','-','(',')','\'' };
+            public string extension = "txt";
+            public char[] separators = new char[] { '.', ',', '-', '(', ')', '\'' };
 
             public InstructorObserveWordSeparators() { }
         }
@@ -264,7 +262,7 @@ namespace TrueStory
             };
 
             public bool commandConsoleEnabled = true;
-            
+
             public InstructorData instructor = new();
 
             public AssistantData assistant = new();
@@ -284,10 +282,10 @@ namespace TrueStory
             buffer.WriteString(r.guid);
             buffer.WriteInt(r.editableExtensions.Length);
             foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
-            
+
             buffer.WriteInt(r.commandConsoleEnabled ? 1 : 0);
             buffer.WriteInt(r.instructor.enabled ? 1 : 0);
-            
+
             buffer.WriteInt(r.instructor.wait.time.min);
             buffer.WriteInt(r.instructor.wait.time.max);
             buffer.WriteInt(r.instructor.wait.characters.min);
@@ -354,7 +352,7 @@ namespace TrueStory
             result.guid = buffer.ReadString();
             int extensionsCount = buffer.ReadInt();
             result.editableExtensions = new string[extensionsCount];
-            for(int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
+            for (int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
 
             result.commandConsoleEnabled = (buffer.ReadInt() != 0);
             result.instructor.enabled = (buffer.ReadInt() != 0);
@@ -374,14 +372,14 @@ namespace TrueStory
             result.instructor.observe.time.max = buffer.ReadInt();
             int wordSeparatorsCount = buffer.ReadInt();
             result.instructor.observe.wordSeparators = new InstructorObserveWordSeparators[wordSeparatorsCount];
-            for(int i = 0; i < wordSeparatorsCount; i++)
+            for (int i = 0; i < wordSeparatorsCount; i++)
             {
                 InstructorObserveWordSeparators wordSeparator = new();
                 wordSeparator.extension = buffer.ReadString();
 
                 int separatorsCount = buffer.ReadInt();
                 wordSeparator.separators = new char[separatorsCount];
-                for(int j = 0; j < separatorsCount; j++)
+                for (int j = 0; j < separatorsCount; j++)
                 {
                     wordSeparator.separators[j] = buffer.ReadString()[0];
                 }
@@ -392,7 +390,7 @@ namespace TrueStory
             int templatesCount = buffer.ReadInt();
             result.instructor.ask.templates = new QuestionTemplateData[templatesCount];
 
-            for(int i = 0; i < templatesCount; i++)
+            for (int i = 0; i < templatesCount; i++)
             {
                 QuestionTemplateData template = new();
 
@@ -407,7 +405,7 @@ namespace TrueStory
 
             int chancesCount = buffer.ReadInt();
             result.instructor.ask.chances = new QuestionChanceData[chancesCount];
-            for(int i = 0; i < chancesCount; i++)
+            for (int i = 0; i < chancesCount; i++)
             {
                 QuestionChanceData chance;
 

@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace TrueStory
 {
@@ -29,7 +18,7 @@ namespace TrueStory
 
         private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == Key.Return)
+            if (e.Key == Key.Return)
             {
                 DialogResult = true;
                 Close();
@@ -58,7 +47,7 @@ namespace TrueStory
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(!DialogResult.HasValue) { DialogResult = false; }
+            if (!DialogResult.HasValue) { DialogResult = false; }
         }
     }
 }

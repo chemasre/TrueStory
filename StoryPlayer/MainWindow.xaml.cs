@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using TrueStory;
 using static TrueStory.Story;
@@ -201,7 +200,7 @@ namespace StoryPlayer
 
         void OnHeaderReaded(RecordData.NewHeaderData data)
         {
-            if (ignoreReadEvent) { return;  }
+            if (ignoreReadEvent) { return; }
 
             BlockInfoLabel.Content = GetCursorText() + " Creada actividad por " + data.student + " con título " + data.title;
 
@@ -654,8 +653,8 @@ namespace StoryPlayer
                 }
 
                 // Read a block
-                
-                if(!stepDone)
+
+                if (!stepDone)
                 {
 
                     record = story.ReadRecord(direction);
@@ -673,7 +672,7 @@ namespace StoryPlayer
                         { stepDone = true; }
                         else if (questionReadStop && record.Value.type == RecordType.Question)
                         { stepDone = true; }
-                        else if(languageModelChatStop && record.Value.type == RecordType.LanguageModelChat)
+                        else if (languageModelChatStop && record.Value.type == RecordType.LanguageModelChat)
                         { stepDone = true; }
                         else if (consoleReadStop && record.Value.type == RecordType.ExecuteCommand)
                         { stepDone = true; }
@@ -742,7 +741,7 @@ namespace StoryPlayer
             int pos = list.IndexOf(filename);
             if (pos >= 0)
             { FolderViewList.SelectedIndex = folders.Count + pos; }
-            
+
         }
 
         string ApplyFileChange(string text, RecordData.FileChangeData change, ReadDirection direction)
@@ -765,7 +764,7 @@ namespace StoryPlayer
 
             return result;
         }
-            
+
 
         string GetCursorText()
         {
@@ -855,7 +854,7 @@ namespace StoryPlayer
 
         private void OnClosed(object sender, EventArgs e)
         {
-            if(story != null)
+            if (story != null)
             {
                 story.Dispose();
                 story = null;
@@ -867,8 +866,8 @@ namespace StoryPlayer
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
-                "Aplicación bajo licencia Creative Commons CC BY-NC-ND 4.0." + "\n\n" + "Desarrollada por " + AppInfo.AppAuthor + ".",
-                "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
+                "Este programa se distribuye de forma gratuita para uso personal y no comercial. Queda prohibida su venta, su redistribución con fines comerciales y su uso en entornos profesionales sin autorización expresa del autor.\n\n" +
+                "© 2026 Sinestesia Game Design.\nTodos los derechos reservados", "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

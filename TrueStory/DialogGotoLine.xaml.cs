@@ -8,7 +8,7 @@ namespace TrueStory
     /// </summary>
     public partial class DialogGotoLine : Window
     {
-        public int Line { get { return line;  }  }
+        public int Line { get { return line; } }
         public int MaxLines { get; set; }
 
         int line;
@@ -25,7 +25,7 @@ namespace TrueStory
 
         private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == Key.Return)
+            if (e.Key == Key.Return)
             {
                 line = Int32.Parse(Input.Text) - 1;
 
@@ -66,7 +66,7 @@ namespace TrueStory
             int n;
             if (!Int32.TryParse(Input.Text, out n)) { Input.Text = "1"; }
             else if (n == 0) { Input.Text = "1"; }
-            else if (n > MaxLines) { Input.Text = MaxLines.ToString();  }
+            else if (n > MaxLines) { Input.Text = MaxLines.ToString(); }
         }
 
         private void Input_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -74,10 +74,10 @@ namespace TrueStory
             bool allValid = true;
             foreach (char c in e.Text)
             {
-                if (!validChars.Contains(c)) { allValid = false;  }
+                if (!validChars.Contains(c)) { allValid = false; }
             }
 
-            if(!allValid) { e.Handled = true; }
+            if (!allValid) { e.Handled = true; }
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
         mc:Ignorable="d"
-        Title="Pregunta" Width="670" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Background="{DynamicResource TrueEditorBackground}">
+        Title="Pregunta" Width="670" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Background="{DynamicResource TrueEditorWindowBackground}">
     <DockPanel>
         <RichTextBox x:Name="QuestionDocument" DockPanel.Dock="Top" MinHeight="100" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40" AutoWordSelection="False" Focusable="False" IsHitTestVisible="False" FontFamily="{DynamicResource TrueStoryCodeFont}" Margin="20,20,20,10" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}">
             <FlowDocument/>

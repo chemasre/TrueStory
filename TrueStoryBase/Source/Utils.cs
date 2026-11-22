@@ -75,7 +75,7 @@ namespace TrueStory
 
         public static void ReadAllBytes(Stream stream, byte[] bytes)
         {
-            if (bytes.Length == 0) { return;  }
+            if (bytes.Length == 0) { return; }
 
             int readed = 0;
             int readedTotal = 0;
@@ -85,7 +85,7 @@ namespace TrueStory
                 readed = stream.Read(bytes, readedTotal, bytes.Length - readedTotal);
 
                 if (readed == 0) { throw new InvalidOperationException(); }
-                else { readedTotal += readed;  }
+                else { readedTotal += readed; }
             }
             while (readedTotal < bytes.Length);
 

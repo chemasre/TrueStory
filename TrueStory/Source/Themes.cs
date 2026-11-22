@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace TrueStory
 {
@@ -40,7 +32,8 @@ namespace TrueStory
             "DarkMode_TrueStoryTabItem",
             "DarkMode_TrueStoryTabItemText",
             "DarkMode_TrueStoryTabControlBackground",
-            "DarkMode_TrueStoryEditableText"
+            "DarkMode_TrueStoryEditableText",
+            "DarkMode_TrueEditorWindowBackground"
         };
 
         List<string> lightThemeResources = new()
@@ -61,7 +54,8 @@ namespace TrueStory
             "LightMode_TrueStoryTabItem",
             "LightMode_TrueStoryTabItemText",
             "LightMode_TrueStoryTabControlBackground",
-            "LightMode_TrueStoryEditableText"
+            "LightMode_TrueStoryEditableText",
+            "LightMode_TrueEditorWindowBackground"
         };
 
         List<string> currentThemeResources = new()
@@ -82,7 +76,8 @@ namespace TrueStory
             "TrueStoryTabItem",
             "TrueStoryTabItemText",
             "TrueStoryTabControlBackground",
-            "TrueStoryEditableText"
+            "TrueStoryEditableText",
+            "TrueEditorWindowBackground"
         };
 
         Dictionary<string, Brush> darkThemeBrushes = new();

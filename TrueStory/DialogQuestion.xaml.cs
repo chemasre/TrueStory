@@ -4,7 +4,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace TrueStory
@@ -68,7 +67,7 @@ namespace TrueStory
             if (Question.type == RecordData.QuestionType.input)
             {
 
-                Table table = new ();
+                Table table = new();
                 TableColumn column = new();
                 table.Columns.Add(column);
                 TableRowGroup rowGroup = new();
@@ -97,7 +96,7 @@ namespace TrueStory
 
                 doc.Blocks.Add(table);
             }
-            else if(Question.type == RecordData.QuestionType.command)
+            else if (Question.type == RecordData.QuestionType.command)
             {
                 p = new Paragraph(new Run(Constants.consolePrompt + Question.context.command));
                 p.TextAlignment = TextAlignment.Center;

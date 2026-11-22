@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
-        mc:Ignorable="d" Height="300" Width="559" ResizeMode="NoResize" Title="Nueva actividad" Closing="Window_Closing" WindowStartupLocation="CenterOwner" Background="{DynamicResource TrueEditorBackground}" SizeToContent="Height" FontFamily="{DynamicResource TrueStoryFont}">
+        mc:Ignorable="d" Height="300" Width="559" ResizeMode="NoResize" Title="Nueva actividad" Closing="Window_Closing" WindowStartupLocation="CenterOwner" Background="{DynamicResource TrueEditorWindowBackground}" SizeToContent="Height" FontFamily="{DynamicResource TrueStoryFont}">
     <DockPanel>
         <Grid DockPanel.Dock="Top" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Margin="10,10,10,10">
             <Grid.RowDefinitions>
