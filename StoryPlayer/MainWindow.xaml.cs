@@ -128,41 +128,55 @@ namespace StoryPlayer
             {
                 string path = dialog.FolderName;
 
-                if (Story.ExistsStory(path))
+                if (Story.ExistsStoryFile(path))
                 {
-                    story = new Story(path, Story.Mode.Read);
+                    try
+                    {
+                        story = new Story(path, Story.Mode.Read);
 
-                    story.OnReadedHeader += OnHeaderReaded;
-                    story.OnReadedOpenStory += OnOpenStoryReaded;
-                    story.OnReadedCloseStory += OnCloseStoryReaded;
-                    story.OnReadedCreateFile += OnCreateFileReaded;
-                    story.OnReadedCreateFolder += OnCreateFolderReaded;
-                    story.OnReadedDeleteFile += OnDeleteFileReaded;
-                    story.OnReadedDeleteFolder += OnDeleteFolderReaded;
-                    story.OnReadedExecuteCommand += OnExecuteCommandReaded;
-                    story.OnReadedQuestion += OnQuestionReaded;
-                    story.OnReadedLanguageModelChat += OnLanguageModelChatReaded;
-                    story.OnReadedLoadFile += OnLoadFileReaded;
-                    story.OnReadedSaveFile += OnSaveFileReaded;
-                    story.OnReadedRenameFile += OnRenameFileReaded;
+                        story.OnReadedHeader += OnHeaderReaded;
+                        story.OnReadedOpenStory += OnOpenStoryReaded;
+                        story.OnReadedCloseStory += OnCloseStoryReaded;
+                        story.OnReadedCreateFile += OnCreateFileReaded;
+                        story.OnReadedCreateFolder += OnCreateFolderReaded;
+                        story.OnReadedDeleteFile += OnDeleteFileReaded;
+                        story.OnReadedDeleteFolder += OnDeleteFolderReaded;
+                        story.OnReadedExecuteCommand += OnExecuteCommandReaded;
+                        story.OnReadedQuestion += OnQuestionReaded;
+                        story.OnReadedLanguageModelChat += OnLanguageModelChatReaded;
+                        story.OnReadedLoadFile += OnLoadFileReaded;
+                        story.OnReadedSaveFile += OnSaveFileReaded;
+                        story.OnReadedRenameFile += OnRenameFileReaded;
 
-                    SetState(State.StoryManualPlay);
+                        SetState(State.StoryManualPlay);
 
-                    BlockProgress.Maximum = story.TotalRecords;
-                    BlockProgress.Minimum = 0;
-                    BlockProgress.Value = story.RecordIndex;
+                        BlockProgress.Maximum = story.TotalRecords;
+                        BlockProgress.Minimum = 0;
+                        BlockProgress.Value = story.RecordIndex;
 
-                    ChangesProgress.Visibility = Visibility.Hidden;
+                        ChangesProgress.Visibility = Visibility.Hidden;
 
-                    files.Clear();
-                    folders.Clear();
-                    lastReadDirection = null;
-                    lastReadedIsQuestion = false;
-                    lastReadedIsLanguageModelChat = false;
-                    lastReadedIsFileSave = false;
-                    lastReadedSaveFileData = null;
-                    lastReadedChangeIndex = 0;
-                    ignoreReadEvent = false;
+                        files.Clear();
+                        folders.Clear();
+                        lastReadDirection = null;
+                        lastReadedIsQuestion = false;
+                        lastReadedIsLanguageModelChat = false;
+                        lastReadedIsFileSave = false;
+                        lastReadedSaveFileData = null;
+                        lastReadedChangeIndex = 0;
+                        ignoreReadEvent = false;
+                    }
+                    catch (StorySignatureNotFoundException)
+                    {
+                        MessageBox.Show("La carpeta no contiene una actividad válida.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
+                    catch (WrongStoryVersionException versionException)
+                    {
+                        MessageBox.Show("Esta actividad se creó con una versión incompatible de la aplicación (v" +
+                            versionException.foundMajor + "." +
+                            versionException.foundMinor + "." +
+                            versionException.foundPatch + ")" , "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
 
                 }
                 else

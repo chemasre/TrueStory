@@ -442,25 +442,39 @@ namespace TrueStory
 
             if (result.GetValueOrDefault())
             {
+
                 string path = dialog.FolderName;
 
-                if (Story.ExistsStory(path))
+                if (Story.ExistsStoryFile(path))
                 {
-                    story = new Story(path, Story.Mode.Append);
-                    storyActions = new StoryActions(story, this);
+                    try
+                    {
+                        story = new Story(path, Story.Mode.Append);
+                        storyActions = new StoryActions(story, this);
 
-                    SetUIState(UIState.StoryNoSelection);
+                        SetUIState(UIState.StoryNoSelection);
 
-                    UpdateFileTitle();
-                    UpdateWindowTitle();
-                    UpdateAssistantMenu();
+                        UpdateFileTitle();
+                        UpdateWindowTitle();
+                        UpdateAssistantMenu();
 
-                    commandConsole.Story = story;
-                    folderView.Story = story;
-                    instructor.Story = story;
+                        commandConsole.Story = story;
+                        folderView.Story = story;
+                        instructor.Story = story;
 
-                    story.AddOpenStory();
-
+                        story.AddOpenStory();
+                    }
+                    catch (StorySignatureNotFoundException)
+                    {
+                        MessageBox.Show("La carpeta no contiene una actividad válida.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
+                    catch (WrongStoryVersionException versionException)
+                    {
+                        MessageBox.Show("Esta actividad se creó con una versión incompatible de la aplicación (v" +
+                            versionException.foundMajor + "." +
+                            versionException.foundMinor + "." +
+                            versionException.foundPatch + ")", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
 
                 }
                 else

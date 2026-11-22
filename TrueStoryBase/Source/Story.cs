@@ -4,6 +4,25 @@ using System.Text;
 
 namespace TrueStory
 {
+    public class WrongStoryVersionException : Exception
+    {
+        public int foundMajor;
+        public int foundMinor;
+        public int foundPatch;
+
+        public WrongStoryVersionException(int _foundMajor, int _foundMinor, int _foundPatch)
+        {
+            foundMajor = _foundMajor;
+            foundMinor = _foundMinor;
+            foundPatch = _foundPatch;
+        }
+    }
+
+    public class StorySignatureNotFoundException : Exception
+    {
+        // Nothing to add
+    }
+
     public class Story : IDisposable
     {
         public const string signature = "TSRY";
@@ -131,6 +150,7 @@ namespace TrueStory
         Mode mode;
 
         byte[] signatureBytes;
+        int versionBytesLength;
 
         bool internalCall;
 
@@ -150,6 +170,7 @@ namespace TrueStory
 
             Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
             signatureBytes = encoding.GetBytes(Story.signature);
+            versionBytesLength = sizeof(int) * 3;
 
             internalCall = false;
 
@@ -160,6 +181,7 @@ namespace TrueStory
                 file = new FileStream(filePath, FileMode.CreateNew, FileAccess.ReadWrite);
 
                 AddSignature();
+                AddVersion();
 
                 Debug.Assert(_header != null);
 
@@ -172,37 +194,94 @@ namespace TrueStory
             }
             else if (_mode == Mode.Append)
             {
-                file = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
+                try
+                {
+                    file = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite);
 
-                string foundSignature = ReadSignature();
-                if (signature != foundSignature) { throw new InvalidDataException(); }
+                    string foundSignature = ReadSignature();
+                    if (signature != foundSignature) { throw new StorySignatureNotFoundException(); }
 
-                Record? r = ReadRecord();
+                    int major;
+                    int minor;
+                    int patch;
 
-                if (r == null) { throw new InvalidDataException(); }
+                    ReadVersion(out major, out minor, out patch);
 
-                header = RecordData.DecodeNewHeaderRecord(r.Value);
+                    bool match = (major == Version.Major) && (minor == Version.Minor);
+                    if (!match) { throw new WrongStoryVersionException(major, minor, patch); }
 
-                file.Seek(0, SeekOrigin.End);
+                    Record? r = ReadRecord();
+
+                    Debug.Assert(r != null);
+
+                    header = RecordData.DecodeNewHeaderRecord(r.Value);
+
+                    file.Seek(0, SeekOrigin.End);
+                }
+                catch (StorySignatureNotFoundException e1)
+                {
+                    Debug.Assert(file != null);
+
+                    file.Dispose();
+
+                    throw;
+                }
+                catch (WrongStoryVersionException e2)
+                {
+                    Debug.Assert(file != null);
+
+                    file.Dispose();
+
+                    throw;
+                }
+
 
             }
             else // _mode == Mode.Read
             {
-                file = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                try
+                {
+                    file = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
-                string foundSignature = ReadSignature();
-                if (signature != foundSignature) { throw new InvalidDataException(); }
+                    string foundSignature = ReadSignature();
+                    if (signature != foundSignature) { throw new StorySignatureNotFoundException(); }
 
-                Record? r = ReadRecord();
+                    int major;
+                    int minor;
+                    int patch;
 
-                if (r == null) { throw new InvalidDataException(); }
+                    ReadVersion(out major, out minor, out patch);
 
-                header = RecordData.DecodeNewHeaderRecord(r.Value);
+                    bool match = (major == Version.Major) && (minor == Version.Minor);
+                    if (!match) { throw new WrongStoryVersionException(major, minor, patch); }
 
-                file.Seek(signatureBytes.Length, SeekOrigin.Begin);
+                    Record? r = ReadRecord();
 
-                readRecordIndex = 0;
-                readTotalRecords = CountRecords();
+                    Debug.Assert(r != null);
+
+                    header = RecordData.DecodeNewHeaderRecord(r.Value);
+
+                    file.Seek(signatureBytes.Length + versionBytesLength, SeekOrigin.Begin);
+
+                    readRecordIndex = 0;
+                    readTotalRecords = CountRecords();
+                }
+                catch (StorySignatureNotFoundException)
+                {
+                    Debug.Assert(file != null);
+
+                    file.Dispose();
+
+                    throw;
+                }
+                catch (WrongStoryVersionException)
+                {
+                    Debug.Assert(file != null);
+
+                    file.Dispose();
+
+                    throw;
+                }
 
             }
 
@@ -214,7 +293,7 @@ namespace TrueStory
 
             long previousPosition = file.Position;
 
-            file.Seek(signature.Length, SeekOrigin.Begin);
+            file.Seek(signatureBytes.Length + versionBytesLength, SeekOrigin.Begin);
 
             internalCall = true;
 
@@ -232,6 +311,17 @@ namespace TrueStory
             return count;
         }
 
+        void ReadVersion(out int major, out int minor, out int patch)
+        {
+            byte[] bytes = new byte[sizeof(int)];
+            Utils.ReadAllBytes(file, bytes);
+            major = BitConverter.ToInt32(bytes);
+            Utils.ReadAllBytes(file, bytes);
+            minor = BitConverter.ToInt32(bytes);
+            Utils.ReadAllBytes(file, bytes);
+            patch = BitConverter.ToInt32(bytes);
+        }
+
         string ReadSignature()
         {
             byte[] bytes = new byte[signature.Length];
@@ -240,7 +330,7 @@ namespace TrueStory
             return encoding.GetString(bytes);
         }
 
-        public static bool ExistsStory(string path)
+        public static bool ExistsStoryFile(string path)
         {
             bool result;
 
@@ -273,7 +363,15 @@ namespace TrueStory
         void AddSignature()
         {
             file.Write(signatureBytes);
-            file.Flush();
+            file.Flush(true);
+        }
+
+        void AddVersion()
+        {
+            file.Write(BitConverter.GetBytes(Version.Major));
+            file.Write(BitConverter.GetBytes(Version.Minor));
+            file.Write(BitConverter.GetBytes(Version.Patch));
+            file.Flush(true);
         }
 
         void AddRecord(Record record)
@@ -314,7 +412,7 @@ namespace TrueStory
 
 
             file.Write(buffer);
-            file.Flush();
+            file.Flush(true);
 
         }
 
@@ -325,7 +423,7 @@ namespace TrueStory
 
             Record? result;
 
-            if (direction == ReadDirection.Backwards && file.Position <= signatureBytes.Length)
+            if (direction == ReadDirection.Backwards && file.Position <= signatureBytes.Length + versionBytesLength)
             {
                 // No block before current position
 
@@ -334,7 +432,7 @@ namespace TrueStory
             else if (direction == ReadDirection.Backwards)
             {
 
-                Debug.Assert(file.Position >= signatureBytes.Length + minimumBlockSize, "Story: found too small block reading backwards");
+                Debug.Assert(file.Position >= signatureBytes.Length + versionBytesLength + minimumBlockSize, "Story: found too small block reading backwards");
 
                 Record r = new();
 
@@ -352,7 +450,7 @@ namespace TrueStory
 
                 blockDataLength = BitConverter.ToInt32(bytes);
 
-                Debug.Assert(file.Position >= signatureBytes.Length + blockHeaderSize + blockDataLength, "Story: Block data not found when reading backwards");
+                Debug.Assert(file.Position >= signatureBytes.Length + versionBytesLength + blockHeaderSize + blockDataLength, "Story: Block data not found when reading backwards");
 
                 // Place the file pointer at the beginning of the block data
 
@@ -806,184 +904,184 @@ namespace TrueStory
 
         }
 
-        public void Dump()
-        {
-            long previousPos = file.Position;
+        //public void Dump()
+        //{
+        //    long previousPos = file.Position;
 
-            internalCall = true;
+        //    internalCall = true;
 
-            file.Seek(0, SeekOrigin.Begin);
+        //    file.Seek(0, SeekOrigin.Begin);
 
-            byte[] bytes = new byte[signatureBytes.Length];
-            Utils.ReadAllBytes(file, bytes);
+        //    byte[] bytes = new byte[signatureBytes.Length];
+        //    Utils.ReadAllBytes(file, bytes);
 
-            Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        //    Encoding encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-            string signature = encoding.GetString(bytes);
+        //    string signature = encoding.GetString(bytes);
 
-            Utils.Log("Signature: " + signature);
+        //    Utils.Log("Signature: " + signature);
 
-            int blockCounter = 0;
+        //    int blockCounter = 0;
 
-            Record? record;
-            do
-            {
-                record = ReadRecord();
+        //    Record? record;
+        //    do
+        //    {
+        //        record = ReadRecord();
 
-                if (record.HasValue)
-                {
-                    Utils.Log("Block " + blockCounter + ": type " + record.Value.type + " data size " + record.Value.data.Length);
+        //        if (record.HasValue)
+        //        {
+        //            Utils.Log("Block " + blockCounter + ": type " + record.Value.type + " data size " + record.Value.data.Length);
 
-                    if (record.Value.type == RecordType.Header)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
+        //            if (record.Value.type == RecordType.Header)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
 
-                        string guid = reader.ReadString();
-                        string publicKey = reader.ReadString();
-                        string author = reader.ReadString();
+        //                string guid = reader.ReadString();
+        //                string publicKey = reader.ReadString();
+        //                string author = reader.ReadString();
 
-                        Utils.Log("    GUID       : " + guid);
-                        Utils.Log("    Public key : " + publicKey);
-                        Utils.Log("    Author     : " + author);
-                    }
-                    else if (record.Value.type == RecordType.LoadFile)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
+        //                Utils.Log("    GUID       : " + guid);
+        //                Utils.Log("    Public key : " + publicKey);
+        //                Utils.Log("    Author     : " + author);
+        //            }
+        //            else if (record.Value.type == RecordType.LoadFile)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
 
-                        string fileName = reader.ReadString();
-                        string result = reader.ReadString();
+        //                string fileName = reader.ReadString();
+        //                string result = reader.ReadString();
 
-                        Utils.Log("    File       : " + fileName);
-                        Utils.Log("    Loaded     : " + result.Length + " chars");
+        //                Utils.Log("    File       : " + fileName);
+        //                Utils.Log("    Loaded     : " + result.Length + " chars");
 
-                    }
-                    else if (record.Value.type == RecordType.SaveFile)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
+        //            }
+        //            else if (record.Value.type == RecordType.SaveFile)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
 
-                        string fileName = reader.ReadString();
-                        int changesCount = reader.ReadInt();
+        //                string fileName = reader.ReadString();
+        //                int changesCount = reader.ReadInt();
 
-                        for (int i = 0; i < changesCount; i++)
-                        {
-                            reader.ReadInt();
-                            reader.ReadInt();
-                            reader.ReadString();
-                            reader.ReadInt();
-                            reader.ReadLong();
+        //                for (int i = 0; i < changesCount; i++)
+        //                {
+        //                    reader.ReadInt();
+        //                    reader.ReadInt();
+        //                    reader.ReadString();
+        //                    reader.ReadInt();
+        //                    reader.ReadLong();
 
-                        }
+        //                }
 
-                        string result = reader.ReadString();
+        //                string result = reader.ReadString();
 
-                        Utils.Log("    File       : " + fileName);
-                        Utils.Log("    Changes    : " + changesCount);
-                        Utils.Log("    Saved      : " + result.Length + " chars");
+        //                Utils.Log("    File       : " + fileName);
+        //                Utils.Log("    Changes    : " + changesCount);
+        //                Utils.Log("    Saved      : " + result.Length + " chars");
 
-                    }
-                    else if (record.Value.type == RecordType.CreateFile ||
-                            record.Value.type == RecordType.DeleteFile)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
-                        string fileName = reader.ReadString();
-                        Utils.Log("    File       : " + fileName);
-                    }
-                    else if (record.Value.type == RecordType.CreateDirectory ||
-                             record.Value.type == RecordType.DeleteDirectory)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
-                        string fileName = reader.ReadString();
-                        Utils.Log("    Directory  : " + fileName);
-                    }
-                    else if (record.Value.type == RecordType.RenameFile)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
-                        string oldName = reader.ReadString();
-                        string newName = reader.ReadString();
-                        Utils.Log("    Old name   : " + oldName);
-                        Utils.Log("    New name   : " + newName);
-                    }
-                    else if (record.Value.type == RecordType.ExecuteCommand)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
-                        string command = reader.ReadString();
-                        string result = reader.ReadString();
-                        Utils.Log("    Command    : " + command);
-                        Utils.Log("    Result     : " + result.Length + " chars");
-                    }
-                    else if (record.Value.type == RecordType.CloseStory)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
+        //            }
+        //            else if (record.Value.type == RecordType.CreateFile ||
+        //                    record.Value.type == RecordType.DeleteFile)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
+        //                string fileName = reader.ReadString();
+        //                Utils.Log("    File       : " + fileName);
+        //            }
+        //            else if (record.Value.type == RecordType.CreateDirectory ||
+        //                     record.Value.type == RecordType.DeleteDirectory)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
+        //                string fileName = reader.ReadString();
+        //                Utils.Log("    Directory  : " + fileName);
+        //            }
+        //            else if (record.Value.type == RecordType.RenameFile)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
+        //                string oldName = reader.ReadString();
+        //                string newName = reader.ReadString();
+        //                Utils.Log("    Old name   : " + oldName);
+        //                Utils.Log("    New name   : " + newName);
+        //            }
+        //            else if (record.Value.type == RecordType.ExecuteCommand)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
+        //                string command = reader.ReadString();
+        //                string result = reader.ReadString();
+        //                Utils.Log("    Command    : " + command);
+        //                Utils.Log("    Result     : " + result.Length + " chars");
+        //            }
+        //            else if (record.Value.type == RecordType.CloseStory)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
 
-                        int instructorCharactersCounter = reader.ReadInt();
-                        int instructorCharactersWait = reader.ReadInt();
-                        int instructorCommandsCounter = reader.ReadInt();
-                        int instructorCommandsWait = reader.ReadInt();
-                        int instructorOpensCounter = reader.ReadInt();
-                        int instructorOpensWait = reader.ReadInt();
-                        int instructorSavesCounter = reader.ReadInt();
-                        int instructorSavesWait = reader.ReadInt();
+        //                int instructorCharactersCounter = reader.ReadInt();
+        //                int instructorCharactersWait = reader.ReadInt();
+        //                int instructorCommandsCounter = reader.ReadInt();
+        //                int instructorCommandsWait = reader.ReadInt();
+        //                int instructorOpensCounter = reader.ReadInt();
+        //                int instructorOpensWait = reader.ReadInt();
+        //                int instructorSavesCounter = reader.ReadInt();
+        //                int instructorSavesWait = reader.ReadInt();
 
-                        Utils.Log("    CharsCount : " + instructorCharactersCounter);
-                        Utils.Log("    CharsWait  : " + instructorCharactersWait);
-                        Utils.Log("    CommandCount : " + instructorCommandsCounter);
-                        Utils.Log("    CommandWait  : " + instructorCommandsWait);
-                        Utils.Log("    OpensCount : " + instructorOpensCounter);
-                        Utils.Log("    OpensWait  : " + instructorOpensWait);
-                        Utils.Log("    SavesCount : " + instructorSavesCounter);
-                        Utils.Log("    SavesWait  : " + instructorSavesWait);
+        //                Utils.Log("    CharsCount : " + instructorCharactersCounter);
+        //                Utils.Log("    CharsWait  : " + instructorCharactersWait);
+        //                Utils.Log("    CommandCount : " + instructorCommandsCounter);
+        //                Utils.Log("    CommandWait  : " + instructorCommandsWait);
+        //                Utils.Log("    OpensCount : " + instructorOpensCounter);
+        //                Utils.Log("    OpensWait  : " + instructorOpensWait);
+        //                Utils.Log("    SavesCount : " + instructorSavesCounter);
+        //                Utils.Log("    SavesWait  : " + instructorSavesWait);
 
-                    }
-                    else if (record.Value.type == RecordType.OpenStory)
-                    {
-                        // Nothing
-                    }
-                    else if (record.Value.type == RecordType.Question)
-                    {
-                        BinaryBufferReader reader = new(record.Value.data);
+        //            }
+        //            else if (record.Value.type == RecordType.OpenStory)
+        //            {
+        //                // Nothing
+        //            }
+        //            else if (record.Value.type == RecordType.Question)
+        //            {
+        //                BinaryBufferReader reader = new(record.Value.data);
 
-                        RecordData.QuestionType type = (RecordData.QuestionType)reader.ReadInt();
-                        string text = reader.ReadString();
+        //                RecordData.QuestionType type = (RecordData.QuestionType)reader.ReadInt();
+        //                string text = reader.ReadString();
 
-                        string fileName = reader.ReadString();
+        //                string fileName = reader.ReadString();
 
-                        int linesCount = reader.ReadInt();
-                        for (int i = 0; i < linesCount; i++)
-                        {
-                            reader.ReadInt();
-                            reader.ReadString();
-                        }
+        //                int linesCount = reader.ReadInt();
+        //                for (int i = 0; i < linesCount; i++)
+        //                {
+        //                    reader.ReadInt();
+        //                    reader.ReadString();
+        //                }
 
-                        int currentLine = reader.ReadInt();
-                        string command = reader.ReadString();
+        //                int currentLine = reader.ReadInt();
+        //                string command = reader.ReadString();
 
-                        string answer = reader.ReadString();
-                        int usedTime = reader.ReadInt();
-                        int timeLimit = reader.ReadInt();
+        //                string answer = reader.ReadString();
+        //                int usedTime = reader.ReadInt();
+        //                int timeLimit = reader.ReadInt();
 
-                        Utils.Log("    Type       : " + type);
-                        Utils.Log("    Text       : " + text);
-                        Utils.Log("    CtxFilename: " + fileName);
-                        Utils.Log("    CtxLines   : " + linesCount);
-                        Utils.Log("    CtxCurrentLine : " + currentLine);
-                        Utils.Log("    CtxCommand : " + command);
-                        Utils.Log("    Answer     : " + answer);
-                        Utils.Log("    UsedTime   : " + usedTime);
-                        Utils.Log("    TimeLimit  : " + timeLimit);
+        //                Utils.Log("    Type       : " + type);
+        //                Utils.Log("    Text       : " + text);
+        //                Utils.Log("    CtxFilename: " + fileName);
+        //                Utils.Log("    CtxLines   : " + linesCount);
+        //                Utils.Log("    CtxCurrentLine : " + currentLine);
+        //                Utils.Log("    CtxCommand : " + command);
+        //                Utils.Log("    Answer     : " + answer);
+        //                Utils.Log("    UsedTime   : " + usedTime);
+        //                Utils.Log("    TimeLimit  : " + timeLimit);
 
-                    }
+        //            }
 
 
 
-                    blockCounter++;
-                }
-            }
-            while (record.HasValue);
+        //            blockCounter++;
+        //        }
+        //    }
+        //    while (record.HasValue);
 
-            internalCall = false;
+        //    internalCall = false;
 
-            file.Position = previousPos;
-        }
+        //    file.Position = previousPos;
+        //}
 
         public void Dispose()
         {

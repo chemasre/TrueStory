@@ -90,7 +90,8 @@
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>
-                                Otras herramientas pedagógicas que he desarrollado:
+                                Otras herramientas pedagógicas desarrolladas por
+                                <Bold>Sinestesia</Bold>:
                             </Paragraph>
                             <List>
                                 <ListItem>
@@ -114,6 +115,8 @@
                                     </Paragraph>
                                 </ListItem>
                             </List>
+                            <Paragraph Margin="0,30,0,0" TextAlignment="Left">
+                                Para más información, visita <Bold>https://sinestesiagamedesign.es</Bold></Paragraph>
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>

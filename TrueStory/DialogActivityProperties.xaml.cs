@@ -77,7 +77,7 @@ namespace TrueStory
             {
                 string path = dialog.FolderName;
 
-                if (Story.ExistsStory(path))
+                if (Story.ExistsStoryFile(path))
                 {
                     MessageBox.Show("Ya hay una historia en esa carpeta.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 }
@@ -116,7 +116,7 @@ namespace TrueStory
             if (passes && !Directory.Exists(ActivityFolderText.Text))
             { MessageBox.Show("La carpeta de actividad no existe.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
 
-            if (passes && Story.ExistsStory(ActivityFolderText.Text))
+            if (passes && Story.ExistsStoryFile(ActivityFolderText.Text))
             { MessageBox.Show("Ya existe una historia en esa carpeta.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Exclamation); passes = false; }
 
 
