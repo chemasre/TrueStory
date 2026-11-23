@@ -1239,8 +1239,8 @@ namespace ActivityDesigner
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
-                "Este programa se distribuye de forma gratuita para uso personal y no comercial. Queda prohibida su venta, su redistribución con fines comerciales y su uso en entornos profesionales sin autorización expresa del autor.\n\n" +
-                "© 2026 Sinestesia Game Design.\nTodos los derechos reservados", "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
+                "© 2026 Sinestesia Game Design. Todos los derechos reservados.\n\n" +
+                "Licencia para uso educativo válida durante el curso 2026/27.", "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
     }
