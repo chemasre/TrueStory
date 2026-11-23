@@ -77,7 +77,7 @@
                         <FlowDocument>
                             <Paragraph TextAlignment="Center" Margin="0,20,0,0">
                                 <InlineUIContainer>
-                                    <Image Source="/AboutLicense.png" Width="200" Margin="10,0,10,10" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    <Image Source="/AboutLicense.png" Width="200" Margin="10,10,10,10" RenderOptions.BitmapScalingMode="HighQuality"/>
                                 </InlineUIContainer>
                             </Paragraph>
                             <Paragraph TextAlignment="Center" >© 2026 Sinestesia Game Design. Todos los derechos reservados.</Paragraph>
