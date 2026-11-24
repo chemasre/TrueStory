@@ -86,7 +86,7 @@ namespace TrueStory
         public delegate void RenamedFileHandler(string oldName, string newName);
         public delegate string LoadFileAddedHandler(string name);
         public delegate void SaveFileAddedHandler(string name, string text);
-        public delegate string ExecuteCommandAddedHandler(string name);
+        public delegate void ExecuteCommandAddedHandler(string name);
         public delegate RecordData.QuestionData QuestionAddedHandler(RecordData.QuestionData q);
         public delegate RecordData.CloseStoryData CloseStoryAddedHandler();
         public delegate RecordData.LanguageModelChatData LanguageModelChatAddedHandler(string? initialUserLine);
@@ -732,12 +732,12 @@ namespace TrueStory
             OnAddedSaveFile?.Invoke(name, text);
         }
 
-        public string AddExecuteCommand(string command)
+        public void AddExecuteCommand(string command)
         {
             Debug.Assert(!disposed);
             Debug.Assert(mode == Mode.Append || mode == Mode.Create);
 
-            string result = OnAddedExecuteCommand?.Invoke(command) ?? "";
+            OnAddedExecuteCommand?.Invoke(command);
 
             Record record = new();
 
@@ -746,14 +746,11 @@ namespace TrueStory
             BinaryBufferWriter buffer = new();
 
             buffer.WriteString(command);
-            buffer.WriteString(result);
+            buffer.WriteString("");
 
             record.data = buffer.GetBytes();
 
             AddRecord(record);
-
-            return result;
-
 
         }
 

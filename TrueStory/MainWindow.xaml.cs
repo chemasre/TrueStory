@@ -167,11 +167,9 @@ namespace TrueStory
             log = null;
         }
 
-        private string OnExecuteCommand(string command)
+        private void OnExecuteCommand(string command)
         {
             Debug.Assert(story != null);
-
-            return story.AddExecuteCommand(command);
         }
 
         private void OnFolderViewFolderSelected(string _folder)

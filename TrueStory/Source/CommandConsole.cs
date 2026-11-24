@@ -1,19 +1,25 @@
-﻿using System.Text;
+﻿using System;
+using System.Diagnostics;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace TrueStory
 {
+
+
     public class CommandConsole
     {
         public event OnExecuteCommandHandler? OnExecuteCommand;
         public event OnCommandExecutedHandler? OnCommandExecuted;
 
-        public delegate string OnExecuteCommandHandler(string command);
+        public delegate void OnExecuteCommandHandler(string command);
         public delegate void OnCommandExecutedHandler(string command, string output);
 
         public Story? Story { get { return story; } set { story = value; OnStoryChanged(); } }
+
+        Process? process;
 
         private void OnStoryChanged()
         {
@@ -22,12 +28,101 @@ namespace TrueStory
                 textBox.IsEnabled = false;
                 textBox.Visibility = Visibility.Collapsed;
                 label.Visibility = Visibility.Collapsed;
+
+                if (process != null)
+                {
+                    StopProcess();
+                }
             }
             else
             {
                 textBox.IsEnabled = story.Header.commandConsoleEnabled;
                 textBox.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
                 label.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
+
+                StartProcess();
+
+            }
+        }
+
+        private void StopProcess()
+        {
+            Debug.Assert(process != null);
+
+            process.OutputDataReceived -= OnProcessOutput;
+            process.ErrorDataReceived -= OnProcessError;
+
+            process.Exited -= OnProcessExited;
+
+            process.Kill();
+            process.Dispose();
+            process = null;
+        }
+
+        private void StartProcess()
+        {
+            process = new();
+            ProcessStartInfo startInfo = new();
+            startInfo.FileName = "cmd.exe";
+            startInfo.WorkingDirectory = story.RootPath;
+            startInfo.CreateNoWindow = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            startInfo.UseShellExecute = false;
+            process.StartInfo = startInfo;
+
+            process.OutputDataReceived += OnProcessOutput;
+            process.ErrorDataReceived += OnProcessError;
+
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.Exited += OnProcessExited;
+
+            process.EnableRaisingEvents = true;
+
+
+        }
+
+        private void OnProcessExited(object? sender, EventArgs e)
+        {
+            StartProcess();
+        }
+
+        private void OnProcessError(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null)
+            {
+                textBox.Dispatcher.Invoke(() =>
+                {
+                    textBox.AppendText(e.Data);
+                    textBox.CaretIndex += e.Data.Length;
+                    textBox.AppendText(Environment.NewLine);
+                    textBox.CaretIndex += Environment.NewLine.Length;
+
+                    textBox.ScrollToEnd();
+                });
+
+            }
+        }
+
+        private void OnProcessOutput(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null)
+            {
+                textBox.Dispatcher.Invoke(() =>
+                {
+                    textBox.AppendText(e.Data);
+                    textBox.CaretIndex += e.Data.Length;
+                    textBox.AppendText(Environment.NewLine);
+                    textBox.CaretIndex += Environment.NewLine.Length;
+
+                    textBox.ScrollToEnd();
+                });
+
+
             }
         }
 
@@ -51,9 +146,6 @@ namespace TrueStory
             _textBox.PreviewTextInput += OnTextInput;
 
             _textBox.IsReadOnly = true;
-
-            _textBox.Text = Constants.consolePrompt;
-            _textBox.CaretIndex = Constants.consolePrompt.Length;
 
             textBox = _textBox;
             label = _label;
@@ -79,33 +171,32 @@ namespace TrueStory
                 textBox.CaretIndex += e.Text.Length;
 
                 command.Append(e.Text);
+
             }
 
-        }
+        }        
 
         void OnKeyDown(object sender, KeyEventArgs e)
         {
+            Debug.Assert(process != null);
+
             if (e.Key == Key.Return)
             {
-                textBox.AppendText(Environment.NewLine);
-                textBox.CaretIndex += Environment.NewLine.Length;
+                string commandText = command.ToString();
 
-                string output = OnExecuteCommand?.Invoke(command.ToString()) ?? "";
-                textBox.AppendText(output);
-                textBox.CaretIndex += output.Length;
+                int previousCaret = textBox.CaretIndex;
 
-                textBox.AppendText(Environment.NewLine);
-                textBox.CaretIndex += Environment.NewLine.Length;
+                textBox.CaretIndex -= commandText.Length;
 
-                textBox.AppendText(Constants.consolePrompt);
-                textBox.CaretIndex += Constants.consolePrompt.Length;
+                textBox.Text = textBox.Text.Substring(0, textBox.CaretIndex);
 
-                string executed = command.ToString();
+                textBox.CaretIndex = previousCaret;
+
+                OnCommandExecuted?.Invoke(commandText, "");
 
                 command.Clear();
 
-                OnCommandExecuted?.Invoke(executed, output);
-
+                process.StandardInput.WriteLine(commandText);
 
             }
             else if (e.Key == Key.Back)

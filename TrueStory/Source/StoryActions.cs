@@ -134,28 +134,9 @@ namespace TrueStory
         }
 
 
-        string OnExecuteCommand(string command)
+        void OnExecuteCommand(string command)
         {
-            string output;
-
-            Process process = new();
-            ProcessStartInfo startInfo = new();
-            //startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.WorkingDirectory = story.RootPath;
-            startInfo.Arguments = "/c " + command;
-            startInfo.CreateNoWindow = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            startInfo.UseShellExecute = false;
-            process.StartInfo = startInfo;
-            process.Start();
-
-            output = process.StandardOutput.ReadToEnd() + Environment.NewLine + process.StandardError.ReadToEnd();
-
-            process.WaitForExit();
-
-            return output;
+            // Nothing to do
         }
 
         public void Dispose()
