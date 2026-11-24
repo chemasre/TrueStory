@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace TrueStory
 {
@@ -20,6 +21,7 @@ namespace TrueStory
         public Story? Story { get { return story; } set { story = value; OnStoryChanged(); } }
 
         Process? process;
+        DispatcherTimer ? processTimer;
 
         private void OnStoryChanged()
         {
@@ -48,6 +50,11 @@ namespace TrueStory
         private void StopProcess()
         {
             Debug.Assert(process != null);
+            Debug.Assert(processTimer != null);
+
+
+            processTimer.Stop();
+            processTimer = null;
 
             process.OutputDataReceived -= OnProcessOutput;
             process.ErrorDataReceived -= OnProcessError;
@@ -77,11 +84,48 @@ namespace TrueStory
 
 
             process.Start();
-            process.BeginOutputReadLine();
+            //process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.Exited += OnProcessExited;
 
             process.EnableRaisingEvents = true;
+
+            processTimer = new();
+            processTimer.Interval = TimeSpan.FromMilliseconds(100);
+            processTimer.Tick += OnProcessTimer;
+
+            processTimer.Start();
+
+
+        }
+
+        char[] readBuffer = new char[1024];
+        Task<int>? readTask;
+
+        private void OnProcessTimer(object? sender, EventArgs e)
+        {
+            Debug.Assert(process != null);
+            Debug.Assert(processTimer != null);
+
+            if (readTask != null)
+            {
+                if (readTask.Status == TaskStatus.RanToCompletion)
+                {
+                    int readed = readTask.Result;
+
+                    if (readed > 0)
+                    {
+                        textBox.AppendText(new string(readBuffer, 0, readed));
+                        textBox.CaretIndex++;
+                    }
+
+                    readTask = process.StandardOutput.ReadAsync(readBuffer, 0, 1024);
+                }
+            }
+            else
+            {
+                readTask = process.StandardOutput.ReadAsync(readBuffer, 0, 1024);
+            }
 
 
         }
@@ -184,13 +228,17 @@ namespace TrueStory
             {
                 string commandText = command.ToString();
 
-                int previousCaret = textBox.CaretIndex;
-
                 textBox.CaretIndex -= commandText.Length;
+
+                int previousCaret = textBox.CaretIndex;
 
                 textBox.Text = textBox.Text.Substring(0, textBox.CaretIndex);
 
                 textBox.CaretIndex = previousCaret;
+
+                //textBox.AppendText(Environment.NewLine);
+                //textBox.CaretIndex += Environment.NewLine.Length;
+
 
                 OnCommandExecuted?.Invoke(commandText, "");
 
