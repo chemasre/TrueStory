@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,8 +9,6 @@ using System.Windows.Threading;
 
 namespace TrueStory
 {
-
-
     public class CommandConsole
     {
         public event OnExecuteCommandHandler? OnExecuteCommand;
@@ -21,20 +20,27 @@ namespace TrueStory
         public Story? Story { get { return story; } set { story = value; OnStoryChanged(); } }
 
         Process? process;
-        DispatcherTimer ? processTimer;
+
+        bool processOutputReaderStop = false;
+        Thread? processOutputReader;
+
+        bool processErrorReaderStop = false;
+        Thread? processErrorReader;
 
         private void OnStoryChanged()
         {
             if (story == null)
             {
+                textBox.Clear();
                 textBox.IsEnabled = false;
                 textBox.Visibility = Visibility.Collapsed;
                 label.Visibility = Visibility.Collapsed;
 
-                if (process != null)
+                if (IsProcessRunning())
                 {
                     StopProcess();
                 }
+
             }
             else
             {
@@ -42,32 +48,74 @@ namespace TrueStory
                 textBox.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
                 label.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
 
-                StartProcess();
+                if(story.Header.commandConsoleEnabled)
+                {
+                    StartProcess();
+                }
 
             }
+        }
+
+        private bool IsProcessRunning()
+        {
+            return (process != null);
         }
 
         private void StopProcess()
         {
             Debug.Assert(process != null);
-            Debug.Assert(processTimer != null);
-
-
-            processTimer.Stop();
-            processTimer = null;
-
-            process.OutputDataReceived -= OnProcessOutput;
-            process.ErrorDataReceived -= OnProcessError;
+            Debug.Assert(processOutputReader != null);
+            Debug.Assert(processErrorReader != null);
 
             process.Exited -= OnProcessExited;
+            
+            processOutputReaderStop = true;
+            process.StandardOutput.Close();
+            processOutputReader.Join();
+            processOutputReaderStop = false;
+
+            processErrorReaderStop = true;
+            process.StandardError.Close();
+            processErrorReader.Join();
+            processErrorReaderStop = false;
 
             process.Kill();
             process.Dispose();
             process = null;
         }
 
+        private void PumpStream(StreamReader stream, ref bool stopFlag)
+        {
+            char[] buffer = new char[1024];
+
+            while(!stopFlag)
+            {
+                try
+                {
+                    int readed = stream.Read(buffer);
+                    if(readed > 0)
+                    {
+                        textBox.Dispatcher.Invoke(
+                            () =>
+                            {
+                                textBox.AppendText(new string(buffer, 0, readed));
+                                textBox.CaretIndex += readed;
+
+                            });
+                    }
+                }
+                catch(Exception e)
+                {
+                    // nothing to do
+                    Console.WriteLine(e.Message);
+                }
+            }
+        }
+
         private void StartProcess()
         {
+            Debug.Assert(story != null);
+
             process = new();
             ProcessStartInfo startInfo = new();
             startInfo.FileName = "cmd.exe";
@@ -79,23 +127,24 @@ namespace TrueStory
             startInfo.UseShellExecute = false;
             process.StartInfo = startInfo;
 
-            process.OutputDataReceived += OnProcessOutput;
-            process.ErrorDataReceived += OnProcessError;
-
-
             process.Start();
-            //process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+
+            processOutputReader = new Thread(
+                () => {
+                    PumpStream(process.StandardOutput, ref processOutputReaderStop);
+                });
+
+            processErrorReader = new Thread(
+                () => {
+                    PumpStream(process.StandardError, ref processErrorReaderStop);
+                });
+
+            processOutputReader.Start();
+            processErrorReader.Start();
+
             process.Exited += OnProcessExited;
 
             process.EnableRaisingEvents = true;
-
-            processTimer = new();
-            processTimer.Interval = TimeSpan.FromMilliseconds(100);
-            processTimer.Tick += OnProcessTimer;
-
-            processTimer.Start();
-
 
         }
 
@@ -105,7 +154,6 @@ namespace TrueStory
         private void OnProcessTimer(object? sender, EventArgs e)
         {
             Debug.Assert(process != null);
-            Debug.Assert(processTimer != null);
 
             if (readTask != null)
             {
@@ -120,6 +168,7 @@ namespace TrueStory
                     }
 
                     readTask = process.StandardOutput.ReadAsync(readBuffer, 0, 1024);
+
                 }
             }
             else
@@ -132,6 +181,8 @@ namespace TrueStory
 
         private void OnProcessExited(object? sender, EventArgs e)
         {
+            StopProcess();
+
             StartProcess();
         }
 
