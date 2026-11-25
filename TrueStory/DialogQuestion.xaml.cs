@@ -18,6 +18,18 @@ namespace TrueStory
 
         public RecordData.QuestionData Question { get; set; }
 
+        public int TextSize
+        {
+            set
+            {
+                AnswerTextBox.FontSize = value;
+                QuestionDocument.FontSize = value;
+                baseQuestionTextSize = value;
+            }
+        }
+
+        int baseQuestionTextSize;
+
         long usedTime;
         DispatcherTimer timer;
 
@@ -60,6 +72,8 @@ namespace TrueStory
         {
             FlowDocument doc = QuestionDocument.Document;
 
+            doc.PageWidth = 10000;
+
             doc.Blocks.Clear();
 
             Paragraph? p = null;
@@ -75,13 +89,13 @@ namespace TrueStory
                 TableCell cell = new();
 
                 p = new Paragraph(new Run(Question.context.fileName));
-                p.FontSize *= 1.2f;
+                p.FontSize = baseQuestionTextSize * 1.2f;
                 doc.Blocks.Add(p);
 
                 foreach (RecordData.QuestionContextLineData l in Question.context.lines)
                 {
                     p = new Paragraph(new Run((l.number + 1) + ": " + l.text));
-
+                    p.FontSize = baseQuestionTextSize;
                     p.Margin = new Thickness(0);
                     cell.Blocks.Add(p);
                 }
@@ -100,7 +114,7 @@ namespace TrueStory
             {
                 p = new Paragraph(new Run(Constants.consolePrompt + Question.context.command));
                 p.TextAlignment = TextAlignment.Center;
-                p.FontSize *= 1.2f;
+                p.FontSize = baseQuestionTextSize * 1.2f;
                 p.Margin = new Thickness(0);
                 doc.Blocks.Add(p);
             }
@@ -108,7 +122,7 @@ namespace TrueStory
 
             p = new Paragraph(new Run(Question.text));
             p.Margin = new Thickness(0, 20, 0, 0);
-            p.FontSize *= 1.2f;
+            p.FontSize = baseQuestionTextSize * 1.2f;
             doc.Blocks.Add(p);
 
             AnswerTextBox.Focus();

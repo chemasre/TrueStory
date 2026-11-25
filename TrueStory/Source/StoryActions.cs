@@ -109,6 +109,7 @@ namespace TrueStory
         {
             DialogQuestion d = new();
             d.Question = question;
+            d.TextSize = window.Settings.GetInt("FontSize", Constants.editorDefaultTextSize); 
             d.ShowDialog();
 
             return d.Question;

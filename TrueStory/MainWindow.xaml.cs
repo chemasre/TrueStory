@@ -286,9 +286,9 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = false;
                 RenameFileOrFolderMenuAction.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
-                EnlargeTextAction.IsEnabled = false;
-                ReduceTextAction.IsEnabled = false;
-                ResetTextAction.IsEnabled = false;
+                EnlargeTextAction.IsEnabled = true;
+                ReduceTextAction.IsEnabled = true;
+                ResetTextAction.IsEnabled = true;
                 ToolsMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
@@ -357,9 +357,9 @@ namespace TrueStory
                 EditMenu.IsEnabled = false;
                 ToolsMenu.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
-                EnlargeTextAction.IsEnabled = false;
-                ReduceTextAction.IsEnabled = false;
-                ResetTextAction.IsEnabled = false;
+                EnlargeTextAction.IsEnabled = true;
+                ReduceTextAction.IsEnabled = true;
+                ResetTextAction.IsEnabled = true;
                 ToolsMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;

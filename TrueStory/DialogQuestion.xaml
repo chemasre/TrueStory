@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
         mc:Ignorable="d"
-        Title="Pregunta" Width="670" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" SizeToContent="Height" Background="{DynamicResource TrueEditorWindowBackground}">
+        Title="Pregunta" Width="800" WindowStartupLocation="CenterOwner" Background="{DynamicResource TrueEditorWindowBackground}" WindowState="Maximized" ResizeMode="NoResize">
     <DockPanel>
-        <RichTextBox x:Name="QuestionDocument" DockPanel.Dock="Top" MinHeight="100" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40" AutoWordSelection="False" Focusable="False" IsHitTestVisible="False" FontFamily="{DynamicResource TrueStoryCodeFont}" Margin="20,20,20,10" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}">
+        <RichTextBox x:Name="QuestionDocument" DockPanel.Dock="Top" MinHeight="100" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40" AutoWordSelection="False" Focusable="True" IsHitTestVisible="True" FontFamily="{DynamicResource TrueStoryCodeFont}" Margin="20,20,20,10" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <FlowDocument/>
         </RichTextBox>
         <ProgressBar x:Name="TimeBar" DockPanel.Dock="Top" MinHeight="10" Margin="20,10,20,10" Foreground="#FF07C51B" Background="{DynamicResource TrueEditorNonEditableTextBackground}"/>
