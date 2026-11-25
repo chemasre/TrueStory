@@ -21,6 +21,7 @@
         <SolidColorBrush x:Key="DarkMode_TrueStoryTabItem" Color="#FF15100A"/>
         <SolidColorBrush x:Key="DarkMode_TrueStoryTabItemText" Color="#FFEDA45A"/>
         <SolidColorBrush x:Key="DarkMode_TrueStoryTabControlBackground" Color="#FF170D09"/>
+        <SolidColorBrush x:Key="DarkMode_TrueStoryResizableBorder" Color="#FF423737"/>
         <SolidColorBrush x:Key="DarkMode_TrueStoryEditableText" Color="#FFB8EA97"/>
         <SolidColorBrush x:Key="DarkMode_TrueEditorWindowBackground" Color="#FF120C06"/>
 
@@ -40,6 +41,7 @@
         <SolidColorBrush x:Key="LightMode_TrueStoryTabItem" Color="#FFFFC386"/>
         <SolidColorBrush x:Key="LightMode_TrueStoryTabItemText" Color="#FF332313"/>
         <SolidColorBrush x:Key="LightMode_TrueStoryTabControlBackground" Color="#FFFF966E"/>
+        <SolidColorBrush x:Key="LightMode_TrueStoryResizableBorder" Color="#FFFFB76D"/>
         <SolidColorBrush x:Key="LightMode_TrueStoryEditableText" Color="#FF0B0E09"/>
         <SolidColorBrush x:Key="LightMode_TrueEditorWindowBackground"  Color="#FFF7AD53"/>
 
@@ -60,6 +62,7 @@
         <SolidColorBrush x:Key="TrueStoryButtonsText" Color="#FF481B19"/>
         <SolidColorBrush x:Key="TrueStoryTabItem" Color="#FFFFC386"/>
         <SolidColorBrush x:Key="TrueStoryTabItemText" Color="#FF332313"/>
+        <SolidColorBrush x:Key="TrueStoryResizableBorder" Color="#FFFFB76D"/>
         <SolidColorBrush x:Key="TrueStoryTabControlBackground" Color="#FFFF966E"/>
         <SolidColorBrush x:Key="TrueStoryEditableText" Color="#FF0B0E09"/>
         <FontFamily x:Key="TrueStoryFont">pack://application:,,,/Resources/Fonts/#IBM Plex Sans</FontFamily>

@@ -32,6 +32,7 @@ namespace TrueStory
             "DarkMode_TrueStoryTabItem",
             "DarkMode_TrueStoryTabItemText",
             "DarkMode_TrueStoryTabControlBackground",
+            "DarkMode_TrueStoryResizableBorder",
             "DarkMode_TrueStoryEditableText",
             "DarkMode_TrueEditorWindowBackground"
         };
@@ -54,6 +55,7 @@ namespace TrueStory
             "LightMode_TrueStoryTabItem",
             "LightMode_TrueStoryTabItemText",
             "LightMode_TrueStoryTabControlBackground",
+            "LightMode_TrueStoryResizableBorder",
             "LightMode_TrueStoryEditableText",
             "LightMode_TrueEditorWindowBackground"
         };
@@ -76,6 +78,7 @@ namespace TrueStory
             "TrueStoryTabItem",
             "TrueStoryTabItemText",
             "TrueStoryTabControlBackground",
+            "TrueStoryResizableBorder",
             "TrueStoryEditableText",
             "TrueEditorWindowBackground"
         };

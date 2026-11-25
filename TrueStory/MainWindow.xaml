@@ -50,12 +50,12 @@
         <Grid DockPanel.Dock="Left">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="4"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="10" MinHeight="10"/>
+                <RowDefinition Height="4" />
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <DockPanel LastChildFill="True" Grid.ColumnSpan="1" Grid.Row="2">
@@ -80,8 +80,8 @@
                 <Label x:Name="FolderViewTitleLabel" DockPanel.Dock="Top" Content="Carpeta de actividad" MinHeight="21" FontFamily="{DynamicResource TrueStoryFont}" BorderThickness="1,1,1,1" BorderBrush="{DynamicResource TrueEditorBackground}" Background="{DynamicResource TrueEditorPanelTitle}" FontWeight="Bold" Foreground="{DynamicResource TrueStoryPanelTitleText}"/>
                 <ListBox x:Name="FolderViewList" DockPanel.Dock="Top" d:ItemsSource="{d:SampleData ItemCount=5}" FontFamily="{DynamicResource TrueStoryFont}" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueEditorBackground}" />
             </DockPanel>
-            <GridSplitter HorizontalAlignment="Stretch" ResizeDirection="Rows" Height="10" Grid.Row="1" ResizeBehavior="PreviousAndNext"/>
-            <GridSplitter HorizontalAlignment="Stretch" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3"/>
+            <GridSplitter HorizontalAlignment="Stretch" ResizeDirection="Rows" Grid.Row="1" ResizeBehavior="PreviousAndNext" Background="{DynamicResource TrueStoryResizableBorder}"/>
+            <GridSplitter HorizontalAlignment="Stretch" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" Grid.Column="1" Grid.RowSpan="3" Background="{DynamicResource TrueStoryResizableBorder}"/>
         </Grid>
     </DockPanel>
     <Window.CommandBindings>
