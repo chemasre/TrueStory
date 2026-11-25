@@ -259,8 +259,9 @@ namespace TrueStory
                 OpenActivityMenuAction.IsEnabled = true;
                 CloseActivityMenuAction.IsEnabled = false;
                 FileEditorTextBox.IsEnabled = false;
-                FolderViewList.IsEnabled = false;
+                FolderViewList.IsEnabled = true;
                 CommandConsoleTextBox.IsEnabled = false;
+                CommandConsoleTextBox.Visibility = Visibility.Visible;
                 FileMenu.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = false;
@@ -268,7 +269,8 @@ namespace TrueStory
                 ResetTextAction.IsEnabled = false;
                 ToolsMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
-                FolderViewList.Visibility = Visibility.Hidden;
+                FolderViewList.Visibility = Visibility.Visible;
+                InstructorTextBox.Visibility = Visibility.Collapsed;
             }
             else if (_uiState == UIState.StoryNoSelection)
             {

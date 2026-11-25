@@ -18,7 +18,7 @@
             <TextBox x:Name="ApiKeyInputText" DockPanel.Dock="Left" TextWrapping="Wrap" Padding="5,5,5,5" FontFamily="{DynamicResource TrueStoryFont}" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}" Margin="20,10,10,5" IsReadOnly="True" VerticalContentAlignment="Center" IsEnabled="False" MaxLines="1"/>
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Height="100" HorizontalAlignment="Center">
-            <Button x:Name="Close"  Content="Cerrar" MinWidth="100" Margin="10,10,10,10" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}" Click="OnCloseButtonPressed"/>
+            <Button x:Name="Close"  Content="Cerrar" MinWidth="100" Margin="10,10,10,10" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}" Click="OnCloseButtonPressed" Style="{DynamicResource RoundButton}"/>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" >
             <Button x:Name="SetURLButton" DockPanel.Dock="Right" Content="..." Margin="10,5,20,20"  Background="{DynamicResource TrueEditorButtonNeutral}" Foreground="{DynamicResource TrueStoryButtonsText}" Padding="10,10,10,10" MinWidth="40" Click="OnSetApiURLButtonClicked"/>

@@ -12,8 +12,8 @@
             <TextBox x:Name="Input" DockPanel.Dock="Left" TextWrapping="Wrap" Text="Nombre" MaxLines="1" Margin="0,20,40,20" LostFocus="Input_LostFocus" PreviewTextInput="Input_PreviewTextInput" Background="{DynamicResource TrueEditorEditableTextBackground}" FontFamily="{DynamicResource TrueStoryFont}" Foreground="{DynamicResource TrueStoryEditableText}"/>
         </DockPanel>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
-            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}" Style="{DynamicResource RoundButton}"/>
+            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}" Foreground="{DynamicResource TrueStoryButtonsText}" Style="{DynamicResource RoundButton}"/>
         </DockPanel>
     </DockPanel>
 </Window>

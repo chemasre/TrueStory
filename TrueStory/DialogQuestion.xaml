@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrueStory"
         mc:Ignorable="d"
-        Title="Pregunta" Width="800" WindowStartupLocation="CenterOwner" Background="{DynamicResource TrueEditorWindowBackground}" WindowState="Maximized" ResizeMode="NoResize">
+        Title="Pregunta" Width="800" WindowStartupLocation="CenterOwner" Background="{DynamicResource TrueEditorWindowBackground}" WindowState="Maximized" ResizeMode="NoResize" Topmost="True">
     <DockPanel>
         <RichTextBox x:Name="QuestionDocument" DockPanel.Dock="Top" MinHeight="100" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,40" AutoWordSelection="False" Focusable="True" IsHitTestVisible="True" FontFamily="{DynamicResource TrueStoryCodeFont}" Margin="20,20,20,10" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <FlowDocument/>
         </RichTextBox>
         <ProgressBar x:Name="TimeBar" DockPanel.Dock="Top" MinHeight="10" Margin="20,10,20,10" Foreground="#FF07C51B" Background="{DynamicResource TrueEditorNonEditableTextBackground}"/>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
+            <Button x:Name="Accept"  Style="{DynamicResource RoundButton}" Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}"/>
         </DockPanel>
         <TextBox x:Name="AnswerTextBox" DockPanel.Dock="Top" TextWrapping="Wrap" MinHeight="150" Margin="20,20,20,20" Padding="5,5,5,5" FontFamily="{DynamicResource TrueStoryFont}" Background="{DynamicResource TrueEditorEditableTextBackground}" Foreground="{DynamicResource TrueStoryEditableText}"/>
     </DockPanel>

@@ -14,13 +14,13 @@
                 <FlowDocument>
                     <Paragraph TextAlignment="Center">
                         <InlineUIContainer>
-                            <Image Source="/AboutImage.png" Width="80" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <Image Source="/AboutImage.png" Width="80" RenderOptions.BitmapScalingMode="HighQuality" Effect="{DynamicResource DropShadow}"/>
                         </InlineUIContainer>
                     </Paragraph>
                 </FlowDocument>
             </RichTextBox>
-            <TabControl DockPanel.Dock="Right" Margin="0,30,30,40" Background="{DynamicResource TrueStoryTabControlBackground}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
-                <TabItem Header="Qué es" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+            <TabControl Effect="{DynamicResource DropShadow}" DockPanel.Dock="Right" Margin="0,30,30,40" Background="{DynamicResource TrueStoryTabControlBackground}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Qué es" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" Style="{DynamicResource RoundTabItem}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>
@@ -36,7 +36,7 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Cómo funciona" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Cómo funciona" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" Style="{DynamicResource RoundTabItem}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                                     <Paragraph Margin="0,0,0,10">
@@ -58,7 +58,7 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Qué no hace" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Qué no hace" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" Style="{DynamicResource RoundTabItem}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                                     <Paragraph>La aplicación
@@ -72,7 +72,7 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Licencia" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Licencia" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" Style="{DynamicResource RoundTabItem}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph TextAlignment="Center" Margin="0,20,0,0">
@@ -87,7 +87,7 @@
                         </FlowDocument>
                     </RichTextBox>
                 </TabItem>
-                <TabItem Header="Otras herramientas" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}">
+                <TabItem Header="Otras herramientas" Padding="{DynamicResource TrueStoryTabItemPadding}" Background="{DynamicResource TrueStoryTabItem}" Foreground="{DynamicResource TrueStoryTabItemText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" Style="{DynamicResource RoundTabItem}">
                     <RichTextBox MinHeight="200" IsReadOnly="True" IsDocumentEnabled="True" Padding="20,20,20,20" Background="{DynamicResource TrueEditorNonEditableTextBackground}" Foreground="{DynamicResource TrueStoryNonEditableText}" BorderBrush="{DynamicResource TrueStoryTabControlBackground}" SelectionBrush="{x:Null}" IsHitTestVisible="False" IsTabStop="False">
                         <FlowDocument>
                             <Paragraph>
@@ -124,7 +124,7 @@
             </TabControl>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" LastChildFill="False" HorizontalAlignment="Center">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}" />
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" MinHeight="50" Background="{DynamicResource TrueEditorButtonAccept}" Foreground="{DynamicResource TrueStoryButtonsText}" Style="{DynamicResource RoundButton}" Effect="{DynamicResource DropShadow}" />
         </DockPanel>
     </DockPanel>
 </Window>

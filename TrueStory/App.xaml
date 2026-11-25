@@ -80,5 +80,31 @@
             <Setter Property="BorderThickness" Value="0" />
         </Style>
 
+        <Style TargetType="Button" x:Key="RoundButton">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <Style TargetType="Label" x:Key="RoundPanelTitle">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10,10,0,0" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <Style TargetType="TabItem" x:Key="RoundTabItem">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10,10,0,0" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <DropShadowEffect x:Key="DropShadow" BlurRadius="10" Opacity="0.6"/>
+
     </Application.Resources>
 </Application>

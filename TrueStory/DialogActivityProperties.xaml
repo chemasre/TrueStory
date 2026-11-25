@@ -41,8 +41,8 @@
             <TextBox x:Name="ActivityExtensionsText" Grid.Row ="2"  Grid.Column="1" MaxLines="1" Margin="5,5,5,5" SelectionTextBrush="{DynamicResource TrueEditorEditableTextBackground}" Background="{DynamicResource TrueEditorEditableTextBackground}" TextChanged="OnExtensionsChanged" Foreground="{DynamicResource TrueStoryEditableText}"/>
         </Grid>
         <DockPanel HorizontalAlignment="Center" LastChildFill="False">
-            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}" MinHeight="50" Foreground="{DynamicResource TrueStoryButtonsText}"/>
-            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}" MinHeight="50" Foreground="{DynamicResource TrueStoryButtonsText}"/>
+            <Button x:Name="Accept"  Content="Aceptar" MinWidth="100" Margin="10,10,10,10" Click="Accept_Click" Background="{DynamicResource TrueEditorButtonAccept}" MinHeight="50" Foreground="{DynamicResource TrueStoryButtonsText}" Style="{DynamicResource RoundButton}"/>
+            <Button x:Name="Cancel" Content="Cancelar" MinWidth="100" Margin="10,10,10,10" Click="Cancel_Click" Background="{DynamicResource TrueEditorButtonCancel}" MinHeight="50" Foreground="{DynamicResource TrueStoryButtonsText}" Style="{DynamicResource RoundButton}"/>
         </DockPanel>
     </DockPanel>
 </Window>
