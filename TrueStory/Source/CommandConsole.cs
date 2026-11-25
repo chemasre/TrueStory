@@ -70,18 +70,20 @@ namespace TrueStory
             process.Exited -= OnProcessExited;
             
             processOutputReaderStop = true;
-            process.StandardOutput.Close();
-            processOutputReader.Join();
-            processOutputReaderStop = false;
-
             processErrorReaderStop = true;
-            process.StandardError.Close();
-            processErrorReader.Join();
-            processErrorReaderStop = false;
 
             process.Kill();
             process.Dispose();
+
+            processOutputReader.Join();
+            processErrorReader.Join();
+
+            processOutputReaderStop = false;
+            processErrorReaderStop = false;
+
             process = null;
+
+            Console.WriteLine("Process stopped");
         }
 
         private void PumpStream(StreamReader stream, ref bool stopFlag)
@@ -107,8 +109,8 @@ namespace TrueStory
                 catch(Exception e)
                 {
                     // nothing to do
-                    Console.WriteLine(e.Message);
                 }
+
             }
         }
 
@@ -145,6 +147,8 @@ namespace TrueStory
             process.Exited += OnProcessExited;
 
             process.EnableRaisingEvents = true;
+
+            Console.WriteLine("Console started");
 
         }
 
