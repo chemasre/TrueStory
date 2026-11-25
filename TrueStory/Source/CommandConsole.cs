@@ -234,25 +234,40 @@ namespace TrueStory
 
         KeyConverter keyConverter;
 
-        public CommandConsole(TextBox _textBox, Label _label)
+        MainWindow window;
+
+        public CommandConsole(MainWindow _window)
         {
-            DataObject.AddPastingHandler(_textBox, OnFileContentsPaste);
-            DataObject.AddCopyingHandler(_textBox, OnFileContentsCopy);
+            _window.FileEditorTextBox.FontSize = _window.TextSize;
+            _window.OnTextSizeChanged += OnTextSizeChanged;
 
-            _textBox.ContextMenu = null;
 
-            _textBox.PreviewKeyDown += OnKeyDown;
-            _textBox.PreviewTextInput += OnTextInput;
+            DataObject.AddPastingHandler(_window.CommandConsoleTextBox, OnFileContentsPaste);
+            DataObject.AddCopyingHandler(_window.CommandConsoleTextBox, OnFileContentsCopy);
 
-            _textBox.IsReadOnly = true;
+            _window.CommandConsoleTextBox.ContextMenu = null;
 
-            textBox = _textBox;
-            label = _label;
+            _window.CommandConsoleTextBox.PreviewKeyDown += OnKeyDown;
+            _window.CommandConsoleTextBox.PreviewTextInput += OnTextInput;
+
+            _window.CommandConsoleTextBox.IsReadOnly = true;
+
+            textBox = _window.CommandConsoleTextBox;
+            label = _window.CommandConsoleTitleLabel;
 
             command = new();
 
             keyConverter = new();
 
+            textBox.FontSize = _window.TextSize;
+            _window.OnTextSizeChanged += OnTextSizeChanged;
+
+            window = _window;
+        }
+
+        private void OnTextSizeChanged(int size)
+        {
+            textBox.FontSize = size;
         }
 
         public void Clear()

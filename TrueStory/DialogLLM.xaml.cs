@@ -63,6 +63,16 @@ namespace TrueStory
             }
         }
 
+        public int TextSize
+        {
+            set
+            {
+                AnswerText.FontSize = value;
+                InputText.FontSize = value;
+
+            }
+        }
+
         List<ChatLine> chatHistory;
 
         StringBuilder builder;

@@ -57,11 +57,9 @@ namespace TrueStory
             _window.PasteMenuAction.Click += OnMenuPaste;
             _window.FindMenuAction.Click += OnMenuFind;
             _window.GotoLineMenuAction.Click += OnMenuGotoLine;
-            _window.EnlargeTextAction.Click += OnEnlargeTextSize;
-            _window.ReduceTextAction.Click += OnReduceTextSize;
-            _window.ResetTextAction.Click += OnResetTextSize;
 
-            _window.FileEditorTextBox.FontSize = _window.Settings.GetInt("FontSize", Constants.editorDefaultTextSize);
+            _window.FileEditorTextBox.FontSize = _window.TextSize;
+            _window.OnTextSizeChanged += OnTextSizeChanged;
 
             window = _window;
 
@@ -75,19 +73,9 @@ namespace TrueStory
             UpdateToolsMenu();
         }
 
-        private void OnResetTextSize(object sender, RoutedEventArgs e)
+        private void OnTextSizeChanged(int size)
         {
-            ResetText();
-        }
-
-        private void OnReduceTextSize(object sender, RoutedEventArgs e)
-        {
-            ReduceText();
-        }
-
-        private void OnEnlargeTextSize(object sender, RoutedEventArgs e)
-        {
-            EnlargeText();
+            textBox.FontSize = size;
         }
 
         private void OnMenuFind(object sender, RoutedEventArgs e)
@@ -149,34 +137,6 @@ namespace TrueStory
             UpdateToolsMenu();
         }
 
-
-        public void ResetText()
-        {
-            textBox.FontSize = Constants.editorDefaultTextSize;
-            window.Settings.SetInt("FontSize", Constants.editorDefaultTextSize);
-
-        }
-
-        public void EnlargeText()
-        {
-            if (textBox.FontSize + Constants.editorTextSizeStep <= Constants.editorMaxTextSize)
-            {
-                textBox.FontSize += Constants.editorTextSizeStep;
-
-                window.Settings.SetInt("FontSize", (int)textBox.FontSize);
-            }
-        }
-
-        public void ReduceText()
-        {
-            if (textBox.FontSize - Constants.editorTextSizeStep >= Constants.editorMinTextSize)
-            {
-                textBox.FontSize -= Constants.editorTextSizeStep;
-
-                window.Settings.SetInt("FontSize", (int)textBox.FontSize);
-            }
-
-        }
 
         void UpdateInfoBar()
         {

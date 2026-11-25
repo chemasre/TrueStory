@@ -22,11 +22,21 @@ namespace TrueStory
 
         bool ignoreEvents;
 
-        public FolderView(ListBox _listBox)
-        {
-            listBox = _listBox;
+        MainWindow window;
 
-            listBox.SelectionChanged += OnListBoxSelectionChanged;
+        public FolderView(MainWindow _window)
+        {
+            _window.FolderViewList.SelectionChanged += OnListBoxSelectionChanged;
+            _window.FolderViewList.FontSize = _window.TextSize;
+            _window.OnTextSizeChanged += OnTextSizeChanged;
+
+            listBox = _window.FolderViewList;
+
+        }
+
+        private void OnTextSizeChanged(int size)
+        {
+            listBox.FontSize = size;
         }
 
         public void Update(bool dontRaiseEvents = false)

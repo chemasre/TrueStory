@@ -18,6 +18,11 @@ namespace TrueStory
         [DllImport("user32.dll")]
         public static extern bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 
+        public event TextSizeSettingChanged OnTextSizeChanged;
+
+        public delegate void TextSizeSettingChanged(int size);
+        public int TextSize { get { return Settings.GetInt("FontSize", Constants.editorDefaultTextSize); } }
+
         public string? LoadedFile { get { return loadedFile; } }
         public FileEditor FileEditor { get { return fileEditor; } }
         public CommandConsole CommandConsole { get { return commandConsole; } }
@@ -85,12 +90,12 @@ namespace TrueStory
             fileEditor = new(this);
             fileEditor.OnContentsChanged += OnFileContentsChanged;
 
-            folderView = new FolderView(FolderViewList);
+            folderView = new FolderView(this);
             folderView.OnDeselected += OnFolderViewDeselected;
             folderView.OnFileSelected += OnFolderViewFileSelected;
             folderView.OnFolderSelected += OnFolderViewFolderSelected;
 
-            commandConsole = new(CommandConsoleTextBox, CommandConsoleTitleLabel);
+            commandConsole = new(this);
             commandConsole.OnExecuteCommand += OnExecuteCommand;
 
             instructor = new(this);
@@ -104,6 +109,9 @@ namespace TrueStory
 
             themes = new(this);
 
+            EnlargeTextAction.Click += OnEnlargeTextSize;
+            ReduceTextAction.Click += OnReduceTextSize;
+            ResetTextAction.Click += OnResetTextSize;
 
             ShortcutSaveFile.InputGestures.Add(new KeyGesture(Key.S, ModifierKeys.Control));
             ShortcutNewFile.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
@@ -230,12 +238,12 @@ namespace TrueStory
 
         private void OnShortcutEnlargeText(object sender, ExecutedRoutedEventArgs e)
         {
-            fileEditor.EnlargeText();
+            EnlargeText();
         }
 
         private void OnShortcutReduceText(object sender, ExecutedRoutedEventArgs e)
         {
-            fileEditor.ReduceText();
+            ReduceText();
         }
 
         void SetUIState(UIState _uiState)
@@ -510,6 +518,52 @@ namespace TrueStory
             SetUIState(UIState.NoStory);
             UpdateFileTitle();
             UpdateWindowTitle();
+        }
+
+        private void OnResetTextSize(object sender, RoutedEventArgs e)
+        {
+            ResetText();
+        }
+
+        private void OnReduceTextSize(object sender, RoutedEventArgs e)
+        {
+            ReduceText();
+        }
+
+        private void OnEnlargeTextSize(object sender, RoutedEventArgs e)
+        {
+            EnlargeText();
+        }
+
+        void ResetText()
+        {
+            settings.SetInt("FontSize", Constants.editorDefaultTextSize);
+            OnTextSizeChanged?.Invoke(Constants.editorDefaultTextSize);
+        }
+
+        void EnlargeText()
+        {
+            int value = settings.GetInt("FontSize", Constants.editorDefaultTextSize);
+
+            if (value + Constants.editorTextSizeStep <= Constants.editorMaxTextSize)
+            {
+                settings.SetInt("FontSize", value + Constants.editorTextSizeStep );
+
+                OnTextSizeChanged?.Invoke(value + Constants.editorTextSizeStep);
+            }
+        }
+
+        public void ReduceText()
+        {
+            int value = settings.GetInt("FontSize", Constants.editorDefaultTextSize);
+
+            if (value - Constants.editorTextSizeStep >= Constants.editorMinTextSize)
+            {
+                settings.SetInt("FontSize", value - Constants.editorTextSizeStep );
+
+                OnTextSizeChanged?.Invoke(value - Constants.editorTextSizeStep);
+            }
+
         }
 
         void UpdateFileTitle()
