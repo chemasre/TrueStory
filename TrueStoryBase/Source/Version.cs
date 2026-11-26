@@ -4,9 +4,9 @@
     {
         public const int Major = 0;
         public const int Minor = 13;
-        public const int Patch = 3;
+        public const int Patch = 2;
 
-        public const string Alias = "Cambio tamaño de fuente";
+        public const string Alias = "Actualizado tema visual";
 
         public static string GetVersion(bool includeAlias = true)
         {

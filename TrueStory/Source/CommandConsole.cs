@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -26,6 +27,8 @@ namespace TrueStory
 
         bool processErrorReaderStop = false;
         Thread? processErrorReader;
+
+        Encoding encoding;
 
         private void OnStoryChanged()
         {
@@ -84,6 +87,7 @@ namespace TrueStory
             process = null;
 
             Console.WriteLine("Process stopped");
+
         }
 
         private void PumpStream(StreamReader stream, ref bool stopFlag)
@@ -118,6 +122,7 @@ namespace TrueStory
         {
             Debug.Assert(story != null);
 
+
             process = new();
             ProcessStartInfo startInfo = new();
             startInfo.FileName = "cmd.exe";
@@ -126,6 +131,10 @@ namespace TrueStory
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
+            startInfo.StandardInputEncoding = encoding;
+            startInfo.StandardOutputEncoding = encoding;
+            startInfo.StandardErrorEncoding = encoding;
+
             startInfo.UseShellExecute = false;
             process.StartInfo = startInfo;
 
@@ -263,6 +272,10 @@ namespace TrueStory
             _window.OnTextSizeChanged += OnTextSizeChanged;
 
             window = _window;
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            encoding = Encoding.GetEncoding(CultureInfo.CurrentCulture.TextInfo.OEMCodePage);
+
         }
 
         private void OnTextSizeChanged(int size)
