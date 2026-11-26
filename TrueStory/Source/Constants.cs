@@ -15,6 +15,7 @@
         // Console
 
         public const string consolePrompt = "> ";
+        public const string consoleProcessExecutable = "cmd.exe";
 
 
         // Folder view

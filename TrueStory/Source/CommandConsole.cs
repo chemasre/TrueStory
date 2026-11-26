@@ -125,7 +125,7 @@ namespace TrueStory
 
             process = new();
             ProcessStartInfo startInfo = new();
-            startInfo.FileName = "cmd.exe";
+            startInfo.FileName = Constants.consoleProcessExecutable;
             startInfo.WorkingDirectory = story.RootPath;
             startInfo.CreateNoWindow = true;
             startInfo.RedirectStandardInput = true;
