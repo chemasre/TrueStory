@@ -356,6 +356,8 @@ namespace TrueStory
         {
             DialogAskName d = new();
 
+            d.Owner = this;
+
             d.Title = "Introducir clave de API";
             d.Message.Text = "Introduce la clave de API Gemini que quieras utilizar para las consultas.";
             d.Input.Text = apiKey;
@@ -374,6 +376,8 @@ namespace TrueStory
         private void OnSetApiURLButtonClicked(object sender, RoutedEventArgs e)
         {
             DialogAskName d = new();
+
+            d.Owner = this;
 
             d.Title = "Introducir URL de API";
             d.Message.Text = "Introduce la URL de API Gemini que quieras utilizar para las consultas.";

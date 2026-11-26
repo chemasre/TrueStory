@@ -228,6 +228,9 @@ namespace TrueStory
         void DoFind()
         {
             DialogFind d = new();
+
+            d.Owner = window;
+
             d.Message.Text = "Texto a buscar";
             d.Input.Text = textBox.SelectionLength > 0 ? textBox.SelectedText : lastSearch;
 
@@ -302,6 +305,9 @@ namespace TrueStory
         void DoGoto()
         {
             DialogGotoLine d = new();
+
+            d.Owner = window;
+
             d.Message.Text = String.Format("Ir a línea ({0:0} - {1:0})", 1, textBox.LineCount);
             d.MaxLines = textBox.LineCount;
             d.Input.Text = "1";

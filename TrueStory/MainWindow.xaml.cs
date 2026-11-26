@@ -420,6 +420,8 @@ namespace TrueStory
         {
             DialogActivityProperties dialog = new();
 
+            dialog.Owner = this;
+
             bool? result = dialog.ShowDialog();
 
 
@@ -596,6 +598,8 @@ namespace TrueStory
 
             DialogAskName dialog = new();
 
+            dialog.Owner = this;
+
             dialog.Title = "Crear nueva carpeta";
             dialog.Message.Text = "Introduce un nombre para la nueva carpeta.";
             dialog.Input.Text = "NuevaCarpeta";
@@ -628,6 +632,8 @@ namespace TrueStory
             Debug.Assert(story != null);
 
             DialogAskName dialog = new();
+
+            dialog.Owner = this;
 
             dialog.Title = "Crear nuevo fichero";
             dialog.Message.Text = "Introduce un nombre de fichero con alguna de estas extensiones:\n\n" + String.Join(Constants.extensionSeparator, story.Header.editableExtensions);
@@ -778,6 +784,9 @@ namespace TrueStory
                         string oldName = loadedFile;
 
                         DialogAskName askName = new();
+
+                        askName.Owner = this;
+
                         askName.Title = "Renombrar fichero";
                         askName.Message.Text = "Introduce el nuevo nombre para el fichero '" + oldName + "'";
                         askName.Input.Text = loadedFile;

@@ -322,7 +322,6 @@ namespace TrueStory
                 //textBox.AppendText(Environment.NewLine);
                 //textBox.CaretIndex += Environment.NewLine.Length;
 
-
                 OnCommandExecuted?.Invoke(commandText, "");
 
                 command.Clear();

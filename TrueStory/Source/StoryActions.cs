@@ -91,6 +91,9 @@ namespace TrueStory
         RecordData.LanguageModelChatData OnLanguageModelChat(string? initialUserLine)
         {
             DialogLLM d = new();
+
+            d.Owner = window;
+
             d.TextSize = window.Settings.GetInt("FontSize", Constants.editorDefaultTextSize);
             d.ApiKey = window.Settings.GetString("LanguageModelAPIKey");
             d.ApiURL = window.Settings.GetString("LanguageModelURL", Constants.languageModelDefaultURL);
@@ -108,6 +111,9 @@ namespace TrueStory
         RecordData.QuestionData OnQuestion(RecordData.QuestionData question)
         {
             DialogQuestion d = new();
+
+            d.Owner = window;
+
             d.Question = question;
             d.TextSize = window.Settings.GetInt("FontSize", Constants.editorDefaultTextSize); 
             d.ShowDialog();
