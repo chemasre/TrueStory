@@ -10,7 +10,7 @@ using System.Windows.Threading;
 
 namespace TrueStory
 {
-    public class CommandConsole
+    public class CommandConsole : IDisposable
     {
         public event OnExecuteCommandHandler? OnExecuteCommand;
         public event OnCommandExecutedHandler? OnCommandExecuted;
@@ -359,6 +359,12 @@ namespace TrueStory
             e.CancelCommand();
         }
 
-
+        public void Dispose()
+        {
+            if (IsProcessRunning())
+            {
+                StopProcess();
+            }
+        }
     }
 }

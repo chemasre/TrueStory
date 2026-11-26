@@ -18,7 +18,7 @@ namespace TrueStory
         [DllImport("user32.dll")]
         public static extern bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 
-        public event TextSizeSettingChanged OnTextSizeChanged;
+        public event TextSizeSettingChanged? OnTextSizeChanged;
 
         public delegate void TextSizeSettingChanged(int size);
         public int TextSize { get { return Settings.GetInt("FontSize", Constants.editorDefaultTextSize); } }
@@ -173,6 +173,9 @@ namespace TrueStory
 
             log.Dispose();
             log = null;
+
+            commandConsole.Dispose();
+            commandConsole = null;
         }
 
         private void OnExecuteCommand(string command)
