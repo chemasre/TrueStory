@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace TrueStory
 {
@@ -22,7 +23,7 @@ namespace TrueStory
 
         public DialogActivityProperties()
         {
-
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 
             disableUIEvents = true;
             InitializeComponent();

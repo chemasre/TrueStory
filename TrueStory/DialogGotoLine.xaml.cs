@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace TrueStory
 {
@@ -18,6 +19,8 @@ namespace TrueStory
         public DialogGotoLine()
         {
             InitializeComponent();
+
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 
             Loaded += OnLoaded;
             Input.KeyDown += OnKeyDown;

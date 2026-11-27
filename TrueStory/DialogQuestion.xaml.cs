@@ -37,6 +37,8 @@ namespace TrueStory
         {
             InitializeComponent();
 
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
+
             DataObject.AddPastingHandler(AnswerTextBox, OnFileContentsPaste);
             DataObject.AddCopyingHandler(AnswerTextBox, OnFileContentsCopy);
 

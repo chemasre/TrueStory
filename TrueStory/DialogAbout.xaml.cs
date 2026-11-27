@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace TrueStory
 {
@@ -11,6 +12,8 @@ namespace TrueStory
         public DialogAbout()
         {
             InitializeComponent();
+
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 
             FlowDocument doc = Document.Document;
             Paragraph p;

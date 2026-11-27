@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace TrueStory
 {
@@ -11,6 +12,8 @@ namespace TrueStory
         public DialogFind()
         {
             InitializeComponent();
+
+            TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 
             Loaded += OnLoaded;
             Input.KeyDown += OnKeyDown;
