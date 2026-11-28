@@ -20,6 +20,12 @@
         public const string extensionSettingsExtension = "extensionsettings";
 
         public const string assistantParamsProfileExtension = "assistantparams";
+        public const string consoleParamsProfileExtension = "consoleparams";
+
+        public const int generalTabIndex   = 0;
+        public const int instructorTabIndex = 1;
+        public const int assistantTabIndex = 2;
+        public const int consoleTabIndex   = 3;
 
 
     }

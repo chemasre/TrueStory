@@ -3,10 +3,10 @@
     public class Version
     {
         public const int Major = 0;
-        public const int Minor = 13;
-        public const int Patch = 3;
+        public const int Minor = 14;
+        public const int Patch = 0;
 
-        public const string Alias = "Arregladas fuentes borrosas";
+        public const string Alias = "Comandos predefinidos de consola";
 
         public static string GetVersion(bool includeAlias = true)
         {

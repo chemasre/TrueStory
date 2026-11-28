@@ -12,10 +12,8 @@ namespace TrueStory
 {
     public class CommandConsole : IDisposable
     {
-        public event OnExecuteCommandHandler? OnExecuteCommand;
         public event OnCommandExecutedHandler? OnCommandExecuted;
 
-        public delegate void OnExecuteCommandHandler(string command);
         public delegate void OnCommandExecutedHandler(string command, string output);
 
         public Story? Story { get { return story; } set { story = value; OnStoryChanged(); } }
@@ -47,11 +45,11 @@ namespace TrueStory
             }
             else
             {
-                textBox.IsEnabled = story.Header.commandConsoleEnabled;
-                textBox.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
-                label.Visibility = story.Header.commandConsoleEnabled ? Visibility.Visible : Visibility.Collapsed;
+                textBox.IsEnabled = story.Header.commandConsole.enabled;
+                textBox.Visibility = story.Header.commandConsole.enabled ? Visibility.Visible : Visibility.Collapsed;
+                label.Visibility = story.Header.commandConsole.enabled ? Visibility.Visible : Visibility.Collapsed;
 
-                if(story.Header.commandConsoleEnabled)
+                if(story.Header.commandConsole.enabled)
                 {
                     StartProcess();
                 }
@@ -125,7 +123,7 @@ namespace TrueStory
 
             process = new();
             ProcessStartInfo startInfo = new();
-            startInfo.FileName = Constants.consoleProcessExecutable;
+            startInfo.FileName = story.Header.commandConsole.processExecutable;
             startInfo.WorkingDirectory = story.RootPath;
             startInfo.CreateNoWindow = true;
             startInfo.RedirectStandardInput = true;
@@ -250,6 +248,9 @@ namespace TrueStory
             _window.FileEditorTextBox.FontSize = _window.TextSize;
             _window.OnTextSizeChanged += OnTextSizeChanged;
 
+            _window.ConsolePresetCommand1Action.Click += OnPresetCommand1;
+            _window.ConsolePresetCommand2Action.Click += OnPresetCommand2;
+            _window.ConsolePresetCommand3Action.Click += OnPresetCommand3;
 
             DataObject.AddPastingHandler(_window.CommandConsoleTextBox, OnFileContentsPaste);
             DataObject.AddCopyingHandler(_window.CommandConsoleTextBox, OnFileContentsCopy);
@@ -278,6 +279,27 @@ namespace TrueStory
 
         }
 
+        private void OnPresetCommand3(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(story != null);
+
+            DoExecuteCommand(story.Header.commandConsole.commandPreset3.command);
+        }
+
+        private void OnPresetCommand2(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(story != null);
+
+            DoExecuteCommand(story.Header.commandConsole.commandPreset2.command);
+        }
+
+        private void OnPresetCommand1(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(story != null);
+
+            DoExecuteCommand(story.Header.commandConsole.commandPreset1.command);
+        }
+
         private void OnTextSizeChanged(int size)
         {
             textBox.FontSize = size;
@@ -301,7 +323,30 @@ namespace TrueStory
 
             }
 
-        }        
+        }
+        
+        void DoExecuteCommand(string commandText)
+        {
+            Debug.Assert(process != null);
+
+            textBox.CaretIndex -= commandText.Length;
+
+            int previousCaret = textBox.CaretIndex;
+
+            textBox.Text = textBox.Text.Substring(0, textBox.CaretIndex);
+
+            textBox.CaretIndex = previousCaret;
+
+            //textBox.AppendText(Environment.NewLine);
+            //textBox.CaretIndex += Environment.NewLine.Length;
+
+            OnCommandExecuted?.Invoke(commandText, "");
+
+            command.Clear();
+
+            process.StandardInput.WriteLine(commandText);
+
+        }
 
         void OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -310,23 +355,7 @@ namespace TrueStory
             if (e.Key == Key.Return)
             {
                 string commandText = command.ToString();
-
-                textBox.CaretIndex -= commandText.Length;
-
-                int previousCaret = textBox.CaretIndex;
-
-                textBox.Text = textBox.Text.Substring(0, textBox.CaretIndex);
-
-                textBox.CaretIndex = previousCaret;
-
-                //textBox.AppendText(Environment.NewLine);
-                //textBox.CaretIndex += Environment.NewLine.Length;
-
-                OnCommandExecuted?.Invoke(commandText, "");
-
-                command.Clear();
-
-                process.StandardInput.WriteLine(commandText);
+                DoExecuteCommand(commandText);
 
             }
             else if (e.Key == Key.Back)

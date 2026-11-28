@@ -98,7 +98,7 @@ namespace TrueStory
             int readed = 0;
             int readedTotal = 0;
 
-            do
+            do 
             {
                 readed = reader.Read(bytes, readedTotal, bytes.Length - readedTotal);
 

@@ -20,7 +20,7 @@
             </MenuItem>
         </Menu>
         <TabControl x:Name="Tabs" DockPanel.Dock="Top" Background="{DynamicResource StoryPlayerNonEditableTextBackground}">
-            <TabItem x:Name="GeneralTab" Header="Configuración básica" Padding="8,5,8,5" Margin="0,0,0,0">
+            <TabItem x:Name="GeneralTab" Header="Ajustes generales de la actividad" Padding="8,5,8,5" Margin="0,0,0,0">
                 <Grid Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Margin="20,20,20,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
@@ -44,7 +44,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Label x:Name="GeneralLabel" Content="Configuración general de la actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
+                    <Label x:Name="GeneralLabel" Content="Ajustes generales de la actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Grid.ColumnSpan="3" Background="{DynamicResource StoryPlayerPanelTitle}"/>
                     <Label x:Name="TitleLabel" Content="Título de la actividad" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Margin="0,10,0,0"/>
                     <TextBox x:Name="TitleText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="1" TextChanged="OnTitleChanged" Margin="0,10,0,0"/>
                     <Label x:Name="EditableExtensionsLabel" Content="Extensiones de fichero editables (separar con comas)" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="2"/>
@@ -84,7 +84,7 @@
                     <CheckBox x:Name="ConsoleEnabledCheckbox" Content="" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Checked="OnConsoleChecked" Unchecked="OnConsoleUnchecked"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="QuestionsTab" Header="Configuración de preguntas" Margin="0,0,0,0" Padding="8,5,8,5">
+            <TabItem x:Name="QuestionsTab" Header="Ajustes de preguntas" Margin="0,0,0,0" Padding="8,5,8,5">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top" Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Margin="20,20,20,0">
                         <Grid.ColumnDefinitions>
@@ -197,7 +197,7 @@
                     </Grid>
                 </DockPanel>
             </TabItem>
-            <TabItem x:Name="AssistantTab" Header="Configuración del asistente" Padding="8,5,8,5">
+            <TabItem x:Name="AssistantTab" Header="Ajustes del asistente" Padding="8,5,8,5">
                 <Grid Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Margin="20,20,20,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
@@ -223,7 +223,7 @@
                     <DockPanel Grid.ColumnSpan="3">
                         <Button x:Name="AssistantParamsProfileLoad" DockPanel.Dock="Right"  Content="Guardar parámetros" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="5,5,5,5" Click="OnAssistantParamsProfileSave"/>
                         <Button x:Name="AssistantParamsProfileSave" DockPanel.Dock="Right" Content="Cargar parámetros" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="5,5,5,5" MinWidth="100" Click="OnAssistantParamsProfileLoad"/>
-                        <Label x:Name="AssistantLabel" Content="Configuración del asistente" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Background="{DynamicResource StoryPlayerPanelTitle}"/>
+                        <Label x:Name="AssistantLabel" Content="Ajustes del asistente" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Background="{DynamicResource StoryPlayerPanelTitle}"/>
                     </DockPanel>
                     <Label x:Name="AssistantNameLabel" Content="Nombre del asistente" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Margin="0,10,0,0"/>
                     <TextBox x:Name="AssistantNameText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="1" TextChanged="OnAssistantParamChanged" Margin="0,10,0,0"/>
@@ -238,6 +238,59 @@
                     <TextBox x:Name="AssistantContextualQuestion2TitleText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="6" TextChanged="OnAssistantParamChanged" Margin="0,5,0,0"/>
                     <Label x:Name="AssistantContextualQuestion2TextLabel" Content="Texto de la pregunta 2" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="7" Margin="40,5,0,0"/>
                     <TextBox x:Name="AssistantContextualQuestion2TextText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="7" TextChanged="OnAssistantParamChanged" Margin="0,5,0,0"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="ConsoleTab" Header="Ajustes de la consola" Padding="8,5,8,5" Margin="-2,-2,-2,0">
+                <Grid Background="{DynamicResource StoryPlayerNonEditableTextBackground}" Margin="20,20,20,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.ColumnSpan="3">
+                        <Button x:Name="ConsoleParamsProfileLoad" DockPanel.Dock="Right"  Content="Guardar parámetros" MinWidth="100" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="5,5,5,5" Click="OnConsoleParamsProfileSave"/>
+                        <Button x:Name="ConsoleParamsProfileSave" DockPanel.Dock="Right" Content="Cargar parámetros" Background="{DynamicResource StoryPlayerButtonNeutral}" Foreground="{DynamicResource StoryPlayerButtonsText}" Padding="5,5,5,5" MinWidth="100" Click="OnConsoleParamsProfileLoad"/>
+                        <Label x:Name="ConsoleLabel" Content="Ajustes de la consola" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerPanelTitleText}" Background="{DynamicResource StoryPlayerPanelTitle}"/>
+                    </DockPanel>
+                    <Label x:Name="ConsoleExecutableLabel" Content="Ejecutable del proceso" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Grid.Row="1" Margin="0,10,0,0"/>
+                    <TextBox x:Name="ConsoleExecutableText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="1" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand1EnabledLabel" Content="Comando predefinido 1" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="3" Margin="0,10,0,0"/>
+                    <CheckBox x:Name="ConsolePresetCommand1EnabledCheckbox" Content="" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Grid.Row="3" Grid.Column="1" Checked="OnCommandConsolePresetChecked" Unchecked="OnCommandConsolePresetUnchecked" Margin="0,10,0,0"/>
+                    <TextBox x:Name="ConsolePresetCommand1NameText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="4" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand1NameLabel" Content="Nombre en el menú" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="4" Margin="20,10,0,0"/>
+                    <TextBox x:Name="ConsolePresetCommand1CommandText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="5" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand1CommandLabel" Content="Texto del comando" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="5" Margin="20,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand2EnabledLabel" Content="Comando predefinido 1" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="6" Margin="0,10,0,0"/>
+                    <CheckBox x:Name="ConsolePresetCommand2EnabledCheckbox" Content="" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Grid.Row="6" Grid.Column="1" Checked="OnCommandConsolePresetChecked" Unchecked="OnCommandConsolePresetUnchecked" Margin="0,10,0,0"/>
+                    <TextBox x:Name="ConsolePresetCommand2NameText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="7" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand2NameLabel" Content="Nombre en el menú" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="7" Margin="20,10,0,0"/>
+                    <TextBox x:Name="ConsolePresetCommand2CommandText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="8" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand2CommandLabel" Content="Texto del comando" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="8" Margin="20,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand3EnabledLabel" Content="Comando predefinido 1" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="9" Margin="0,10,0,0"/>
+                    <CheckBox x:Name="ConsolePresetCommand3EnabledCheckbox" Content="" Padding="{DynamicResource StoryPlayerTabItemPadding}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsChecked="True" Grid.Row="9" Grid.Column="1" Checked="OnCommandConsolePresetChecked" Unchecked="OnCommandConsolePresetUnchecked" Margin="0,10,0,0"/>
+                    <TextBox x:Name="ConsolePresetCommand3NameText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="10" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0"/>
+                    <Label x:Name="ConsolePresetCommand3NameLabel" Content="Nombre en el menú" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="10" Margin="20,10,0,0"/>
+                    <TextBox x:Name="ConsolePresetCommand3CommandText" TextWrapping="Wrap" Grid.Column="1" VerticalContentAlignment="Center" Padding="5,0,0,0" Grid.ColumnSpan="2" Grid.Row="11" TextChanged="OnCommandConsoleParamChanged" Margin="0,10,0,0" Grid.RowSpan="8"/>
+                    <Label x:Name="ConsolePresetCommand3CommandLabel" Content="Texto del comando" MinHeight="21" FontFamily="{DynamicResource StoryPlayerFont}" BorderThickness="1,1,1,1" Foreground="{DynamicResource StoryPlayerNonEditableText}" Grid.Row="11" Margin="20,10,0,0" Grid.RowSpan="8"/>
                 </Grid>
             </TabItem>
         </TabControl>

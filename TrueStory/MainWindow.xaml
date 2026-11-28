@@ -38,7 +38,12 @@
                 <Separator/>
                 <MenuItem x:Name="DarkModeCheckableAction" Header="Tema oscuro" IsCheckable="True" Checked="OnMenuDarkModeChecked" Unchecked="OnMenuDarkModeUnchecked"/>
             </MenuItem>
-            <MenuItem x:Name="ToolsMenu" Header="Asistente IA" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
+            <MenuItem x:Name="ConsoleMenu" Header="Consola" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
+                <MenuItem x:Name="ConsolePresetCommand1Action" Header="Comando predefinido 1"/>
+                <MenuItem x:Name="ConsolePresetCommand2Action" Header="Comando predefinido 2"/>
+                <MenuItem x:Name="ConsolePresetCommand3Action" Header="Comando predefinido 3"/>
+            </MenuItem>
+            <MenuItem x:Name="LLMMenu" Header="Asistente IA" Background="{DynamicResource TrueEditorMenu}" Padding="{DynamicResource TrueStoryTabItemPadding}" BorderThickness="0,0,0,0">
                 <MenuItem x:Name="LLMGeneralQuestionAction" Header="Consulta general" Click="OnMenuLLMGeneralQuestion"/>
                 <MenuItem x:Name="LLMContextualQuestion1Action" Header="Explica la selección" Click="OnMenuLLMContextualQuestion1"/>
                 <MenuItem x:Name="LLMContextualQuestion2Action" Header="Sugerencia sobre la selección" Click="OnMenuLLMContextualQuestion2"/>

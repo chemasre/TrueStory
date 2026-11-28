@@ -99,7 +99,7 @@ namespace TrueStory
             folderView.OnFolderSelected += OnFolderViewFolderSelected;
 
             commandConsole = new(this);
-            commandConsole.OnExecuteCommand += OnExecuteCommand;
+            commandConsole.OnCommandExecuted += OnCommandExecuted;
 
             instructor = new(this);
 
@@ -181,9 +181,12 @@ namespace TrueStory
             commandConsole = null;
         }
 
-        private void OnExecuteCommand(string command)
+        private void OnCommandExecuted(string command, string output)
         {
             Debug.Assert(story != null);
+
+            story.AddExecuteCommand(command);
+
         }
 
         private void OnFolderViewFolderSelected(string _folder)
@@ -254,9 +257,27 @@ namespace TrueStory
 
         void SetUIState(UIState _uiState)
         {
-            if (story != null)
+            if (_uiState != UIState.NoStory)
             {
-                ToolsMenu.Visibility = story.Header.assistant.enabled ? Visibility.Visible : Visibility.Collapsed;
+                Debug.Assert(story != null);
+
+                LLMMenu.Visibility = story.Header.assistant.enabled ? Visibility.Visible : Visibility.Collapsed;
+
+                bool consoleEnabled = story.Header.commandConsole.enabled;
+                bool preset1Enabled = consoleEnabled && story.Header.commandConsole.commandPreset1.enabled;
+                bool preset2Enabled = consoleEnabled && story.Header.commandConsole.commandPreset2.enabled;
+                bool preset3Enabled = consoleEnabled && story.Header.commandConsole.commandPreset3.enabled;
+                bool somePresetEnabled = consoleEnabled && (preset1Enabled || preset2Enabled || preset3Enabled);
+
+                ConsoleMenu.Visibility = somePresetEnabled ? Visibility.Visible : Visibility.Collapsed;
+                ConsolePresetCommand1Action.Visibility = preset1Enabled ? Visibility.Visible : Visibility.Collapsed;
+                ConsolePresetCommand2Action.Visibility = preset2Enabled ? Visibility.Visible : Visibility.Collapsed;
+                ConsolePresetCommand3Action.Visibility = preset3Enabled ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                LLMMenu.Visibility = Visibility.Collapsed;
+                ConsoleMenu.Visibility = Visibility.Collapsed;
             }
 
             if (_uiState == UIState.NoStory)
@@ -273,7 +294,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
                 ResetTextAction.IsEnabled = false;
-                ToolsMenu.IsEnabled = false;
+                LLMMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
                 InstructorTextBox.Visibility = Visibility.Collapsed;
@@ -297,7 +318,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
                 ResetTextAction.IsEnabled = true;
-                ToolsMenu.IsEnabled = true;
+                LLMMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -320,7 +341,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
                 ResetTextAction.IsEnabled = true;
-                ToolsMenu.IsEnabled = true;
+                LLMMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -343,7 +364,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
                 ResetTextAction.IsEnabled = true;
-                ToolsMenu.IsEnabled = true;
+                LLMMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -363,12 +384,12 @@ namespace TrueStory
                 DeleteFileOrFolderMenuAction.IsEnabled = true;
                 RenameFileOrFolderMenuAction.IsEnabled = true;
                 EditMenu.IsEnabled = false;
-                ToolsMenu.IsEnabled = false;
+                LLMMenu.IsEnabled = false;
                 ViewMenu.IsEnabled = true;
                 EnlargeTextAction.IsEnabled = true;
                 ReduceTextAction.IsEnabled = true;
                 ResetTextAction.IsEnabled = true;
-                ToolsMenu.IsEnabled = true;
+                LLMMenu.IsEnabled = true;
                 FileEditorTextBox.IsReadOnly = false;
                 FolderViewList.Visibility = Visibility.Visible;
             }
@@ -392,7 +413,7 @@ namespace TrueStory
                 EnlargeTextAction.IsEnabled = false;
                 ReduceTextAction.IsEnabled = false;
                 ResetTextAction.IsEnabled = false;
-                ToolsMenu.IsEnabled = false;
+                LLMMenu.IsEnabled = false;
                 FileEditorTextBox.IsReadOnly = true;
                 FolderViewList.Visibility = Visibility.Hidden;
             }
@@ -441,7 +462,7 @@ namespace TrueStory
                 UpdateFileTitle();
                 UpdateWindowTitle();
                 UpdateAssistantMenu();
-
+                UpdateConsoleMenu();
 
                 commandConsole.Story = story;
                 folderView.Story = story;
@@ -473,6 +494,7 @@ namespace TrueStory
                         UpdateFileTitle();
                         UpdateWindowTitle();
                         UpdateAssistantMenu();
+                        UpdateConsoleMenu();
 
                         commandConsole.Story = story;
                         folderView.Story = story;
@@ -596,6 +618,15 @@ namespace TrueStory
 
             LLMContextualQuestion1Action.Header = story.Header.assistant.contextualQuery1.title;
             LLMContextualQuestion2Action.Header = story.Header.assistant.contextualQuery2.title;
+        }
+
+        void UpdateConsoleMenu()
+        {
+            Debug.Assert(story != null);
+
+            ConsolePresetCommand1Action.Header = story.Header.commandConsole.commandPreset1.name;
+            ConsolePresetCommand2Action.Header = story.Header.commandConsole.commandPreset2.name;
+            ConsolePresetCommand3Action.Header = story.Header.commandConsole.commandPreset3.name;
         }
 
         void OnMenuNewFolder(object sender, RoutedEventArgs e)

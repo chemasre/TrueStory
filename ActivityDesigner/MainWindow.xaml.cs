@@ -16,11 +16,13 @@ namespace ActivityDesigner
         enum DataChangeType
         {
             All,
-            QuestionsEnabled,
+            QuestionsEnabledOrDisabled,
             TemplateListModified,
             ExtensionSettingsModified,
-            QuestionChances,
-            AssistantEnabled
+            QuestionChancesModified,
+            AssistantEnabledOrDisabled,
+            ConsoleEnabledOrDisabled,
+            ConsolePresetEnabledOrDisabled
         }
 
         RecordData.NewHeaderData data;
@@ -31,6 +33,10 @@ namespace ActivityDesigner
         HashSet<Control> wordSeparatorsControls;
         HashSet<Control> wordSeparatorsExtensionControls;
         HashSet<Control> assistantControls;
+        HashSet<Control> consoleControls;
+        HashSet<Control> consolePresetCommand1Controls;
+        HashSet<Control> consolePresetCommand2Controls;
+        HashSet<Control> consolePresetCommand3Controls;
 
         bool disableUIEvents;
 
@@ -123,6 +129,36 @@ namespace ActivityDesigner
             assistantControls = new()
             {
                 AssistantTab
+            };
+
+            consoleControls = new()
+            {
+                ConsoleTab
+
+            };
+
+            consolePresetCommand1Controls = new()
+            {
+                ConsolePresetCommand1NameLabel,
+                ConsolePresetCommand1NameText,
+                ConsolePresetCommand1CommandLabel,
+                ConsolePresetCommand1CommandText,
+            };
+
+            consolePresetCommand2Controls = new()
+            {
+                ConsolePresetCommand2NameLabel,
+                ConsolePresetCommand2NameText,
+                ConsolePresetCommand2CommandLabel,
+                ConsolePresetCommand2CommandText,
+            };
+
+            consolePresetCommand3Controls = new()
+            {
+                ConsolePresetCommand3NameLabel,
+                ConsolePresetCommand3NameText,
+                ConsolePresetCommand3CommandLabel,
+                ConsolePresetCommand3CommandText,
             };
 
             savePath = null;
@@ -307,21 +343,70 @@ namespace ActivityDesigner
                 SanitizeExtensions(EditableExtensionsText);
             }
 
-            ConsoleEnabledCheckbox.IsChecked = data.commandConsoleEnabled;
+            if (changeType == DataChangeType.All ||
+                changeType == DataChangeType.ConsoleEnabledOrDisabled ||
+                changeType == DataChangeType.ConsolePresetEnabledOrDisabled)
+            {
+                ConsoleEnabledCheckbox.IsChecked = data.commandConsole.enabled;
 
-            if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled)
+                foreach (Control c in consoleControls)
+                { c.Visibility = data.commandConsole.enabled ? Visibility.Visible : Visibility.Collapsed; }
+
+                if (!data.commandConsole.enabled && Tabs.SelectedIndex == Constants.consoleTabIndex) { Tabs.SelectedIndex = Constants.generalTabIndex; }
+
+                if(data.commandConsole.enabled)
+                {
+                    ConsoleExecutableText.Text = data.commandConsole.processExecutable;
+
+                    if(changeType == DataChangeType.All || changeType == DataChangeType.ConsoleEnabledOrDisabled || changeType == DataChangeType.ConsolePresetEnabledOrDisabled)
+                    {
+                        ConsolePresetCommand1EnabledCheckbox.IsChecked = data.commandConsole.commandPreset1.enabled;
+                        foreach(Control c in consolePresetCommand1Controls)
+                        { c.Visibility = data.commandConsole.commandPreset1.enabled ? Visibility.Visible : Visibility.Collapsed; }
+
+                        ConsolePresetCommand2EnabledCheckbox.IsChecked = data.commandConsole.commandPreset2.enabled;
+                        foreach(Control c in consolePresetCommand2Controls)
+                        { c.Visibility = data.commandConsole.commandPreset2.enabled ? Visibility.Visible : Visibility.Collapsed; }
+
+                        ConsolePresetCommand3EnabledCheckbox.IsChecked = data.commandConsole.commandPreset3.enabled;
+                        foreach(Control c in consolePresetCommand3Controls)
+                        { c.Visibility = data.commandConsole.commandPreset3.enabled ? Visibility.Visible : Visibility.Collapsed; }
+
+                        if(data.commandConsole.commandPreset1.enabled)
+                        {
+                            ConsolePresetCommand1NameText.Text = data.commandConsole.commandPreset1.name;
+                            ConsolePresetCommand1CommandText.Text = data.commandConsole.commandPreset1.command;
+                        }
+
+                        if(data.commandConsole.commandPreset2.enabled)
+                        {
+                            ConsolePresetCommand2NameText.Text = data.commandConsole.commandPreset2.name;
+                            ConsolePresetCommand2CommandText.Text = data.commandConsole.commandPreset2.command;
+                        }
+
+                        if(data.commandConsole.commandPreset3.enabled)
+                        {
+                            ConsolePresetCommand3NameText.Text = data.commandConsole.commandPreset3.name;
+                            ConsolePresetCommand3CommandText.Text = data.commandConsole.commandPreset3.command;
+                        }
+                    }
+                }
+
+            }
+
+            if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabledOrDisabled)
             {
                 QuestionsEnabledCheckbox.IsChecked = data.instructor.enabled;
 
                 foreach (Control c in questionControls)
                 { c.Visibility = data.instructor.enabled ? Visibility.Visible : Visibility.Collapsed; }
 
-                if (!data.instructor.enabled) { Tabs.SelectedIndex = 0; }
+                if (!data.instructor.enabled && Tabs.SelectedIndex == Constants.instructorTabIndex) { Tabs.SelectedIndex = Constants.generalTabIndex; }
             }
 
             if (data.instructor.enabled)
             {
-                if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled)
+                if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabledOrDisabled)
                 {
                     QuestionsTimeMinText.Text = data.instructor.wait.time.min.ToString();
                     QuestionsTimeMaxText.Text = data.instructor.wait.time.max.ToString();
@@ -337,7 +422,7 @@ namespace ActivityDesigner
                     QuestionsObserveMaxText.Text = data.instructor.observe.time.max.ToString();
                 }
 
-                if (changeType == DataChangeType.All || changeType == DataChangeType.TemplateListModified || changeType == DataChangeType.QuestionsEnabled)
+                if (changeType == DataChangeType.All || changeType == DataChangeType.TemplateListModified || changeType == DataChangeType.QuestionsEnabledOrDisabled)
                 {
                     TemplatesList.Items.Clear();
 
@@ -395,7 +480,7 @@ namespace ActivityDesigner
                     }
                 }
 
-                if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionChances || changeType == DataChangeType.QuestionsEnabled)
+                if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionChancesModified || changeType == DataChangeType.QuestionsEnabledOrDisabled)
                 {
                     foreach (RecordData.QuestionChanceData chance in data.instructor.ask.chances)
                     {
@@ -436,7 +521,7 @@ namespace ActivityDesigner
                         c.Visibility = Visibility.Visible;
                     }
 
-                    if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabled || changeType == DataChangeType.ExtensionSettingsModified)
+                    if (changeType == DataChangeType.All || changeType == DataChangeType.QuestionsEnabledOrDisabled || changeType == DataChangeType.ExtensionSettingsModified)
                     {
 
                         WordSeparatorsExtensionList.Items.Clear();
@@ -482,19 +567,19 @@ namespace ActivityDesigner
                 }
             }
 
-            if (changeType == DataChangeType.All || changeType == DataChangeType.AssistantEnabled)
+            if (changeType == DataChangeType.All || changeType == DataChangeType.AssistantEnabledOrDisabled)
             {
                 AssistantEnabledCheckbox.IsChecked = data.assistant.enabled;
 
                 foreach (Control c in assistantControls)
                 { c.Visibility = data.assistant.enabled ? Visibility.Visible : Visibility.Collapsed; }
 
-                if (!data.assistant.enabled) { Tabs.SelectedIndex = 0; }
+                if (!data.assistant.enabled && Tabs.SelectedIndex == Constants.assistantTabIndex) { Tabs.SelectedIndex = Constants.generalTabIndex; }
             }
 
             if (data.assistant.enabled)
             {
-                if (changeType == DataChangeType.All || changeType == DataChangeType.AssistantEnabled)
+                if (changeType == DataChangeType.All || changeType == DataChangeType.AssistantEnabledOrDisabled)
                 {
                     AssistantNameText.Text = data.assistant.name;
 
@@ -508,28 +593,7 @@ namespace ActivityDesigner
                 }
             }
 
-
             disableUIEvents = false;
-        }
-
-        private void OnConsoleChecked(object sender, RoutedEventArgs e)
-        {
-            if (disableUIEvents) { return; }
-
-            data.commandConsoleEnabled = true;
-
-            needsSave = true;
-
-        }
-
-        private void OnConsoleUnchecked(object sender, RoutedEventArgs e)
-        {
-            if (disableUIEvents) { return; }
-
-            data.commandConsoleEnabled = false;
-
-            needsSave = true;
-
         }
 
         private void OnLanguageModelChecked(object sender, RoutedEventArgs e)
@@ -557,7 +621,7 @@ namespace ActivityDesigner
             if (disableUIEvents) { return; }
 
             data.instructor.enabled = true;
-            UpdateView(DataChangeType.QuestionsEnabled);
+            UpdateView(DataChangeType.QuestionsEnabledOrDisabled);
 
             needsSave = true;
             UpdateTitle();
@@ -569,7 +633,7 @@ namespace ActivityDesigner
             if (disableUIEvents) { return; }
 
             data.instructor.enabled = false;
-            UpdateView(DataChangeType.QuestionsEnabled);
+            UpdateView(DataChangeType.QuestionsEnabledOrDisabled);
 
             needsSave = true;
             UpdateTitle();
@@ -829,7 +893,7 @@ namespace ActivityDesigner
             if (disableUIEvents) { return; }
 
             data.assistant.enabled = true;
-            UpdateView(DataChangeType.AssistantEnabled);
+            UpdateView(DataChangeType.AssistantEnabledOrDisabled);
 
             needsSave = true;
             UpdateTitle();
@@ -841,7 +905,7 @@ namespace ActivityDesigner
             if (disableUIEvents) { return; }
 
             data.assistant.enabled = false;
-            UpdateView(DataChangeType.AssistantEnabled);
+            UpdateView(DataChangeType.AssistantEnabledOrDisabled);
 
             needsSave = true;
             UpdateTitle();
@@ -862,6 +926,77 @@ namespace ActivityDesigner
             UpdateTitle();
         }
 
+        private void OnConsoleChecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsole.enabled = true;
+            UpdateView(DataChangeType.ConsoleEnabledOrDisabled);
+
+            needsSave = true;
+            UpdateTitle();
+        }
+
+        private void OnConsoleUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsole.enabled = false;
+            UpdateView(DataChangeType.ConsoleEnabledOrDisabled);
+
+            needsSave = true;
+            UpdateTitle();
+
+        }
+
+        private void OnCommandConsolePresetChecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsole.commandPreset1.enabled = ConsolePresetCommand1EnabledCheckbox.IsChecked.GetValueOrDefault();
+            data.commandConsole.commandPreset2.enabled = ConsolePresetCommand2EnabledCheckbox.IsChecked.GetValueOrDefault();
+            data.commandConsole.commandPreset3.enabled = ConsolePresetCommand3EnabledCheckbox.IsChecked.GetValueOrDefault();
+
+            UpdateView(DataChangeType.ConsolePresetEnabledOrDisabled);
+
+            needsSave = true;
+            UpdateTitle();
+
+        }
+
+        private void OnCommandConsolePresetUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsole.commandPreset1.enabled = ConsolePresetCommand1EnabledCheckbox.IsChecked.GetValueOrDefault();
+            data.commandConsole.commandPreset2.enabled = ConsolePresetCommand2EnabledCheckbox.IsChecked.GetValueOrDefault();
+            data.commandConsole.commandPreset3.enabled = ConsolePresetCommand3EnabledCheckbox.IsChecked.GetValueOrDefault();
+
+            UpdateView(DataChangeType.ConsolePresetEnabledOrDisabled);
+
+            needsSave = true;
+            UpdateTitle();
+
+        }
+
+        private void OnCommandConsoleParamChanged(object sender, TextChangedEventArgs e)
+        {
+            if (disableUIEvents) { return; }
+
+            data.commandConsole.processExecutable = ConsoleExecutableText.Text;
+
+            data.commandConsole.commandPreset1.name = ConsolePresetCommand1NameText.Text;
+            data.commandConsole.commandPreset1.command = ConsolePresetCommand1CommandText.Text;
+
+            data.commandConsole.commandPreset2.name = ConsolePresetCommand2NameText.Text;
+            data.commandConsole.commandPreset2.command = ConsolePresetCommand2CommandText.Text;
+
+            data.commandConsole.commandPreset3.name = ConsolePresetCommand3NameText.Text;
+            data.commandConsole.commandPreset3.command = ConsolePresetCommand3CommandText.Text;
+
+            needsSave = true;
+            UpdateTitle();
+        }
 
         void SanitizeInt(TextBox textBox)
         {
@@ -1090,7 +1225,7 @@ namespace ActivityDesigner
                 if (profile != null)
                 {
                     data.instructor.ask.chances = profile.Chances;
-                    UpdateView(DataChangeType.QuestionChances);
+                    UpdateView(DataChangeType.QuestionChancesModified);
                     needsSave = true;
 
                 }
@@ -1206,7 +1341,7 @@ namespace ActivityDesigner
                 }
                 else
                 {
-                    MessageBox.Show("No se han podido cargar las probabilidades del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("No se han podido cargar los parámetros del asistente del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
 
             }
@@ -1236,12 +1371,70 @@ namespace ActivityDesigner
 
         }
 
+        private void OnConsoleParamsProfileLoad(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new();
+
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
+            dialog.Filter = "console params files (*." + Constants.consoleParamsProfileExtension + ")|*." + Constants.consoleParamsProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+
+                Profiles.ConsoleParams ? profile = Profiles.LoadConsoleParams(path);
+
+                if (profile != null)
+                {
+                    data.commandConsole.processExecutable = profile.ProcessExecutable;
+                    data.commandConsole.commandPreset1 = profile.CommandPreset1;
+                    data.commandConsole.commandPreset2 = profile.CommandPreset2;
+                    data.commandConsole.commandPreset3 = profile.CommandPreset3;
+
+                    UpdateView();
+                    needsSave = true;
+
+                }
+                else
+                {
+                    MessageBox.Show("No se han podido cargar los parámetros de la consola del fichero", "Advertencia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+            }
+        }
+
+        private void OnConsoleParamsProfileSave(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new();
+
+            dialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Constants.contentPath;
+            dialog.Filter = "console params files (*." + Constants.consoleParamsProfileExtension + ")|*." + Constants.consoleParamsProfileExtension;
+            dialog.FilterIndex = 1;
+
+            bool? result = dialog.ShowDialog();
+
+            if (result.GetValueOrDefault())
+            {
+                string path = dialog.FileName;
+                Profiles.ConsoleParams profile = new();
+                profile.ProcessExecutable = data.commandConsole.processExecutable;
+                profile.CommandPreset1 = data.commandConsole.commandPreset1;
+                profile.CommandPreset2 = data.commandConsole.commandPreset2;
+                profile.CommandPreset3 = data.commandConsole.commandPreset3;
+                Profiles.SaveConsoleParams(profile, path);
+            }
+        }
+
         private void OnMenuAbout(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(AppInfo.GetFullName() + "\n\n" +
                 "© 2026 Sinestesia Game Design. Todos los derechos reservados.\n\n" +
                 "Licencia para uso educativo válida durante el curso 2026/27.", "Acerca de la aplicación", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
 
     }
 }

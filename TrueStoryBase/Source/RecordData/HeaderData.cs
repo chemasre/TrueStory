@@ -242,6 +242,27 @@
             public AssistantData() { }
         }
 
+        public struct CommandConsoleCommandPresetData
+        {
+            public bool enabled = false;
+            public string name = "Comando predefinido";
+            public string command = "";
+
+            public CommandConsoleCommandPresetData() { }
+        }
+
+        public struct CommandConsoleData
+        {
+            public bool enabled = true;
+            public string processExecutable = "cmd.exe";
+
+            public CommandConsoleCommandPresetData commandPreset1 = new() { name = "Comando predefinido 1" };
+            public CommandConsoleCommandPresetData commandPreset2 = new() { name = "Comando predefinido 2" };
+            public CommandConsoleCommandPresetData commandPreset3 = new() { name = "Comando predefinido 3" };
+
+            public CommandConsoleData() { }
+        }
+
 
         public struct NewHeaderData
         {
@@ -261,7 +282,7 @@
                 "sh", "bash"
             };
 
-            public bool commandConsoleEnabled = true;
+            public CommandConsoleData commandConsole = new();
 
             public InstructorData instructor = new();
 
@@ -283,7 +304,19 @@
             buffer.WriteInt(r.editableExtensions.Length);
             foreach (string extension in r.editableExtensions) { buffer.WriteString(extension); }
 
-            buffer.WriteInt(r.commandConsoleEnabled ? 1 : 0);
+            buffer.WriteInt(r.commandConsole.enabled ? 1 : 0);
+
+            buffer.WriteString(r.commandConsole.processExecutable);
+            buffer.WriteInt(r.commandConsole.commandPreset1.enabled ? 1 : 0);
+            buffer.WriteString(r.commandConsole.commandPreset1.name);
+            buffer.WriteString(r.commandConsole.commandPreset1.command);
+            buffer.WriteInt(r.commandConsole.commandPreset2.enabled ? 1 : 0);
+            buffer.WriteString(r.commandConsole.commandPreset2.name);
+            buffer.WriteString(r.commandConsole.commandPreset2.command);
+            buffer.WriteInt(r.commandConsole.commandPreset3.enabled ? 1 : 0);
+            buffer.WriteString(r.commandConsole.commandPreset3.name);
+            buffer.WriteString(r.commandConsole.commandPreset3.command);
+
             buffer.WriteInt(r.instructor.enabled ? 1 : 0);
 
             buffer.WriteInt(r.instructor.wait.time.min);
@@ -354,8 +387,20 @@
             result.editableExtensions = new string[extensionsCount];
             for (int i = 0; i < extensionsCount; i++) { result.editableExtensions[i] = buffer.ReadString(); }
 
-            result.commandConsoleEnabled = (buffer.ReadInt() != 0);
-            result.instructor.enabled = (buffer.ReadInt() != 0);
+            result.commandConsole.enabled  = (buffer.ReadInt() != 0);
+
+            result.commandConsole.processExecutable = buffer.ReadString();
+            result.commandConsole.commandPreset1.enabled = (buffer.ReadInt() != 0);
+            result.commandConsole.commandPreset1.name = buffer.ReadString();
+            result.commandConsole.commandPreset1.command = buffer.ReadString();
+            result.commandConsole.commandPreset2.enabled = (buffer.ReadInt() != 0);
+            result.commandConsole.commandPreset2.name = buffer.ReadString();
+            result.commandConsole.commandPreset2.command = buffer.ReadString();
+            result.commandConsole.commandPreset3.enabled = (buffer.ReadInt() != 0);
+            result.commandConsole.commandPreset3.name = buffer.ReadString();
+            result.commandConsole.commandPreset3.command = buffer.ReadString();
+
+            result.instructor.enabled  = (buffer.ReadInt() != 0);
 
             result.instructor.wait.time.min = buffer.ReadInt();
             result.instructor.wait.time.max = buffer.ReadInt();

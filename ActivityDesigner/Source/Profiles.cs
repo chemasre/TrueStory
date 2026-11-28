@@ -61,18 +61,44 @@ namespace ActivityDesigner
             public ContextualQueryData ContextualQuery2 { get; set; } = new();
         }
 
+        public class ConsoleParams
+        {
+            public string ProcessExecutable  { get; set; } = "";
+            public CommandConsoleCommandPresetData CommandPreset1  { get; set; } = new();
+            public CommandConsoleCommandPresetData CommandPreset2  { get; set; } = new();
+            public CommandConsoleCommandPresetData CommandPreset3  { get; set; } = new();
+        }
+
         public static AssistantParams? LoadAssistantParams(string fileName)
         {
             AssistantParams? result;
+            JsonSerializerOptions options = new() { IncludeFields = true };
             string text = File.ReadAllText(fileName);
-            result = JsonSerializer.Deserialize<AssistantParams>(text);
+            result = JsonSerializer.Deserialize<AssistantParams>(text, options);
 
             return result;
         }
 
         public static void SaveAssistantParams(AssistantParams profile, string fileName)
         {
-            JsonSerializerOptions options = new() { WriteIndented = true };
+            JsonSerializerOptions options = new() { IncludeFields = true, WriteIndented = true };
+            string text = JsonSerializer.Serialize(profile, options);
+            File.WriteAllText(fileName, text, Encoding.UTF8);
+        }
+
+        public static ConsoleParams? LoadConsoleParams(string fileName)
+        {
+            ConsoleParams? result;
+            JsonSerializerOptions options = new() { IncludeFields = true };
+            string text = File.ReadAllText(fileName);
+            result = JsonSerializer.Deserialize<ConsoleParams>(text, options);
+
+            return result;
+        }
+
+        public static void SaveConsoleParams(ConsoleParams profile, string fileName)
+        {
+            JsonSerializerOptions options = new() { IncludeFields = true, WriteIndented = true };
             string text = JsonSerializer.Serialize(profile, options);
             File.WriteAllText(fileName, text, Encoding.UTF8);
         }
